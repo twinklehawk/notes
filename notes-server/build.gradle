@@ -1,0 +1,11 @@
+plugins {
+    id 'org.springframework.boot' version '1.5.8.RELEASE'
+}
+
+apply plugin: 'java'
+
+dependencies {
+    compile 'org.slf4j:slf4j-api'
+    compile project(':notes-api')
+    testCompile 'junit:junit:4.12'
+}

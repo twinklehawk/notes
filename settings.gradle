@@ -1,0 +1,4 @@
+rootProject.name = 'notes'
+
+include 'notes-api'
+include 'notes-server'
