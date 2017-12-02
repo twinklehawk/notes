@@ -33,7 +33,7 @@ public class ExceptionHandlerControllerAdvice {
      * @return the response to return to the client
      */
     @ExceptionHandler(Throwable.class)
-    public ResponseEntity<ErrorResponse> handleException(Throwable t, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleThrowable(Throwable t, HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, t, request.getRequestURI()));
     }

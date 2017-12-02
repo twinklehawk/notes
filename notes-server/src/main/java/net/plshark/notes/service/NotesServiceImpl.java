@@ -23,6 +23,7 @@ public class NotesServiceImpl implements NotesService {
 
     @Override
     public Note get(long id) {
+        // TODO catch not found exception, throw something not DAO-specific
         return notesRepo.get(id);
     }
 

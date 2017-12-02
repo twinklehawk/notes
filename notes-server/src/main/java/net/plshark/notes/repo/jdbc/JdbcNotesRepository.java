@@ -25,6 +25,8 @@ public class JdbcNotesRepository implements NotesRepository {
     private final JdbcOperations jdbc;
     private final RowMapper<Note> noteRowMapper;
 
+    // TODO list thrown exceptions in javadoc
+
     /**
      * Create a new instance
      * @param jdbc the JdbcOperations instance to use to interact with the database

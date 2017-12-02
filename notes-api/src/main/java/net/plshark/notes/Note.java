@@ -14,6 +14,40 @@ public class Note {
     private String content;
 
     /**
+     * Create a new instance
+     */
+    public Note() {
+
+    }
+
+    /**
+     * Create a new instance
+     * @param ownerId the ID of the user that owns this note
+     * @param correlationId the external ID
+     * @param title the title
+     * @param content the content
+     */
+    public Note(long ownerId, long correlationId, String title, String content) {
+        this.ownerId = ownerId;
+        this.correlationId = correlationId;
+        this.title = title;
+        this.content = content;
+    }
+
+    /**
+     * Create a new instance
+     * @param id the ID
+     * @param ownerId the ID of the user that owns this note
+     * @param correlationId the external ID
+     * @param title the title
+     * @param content the content
+     */
+    public Note(long id, long ownerId, long correlationId, String title, String content) {
+        this(ownerId, correlationId, title, content);
+        this.id = OptionalLong.of(id);
+    }
+
+    /**
      * @return the ID, can be unset if the note has not been saved yet
      */
     public OptionalLong getId() {
