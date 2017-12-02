@@ -7,6 +7,8 @@ import org.junit.Test;
  */
 public class JdbcNotesRepositoryTest {
 
+    // TODO integration tests
+
     /**
      * Verify an exception is thrown if null objects are passed in
      */

@@ -3,6 +3,9 @@ package net.plshark.notes.repo.jdbc;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.JdbcUpdateAffectedIncorrectNumberOfRowsException;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -15,6 +18,8 @@ import net.plshark.notes.repo.NotesRepository;
 /**
  * Repository that saves notes in and retrieves notes from a DB using JDBC
  */
+@Named
+@Singleton
 public class JdbcNotesRepository implements NotesRepository {
 
     private static final String SELECT = "SELECT " + NoteRowMapper.COLUMNS + " FROM notes WHERE id = ?";

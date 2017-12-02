@@ -2,6 +2,9 @@ package net.plshark.notes.service;
 
 import java.util.Objects;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import net.plshark.notes.Note;
 import net.plshark.notes.NotesService;
 import net.plshark.notes.repo.NotesRepository;
@@ -9,6 +12,8 @@ import net.plshark.notes.repo.NotesRepository;
 /**
  * Implementation for NotesService
  */
+@Named
+@Singleton
 public class NotesServiceImpl implements NotesService {
 
     private final NotesRepository notesRepo;
