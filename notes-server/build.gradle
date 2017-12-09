@@ -13,4 +13,5 @@ dependencies {
     testCompile 'org.mockito:mockito-core:2.12.0'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     runtime 'com.h2database:h2'
+    runtime 'org.flywaydb:flyway-core'
 }
