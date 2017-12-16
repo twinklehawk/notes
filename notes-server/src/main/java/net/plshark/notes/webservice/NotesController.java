@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import net.plshark.notes.BadRequestException;
 import net.plshark.notes.Note;
 import net.plshark.notes.NotesService;
+import net.plshark.notes.ObjectNotFoundException;
 
 /**
  * Controller to provide web service methods for notes
@@ -33,9 +35,10 @@ public class NotesController {
      * Get a note by ID
      * @param id the note ID
      * @return the matching note
+     * @throws ObjectNotFoundException if the note was not found
      */
     @RequestMapping(path = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Note get(@PathVariable("id") long id) {
+    public Note get(@PathVariable("id") long id) throws ObjectNotFoundException {
         // TODO handle not found and return 404
         return notesService.get(id);
     }

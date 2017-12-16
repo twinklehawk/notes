@@ -9,8 +9,9 @@ public interface NotesService {
      * Get a note by ID
      * @param id the note ID
      * @return the matching note
+     * @throws ObjectNotFoundException if the matching note was not found
      */
-    Note get(long id);
+    Note get(long id) throws ObjectNotFoundException;
 
     /**
      * Save a note

@@ -5,8 +5,11 @@ import java.util.Objects;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.springframework.dao.EmptyResultDataAccessException;
+
 import net.plshark.notes.Note;
 import net.plshark.notes.NotesService;
+import net.plshark.notes.ObjectNotFoundException;
 import net.plshark.notes.repo.NotesRepository;
 
 /**
@@ -27,9 +30,12 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public Note get(long id) {
-        // TODO catch not found exception, throw something not DAO-specific
-        return notesRepo.get(id);
+    public Note get(long id) throws ObjectNotFoundException {
+        try {
+            return notesRepo.get(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ObjectNotFoundException("No note found for id " + id, e);
+        }
     }
 
     @Override

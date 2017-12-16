@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import net.plshark.notes.BadRequestException;
 import net.plshark.notes.ErrorResponse;
 
 /**

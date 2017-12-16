@@ -3,6 +3,7 @@ package net.plshark.notes.webservice;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import net.plshark.notes.BadRequestException;
 import net.plshark.notes.Note;
 import net.plshark.notes.NotesService;
 

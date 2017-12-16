@@ -1,4 +1,4 @@
-package net.plshark.notes.webservice;
+package net.plshark.notes;
 
 /**
  * Exception indicating a request was invalid

@@ -9,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import net.plshark.notes.BadRequestException;
 import net.plshark.notes.ErrorResponse;
+import net.plshark.notes.ObjectNotFoundException;
 
 /**
  * Controller advice for handling exceptions
@@ -29,6 +31,18 @@ public class ExceptionHandlerControllerAdvice {
     public ResponseEntity<ErrorResponse> handleBadRequest(BadRequestException e, HttpServletRequest request) {
         log.debug("Bad request", e);
         return ResponseEntity.badRequest().body(buildResponse(HttpStatus.BAD_REQUEST, e, request.getRequestURI()));
+    }
+
+    /**
+     * Handle an ObjectNotFoundException
+     * @param e the exception
+     * @param request the request that caused the exception
+     * @return the response to return to the client
+     */
+    @ExceptionHandler(ObjectNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleObjectNotFound(ObjectNotFoundException e, HttpServletRequest request) {
+        log.debug("Object not found", e);
+        return ResponseEntity.notFound().build();
     }
 
     /**
