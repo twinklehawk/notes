@@ -1,6 +1,8 @@
 package net.plshark.notes.webservice;
 
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,5 +40,14 @@ public class RolesController {
         if (role.getId().isPresent())
             throw new BadRequestException("Cannot insert role with ID already set");
         return userMgmtService.saveRole(role);
+    }
+
+    /**
+     * Delete a role by ID
+     * @param id the role ID
+     */
+    @DeleteMapping(path = "/{id}")
+    public void delete(@PathVariable("id") long id) {
+        userMgmtService.deleteRole(id);
     }
 }
