@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import net.plshark.notes.Note;
-import net.plshark.notes.NotesService;
 import net.plshark.notes.repo.NotesRepository;
 
 /**

@@ -18,4 +18,19 @@ public interface RoleRepository {
      * @throws DataAccessException if the query fails
      */
     List<Role> getRolesForUser(long userId);
+
+    /**
+     * Insert a new role
+     * @param role the role to insert
+     * @return the inserted role, will have the ID set
+     * @throws DataAccessException if the insert fails
+     */
+    Role insert(Role role);
+
+    /**
+     * Delete a role by ID
+     * @param roleId the role ID
+     * @throws DataAccessException if the delete fails
+     */
+    void delete(long roleId);
 }

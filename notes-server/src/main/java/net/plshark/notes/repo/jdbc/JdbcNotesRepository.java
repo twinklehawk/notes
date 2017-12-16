@@ -51,6 +51,7 @@ public class JdbcNotesRepository implements NotesRepository {
             throw new IllegalArgumentException("Cannot insert note with ID already set");
 
         GeneratedKeyHolder holder = new GeneratedKeyHolder();
+        // TODO this doesn't look right
         jdbc.update(con -> con.prepareStatement(INSERT, new int[] { 1 }), holder);
         note.setId(holder.getKey().longValue());
         return note;

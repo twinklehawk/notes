@@ -8,7 +8,6 @@ import javax.inject.Singleton;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import net.plshark.notes.Note;
-import net.plshark.notes.NotesService;
 import net.plshark.notes.ObjectNotFoundException;
 import net.plshark.notes.repo.NotesRepository;
 

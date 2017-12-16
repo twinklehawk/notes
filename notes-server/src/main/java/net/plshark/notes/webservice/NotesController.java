@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import net.plshark.notes.BadRequestException;
 import net.plshark.notes.Note;
-import net.plshark.notes.NotesService;
 import net.plshark.notes.ObjectNotFoundException;
+import net.plshark.notes.service.NotesService;
 
 /**
  * Controller to provide web service methods for notes

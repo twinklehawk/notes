@@ -1,4 +1,7 @@
-package net.plshark.notes;
+package net.plshark.notes.service;
+
+import net.plshark.notes.Note;
+import net.plshark.notes.ObjectNotFoundException;
 
 /**
  * Service for notes

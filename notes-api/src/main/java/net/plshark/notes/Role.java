@@ -1,11 +1,13 @@
 package net.plshark.notes;
 
+import java.util.OptionalLong;
+
 /**
  * Data for a role
  */
 public class Role {
 
-    private long id;
+    private OptionalLong id;
     private String name;
 
     /**
@@ -21,16 +23,19 @@ public class Role {
      * @param name the name
      */
     public Role(long id, String name) {
-        this.id = id;
+        this.id = OptionalLong.of(id);
         this.name = name;
     }
 
-    public long getId() {
+    /**
+     * @return the ID, can be empty if not saved yet
+     */
+    public OptionalLong getId() {
         return id;
     }
 
     public void setId(long id) {
-        this.id = id;
+        this.id = OptionalLong.of(id);
     }
 
     public String getName() {

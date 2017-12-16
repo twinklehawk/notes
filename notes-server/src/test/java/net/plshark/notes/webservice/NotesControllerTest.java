@@ -5,7 +5,7 @@ import org.mockito.Mockito;
 
 import net.plshark.notes.BadRequestException;
 import net.plshark.notes.Note;
-import net.plshark.notes.NotesService;
+import net.plshark.notes.service.NotesService;
 
 /**
  * Tests for {@link NotesController}
