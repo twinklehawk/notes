@@ -12,20 +12,15 @@ import net.plshark.notes.Note;
  */
 class NoteRowMapper implements RowMapper<Note> {
 
-    /**
-     * The note columns in the correct order for use with this RowMapper
-     */
-    public static final String COLUMNS = "id, owner_id, correlation_id, title, content";
-
     @Override
     public Note mapRow(ResultSet rs, int rowNum) throws SQLException {
         Note note = new Note();
 
-        note.setId(rs.getLong(1));
-        note.setOwnerId(rs.getLong(2));
-        note.setCorrelationId(rs.getLong(3));
-        note.setTitle(rs.getString(4));
-        note.setContent(rs.getString(5));
+        note.setId(rs.getLong("id"));
+        note.setOwnerId(rs.getLong("owner_id"));
+        note.setCorrelationId(rs.getLong("correlation_id"));
+        note.setTitle(rs.getString("title"));
+        note.setContent(rs.getString("content"));
 
         return note;
     }

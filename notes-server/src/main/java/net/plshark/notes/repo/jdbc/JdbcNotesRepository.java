@@ -22,15 +22,13 @@ import net.plshark.notes.repo.NotesRepository;
 @Singleton
 public class JdbcNotesRepository implements NotesRepository {
 
-    private static final String SELECT = "SELECT " + NoteRowMapper.COLUMNS + " FROM notes WHERE id = ?";
+    private static final String SELECT = "SELECT id, owner_id, correlation_id, title, content FROM notes WHERE id = ?";
     private static final String DELETE = "DELETE FROM notes WHERE id = ?";
     private static final String UPDATE = "UPDATE notes SET owner_id = ?, correlation_id = ?, title = ?, content = ? WHERE id = ?";
     private static final String INSERT = "INSERT INTO notes (owner_id, correlation_id, title, content) VALUES (?, ?, ?, ?)";
 
     private final JdbcOperations jdbc;
     private final RowMapper<Note> noteRowMapper;
-
-    // TODO list thrown exceptions in javadoc
 
     /**
      * Create a new instance
