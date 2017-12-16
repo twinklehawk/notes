@@ -22,6 +22,14 @@ public interface UserManagementService {
     void deleteUser(long userId);
 
     /**
+     * Update a user's password
+     * @param userId the ID of the user
+     * @param currentPassword the current password, used for verification
+     * @param newPassword the new password
+     */
+    void updateUserPassword(long userId, String currentPassword, String newPassword);
+
+    /**
      * Save a new role
      * @param role the role
      * @return the saved role

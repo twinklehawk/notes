@@ -18,4 +18,17 @@ public interface UserRepository {
      * @throws DataAccessException if the query fails
      */
     User getForUsername(String username);
+
+    /**
+     * Insert a new user
+     * @param user the user to insert
+     * @return the inserted user, will have the ID set
+     */
+    User insert(User user);
+
+    /**
+     * Delete a user by ID
+     * @param userId the user ID
+     */
+    void delete(long userId);
 }

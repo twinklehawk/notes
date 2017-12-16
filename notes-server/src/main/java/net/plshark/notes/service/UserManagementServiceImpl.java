@@ -5,11 +5,19 @@ import net.plshark.notes.User;
 import net.plshark.notes.repo.RoleRepository;
 import net.plshark.notes.repo.UserRepository;
 
+/**
+ * UserManagementService implementation
+ */
 public class UserManagementServiceImpl implements UserManagementService {
 
     private final UserRepository userRepo;
     private final RoleRepository roleRepo;
 
+    /**
+     * Create a new instance
+     * @param userRepository the repository for accessing users
+     * @param roleRepository the repository for accessing roles
+     */
     public UserManagementServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepo = userRepository;
         this.roleRepo = roleRepository;
@@ -17,14 +25,15 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     @Override
     public User saveUser(User user) {
-        // TODO Auto-generated method stub
-        return null;
+        if (user.getId().isPresent())
+            throw new IllegalArgumentException("Updating a user is not supported");
+
+        return userRepo.insert(user);
     }
 
     @Override
     public void deleteUser(long userId) {
-        // TODO Auto-generated method stub
-
+        userRepo.delete(userId);
     }
 
     @Override
@@ -32,8 +41,7 @@ public class UserManagementServiceImpl implements UserManagementService {
         if (role.getId().isPresent())
             throw new IllegalArgumentException("Updating a role is not supported");
 
-        Role savedRole = roleRepo.insert(role);
-        return savedRole;
+        return roleRepo.insert(role);
     }
 
     @Override
@@ -49,6 +57,12 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     @Override
     public void removeRoleFromUser(long userId, long roleId) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void updateUserPassword(long userId, String currentPassword, String newPassword) {
         // TODO Auto-generated method stub
 
     }
