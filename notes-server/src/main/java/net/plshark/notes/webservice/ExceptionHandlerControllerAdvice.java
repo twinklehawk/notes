@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -43,6 +44,20 @@ public class ExceptionHandlerControllerAdvice {
     public ResponseEntity<ErrorResponse> handleObjectNotFound(ObjectNotFoundException e, HttpServletRequest request) {
         log.debug("Object not found", e);
         return ResponseEntity.notFound().build();
+    }
+
+    /**
+     * Handle the request method not supported
+     * @param e the exception
+     * @param request the request that caused the exception
+     * @return the response to return to the client
+     */
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ErrorResponse> handleMethodNotSupported(HttpRequestMethodNotSupportedException e,
+            HttpServletRequest request) {
+        log.debug("Method not supported", e);
+        HttpStatus status = HttpStatus.METHOD_NOT_ALLOWED;
+        return ResponseEntity.status(status).body(buildResponse(status, e, request.getRequestURI()));
     }
 
     /**
