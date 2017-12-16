@@ -2,6 +2,8 @@ package net.plshark.notes.webservice;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -15,6 +17,8 @@ import net.plshark.notes.ErrorResponse;
 @ControllerAdvice
 public class ExceptionHandlerControllerAdvice {
 
+    private static final Logger log = LoggerFactory.getLogger(ExceptionHandlerControllerAdvice.class);
+
     /**
      * Handle a BadRequestException
      * @param e the exception
@@ -23,6 +27,7 @@ public class ExceptionHandlerControllerAdvice {
      */
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ErrorResponse> handleBadRequest(BadRequestException e, HttpServletRequest request) {
+        log.debug("Bad request", e);
         return ResponseEntity.badRequest().body(buildResponse(HttpStatus.BAD_REQUEST, e, request.getRequestURI()));
     }
 
@@ -34,6 +39,7 @@ public class ExceptionHandlerControllerAdvice {
      */
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<ErrorResponse> handleThrowable(Throwable t, HttpServletRequest request) {
+        log.error("Internal error", t);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, t, request.getRequestURI()));
     }
