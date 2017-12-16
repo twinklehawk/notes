@@ -39,7 +39,6 @@ public class NotesController {
      */
     @RequestMapping(path = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Note get(@PathVariable("id") long id) throws ObjectNotFoundException {
-        // TODO handle not found and return 404
         return notesService.get(id);
     }
 
