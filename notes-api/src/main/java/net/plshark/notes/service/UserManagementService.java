@@ -10,7 +10,7 @@ import net.plshark.notes.User;
 public interface UserManagementService {
 
     /**
-     * Save a new user or update an existing user
+     * Save a new user
      * @param user the user
      * @return the saved user
      */

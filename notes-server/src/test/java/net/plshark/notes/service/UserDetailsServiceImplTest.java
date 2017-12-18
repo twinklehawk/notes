@@ -14,7 +14,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import net.plshark.notes.Role;
 import net.plshark.notes.User;
-import net.plshark.notes.repo.RoleRepository;
 import net.plshark.notes.repo.UserRepository;
 
 /**
@@ -32,7 +31,7 @@ public class UserDetailsServiceImplTest {
                 .thenReturn(new User(25, "user", "pass")).getMock();
         Mockito.when(userRepo.getRolesForUser(25))
                 .thenReturn(Arrays.asList(new Role(3, "normal-user"), new Role(5, "admin")));
-        UserDetailsService service = new UserDetailsServiceImpl(userRepo, Mockito.mock(RoleRepository.class));
+        UserDetailsService service = new UserDetailsServiceImpl(userRepo);
 
         UserDetails userDetails = service.loadUserByUsername("user");
         Assert.assertEquals("user", userDetails.getUsername());
@@ -49,7 +48,7 @@ public class UserDetailsServiceImplTest {
     public void loadUserByUsernameNotFoundTest() {
         UserRepository userRepo = Mockito.when(Mockito.mock(UserRepository.class).getForUsername("user"))
                 .thenThrow(new EmptyResultDataAccessException(1)).getMock();
-        UserDetailsService service = new UserDetailsServiceImpl(userRepo, Mockito.mock(RoleRepository.class));
+        UserDetailsService service = new UserDetailsServiceImpl(userRepo);
 
         service.loadUserByUsername("user");
     }
@@ -62,7 +61,7 @@ public class UserDetailsServiceImplTest {
         UserRepository userRepo = Mockito.when(Mockito.mock(UserRepository.class).getForUsername("user"))
                 .thenReturn(new User(25, "user", "pass")).getMock();
         Mockito.when(userRepo.getRolesForUser(25)).thenReturn(Collections.emptyList());
-        UserDetailsService service = new UserDetailsServiceImpl(userRepo, Mockito.mock(RoleRepository.class));
+        UserDetailsService service = new UserDetailsServiceImpl(userRepo);
 
         UserDetails userDetails = service.loadUserByUsername("user");
         Assert.assertEquals("user", userDetails.getUsername());
