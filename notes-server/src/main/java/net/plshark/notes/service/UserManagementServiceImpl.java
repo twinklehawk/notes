@@ -2,8 +2,10 @@ package net.plshark.notes.service;
 
 import java.util.Objects;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import net.plshark.notes.ObjectNotFoundException;
 import net.plshark.notes.Role;
 import net.plshark.notes.User;
 import net.plshark.notes.repo.RoleRepository;
@@ -74,8 +76,24 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public void updateUserPassword(long userId, String currentPassword, String newPassword) {
-        // TODO Auto-generated method stub
+    public void updateUserPassword(long userId, String currentPassword, String newPassword)
+            throws ObjectNotFoundException {
+        Objects.requireNonNull(currentPassword, "currentPassword cannot be null");
+        Objects.requireNonNull(newPassword, "newPassword cannot be null");
 
+        User user;
+
+        try {
+            user = userRepo.getForId(userId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ObjectNotFoundException("No user for ID " + userId, e);
+        }
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword()))
+            // TODO better exception
+            throw new IllegalArgumentException("Invalid credentials");
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepo.update(user);
     }
 }

@@ -1,5 +1,6 @@
 package net.plshark.notes.service;
 
+import net.plshark.notes.ObjectNotFoundException;
 import net.plshark.notes.Role;
 import net.plshark.notes.User;
 
@@ -26,8 +27,9 @@ public interface UserManagementService {
      * @param userId the ID of the user
      * @param currentPassword the current password, used for verification
      * @param newPassword the new password
+     * @throws ObjectNotFoundException if the user was not found
      */
-    void updateUserPassword(long userId, String currentPassword, String newPassword);
+    void updateUserPassword(long userId, String currentPassword, String newPassword) throws ObjectNotFoundException;
 
     /**
      * Save a new role
