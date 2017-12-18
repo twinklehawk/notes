@@ -16,7 +16,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import net.plshark.notes.Role;
 import net.plshark.notes.User;
-import net.plshark.notes.repo.RoleRepository;
 import net.plshark.notes.repo.UserRepository;
 
 /**
@@ -27,16 +26,13 @@ import net.plshark.notes.repo.UserRepository;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
 
     /**
      * Create a new instance
      * @param userRepository the user repository
-     * @param roleRepository the role repository
      */
-    public UserDetailsServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserDetailsServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
     }
 
     @Override

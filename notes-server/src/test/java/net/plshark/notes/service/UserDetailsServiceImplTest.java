@@ -30,9 +30,9 @@ public class UserDetailsServiceImplTest {
     public void loadUserByUsernameTest() {
         UserRepository userRepo = Mockito.when(Mockito.mock(UserRepository.class).getForUsername("user"))
                 .thenReturn(new User(25, "user", "pass")).getMock();
-        RoleRepository roleRepo = Mockito.when(Mockito.mock(RoleRepository.class).getRolesForUser(25))
-                .thenReturn(Arrays.asList(new Role(3, "normal-user"), new Role(5, "admin"))).getMock();
-        UserDetailsService service = new UserDetailsServiceImpl(userRepo, roleRepo);
+        Mockito.when(userRepo.getRolesForUser(25))
+                .thenReturn(Arrays.asList(new Role(3, "normal-user"), new Role(5, "admin")));
+        UserDetailsService service = new UserDetailsServiceImpl(userRepo, Mockito.mock(RoleRepository.class));
 
         UserDetails userDetails = service.loadUserByUsername("user");
         Assert.assertEquals("user", userDetails.getUsername());
@@ -61,9 +61,8 @@ public class UserDetailsServiceImplTest {
     public void loadUserByUsernameNoRolesTest() {
         UserRepository userRepo = Mockito.when(Mockito.mock(UserRepository.class).getForUsername("user"))
                 .thenReturn(new User(25, "user", "pass")).getMock();
-        RoleRepository roleRepo = Mockito.when(Mockito.mock(RoleRepository.class).getRolesForUser(25))
-                .thenReturn(Collections.emptyList()).getMock();
-        UserDetailsService service = new UserDetailsServiceImpl(userRepo, roleRepo);
+        Mockito.when(userRepo.getRolesForUser(25)).thenReturn(Collections.emptyList());
+        UserDetailsService service = new UserDetailsServiceImpl(userRepo, Mockito.mock(RoleRepository.class));
 
         UserDetails userDetails = service.loadUserByUsername("user");
         Assert.assertEquals("user", userDetails.getUsername());
