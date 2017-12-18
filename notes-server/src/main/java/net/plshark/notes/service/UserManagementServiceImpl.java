@@ -70,16 +70,15 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     @Override
     public void grantRoleToUser(long userId, long roleId) {
-        // TODO Auto-generated method stub
-
+        userRepo.insertUserRole(userId, roleId);
     }
 
     @Override
     public void removeRoleFromUser(long userId, long roleId) {
-        // TODO Auto-generated method stub
-
+        userRepo.deleteUserRole(userId, roleId);
     }
 
+    // TODO this needs to be in a transaction or update needs to update password where password = currentPassword
     @Override
     public void updateUserPassword(long userId, String currentPassword, String newPassword)
             throws ObjectNotFoundException {

@@ -11,6 +11,7 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 
+import net.plshark.notes.Role;
 import net.plshark.notes.User;
 import net.plshark.notes.repo.UserRepository;
 
@@ -26,9 +27,13 @@ public class JdbcUserRepository implements UserRepository {
     private static final String INSERT = "INSERT INTO users (username, password) VALUES (?, ?)";
     private static final String DELETE = "DELETE FROM users WHERE id = ?";
     private static final String UPDATE = "UPDATE users SET password = ? WHERE id = ?";
+    private static final String SELECT_ROLES_FOR_USER = "SELECT r.id id, r.name name FROM roles r INNER JOIN user_roles ur ON r.id = ur.role_id WHERE ur.user_id = ?";
+    private static final String INSERT_USER_ROLE = "INSERT INTO user_roles (user_id, role_id) values (SELECT id FROM users WHERE id = ?, SELECT id FROM roles WHERE id = ?)";
+    private static final String DELETE_USER_ROLE = "DELETE FROM user_roles WHERE user_id = ? AND role_id = ?";
 
     private final JdbcOperations jdbc;
     private final UserRowMapper userRowMapper = new UserRowMapper();
+    private final RoleRowMapper roleRowMapper = new RoleRowMapper();
 
     /**
      * Create a new instance
@@ -82,5 +87,26 @@ public class JdbcUserRepository implements UserRepository {
             stmt.setLong(2, user.getId().getAsLong());
         });
         return user;
+    }
+
+    @Override
+    public List<Role> getRolesForUser(long userId) {
+        return jdbc.query(SELECT_ROLES_FOR_USER, stmt -> stmt.setLong(1, userId), roleRowMapper);
+    }
+
+    @Override
+    public void insertUserRole(long userId, long roleId) {
+        jdbc.update(INSERT_USER_ROLE, stmt -> {
+            stmt.setLong(1, userId);
+            stmt.setLong(2, roleId);
+        });
+    }
+
+    @Override
+    public void deleteUserRole(long userId, long roleId) {
+        jdbc.update(DELETE_USER_ROLE, stmt -> {
+            stmt.setLong(1, userId);
+            stmt.setLong(2, roleId);
+        });
     }
 }

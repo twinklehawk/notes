@@ -47,7 +47,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         } catch (DataAccessException e) {
             throw new UsernameNotFoundException("No matching user for " + username, e);
         }
-        List<Role> userRoles = roleRepository.getRolesForUser(user.getId().getAsLong());
+        List<Role> userRoles = userRepository.getRolesForUser(user.getId().getAsLong());
 
         Set<GrantedAuthority> authorities = new HashSet<>(userRoles.size());
         userRoles.forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName())));

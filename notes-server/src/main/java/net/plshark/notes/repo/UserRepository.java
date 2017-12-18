@@ -1,8 +1,11 @@
 package net.plshark.notes.repo;
 
+import java.util.List;
+
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
+import net.plshark.notes.Role;
 import net.plshark.notes.User;
 
 /**
@@ -48,4 +51,26 @@ public interface UserRepository {
      * @param userId the user ID
      */
     void delete(long userId);
+
+    /**
+     * Get all the roles for a user
+     * @param userId the user ID
+     * @return the roles for that user
+     * @throws DataAccessException if the query fails
+     */
+    List<Role> getRolesForUser(long userId);
+
+    /**
+     * Grant a role to a user
+     * @param userId the ID of the user to grant the role to
+     * @param roleId the ID of the role to grant
+     */
+    void insertUserRole(long userId, long roleId);
+
+    /**
+     * Remove a role to a user
+     * @param userId the ID of the user to remove the role from
+     * @param roleId the ID of the role to remove
+     */
+    void deleteUserRole(long userId, long roleId);
 }
