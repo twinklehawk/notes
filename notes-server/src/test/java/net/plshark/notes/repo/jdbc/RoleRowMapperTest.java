@@ -25,7 +25,7 @@ public class RoleRowMapperTest {
         Mockito.when(rs.getString("name")).thenReturn("admin");
 
         Role role = mapper.mapRow(rs, 2);
-        Assert.assertEquals(5L, role.getId());
+        Assert.assertEquals(5L, role.getId().getAsLong());
         Assert.assertEquals("admin", role.getName());
     }
 }

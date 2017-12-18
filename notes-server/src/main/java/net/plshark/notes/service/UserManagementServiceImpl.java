@@ -2,6 +2,9 @@ package net.plshark.notes.service;
 
 import java.util.Objects;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -14,6 +17,8 @@ import net.plshark.notes.repo.UserRepository;
 /**
  * UserManagementService implementation
  */
+@Named
+@Singleton
 public class UserManagementServiceImpl implements UserManagementService {
 
     private final UserRepository userRepo;
