@@ -70,18 +70,20 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     @Override
     public void grantRoleToUser(long userId, long roleId) {
+        // TODO this should fail if user or role does not exist
         userRepo.insertUserRole(userId, roleId);
     }
 
     @Override
     public void removeRoleFromUser(long userId, long roleId) {
+        // TODO this should fail if user does not exist
         userRepo.deleteUserRole(userId, roleId);
     }
 
-    // TODO this needs to be in a transaction or update needs to update password where password = currentPassword
     @Override
     public void updateUserPassword(long userId, String currentPassword, String newPassword)
             throws ObjectNotFoundException {
+        // TODO this needs to be in a transaction or update needs to update password where password = currentPassword
         Objects.requireNonNull(currentPassword, "currentPassword cannot be null");
         Objects.requireNonNull(newPassword, "newPassword cannot be null");
 
