@@ -33,9 +33,9 @@ public class UserManagementServiceImpl implements UserManagementService {
      */
     public UserManagementServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
             PasswordEncoder passwordEncoder) {
-        this.userRepo = userRepository;
-        this.roleRepo = roleRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.userRepo = Objects.requireNonNull(userRepository, "userRepository cannot be null");
+        this.roleRepo = Objects.requireNonNull(roleRepository, "roleRepository cannot be null");
+        this.passwordEncoder = Objects.requireNonNull(passwordEncoder, "passwordEncoder cannot be null");
     }
 
     @Override
