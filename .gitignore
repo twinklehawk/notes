@@ -6,4 +6,5 @@
 .settings/
 */.settings/
 */.classpath
+*/.groovy/
 
