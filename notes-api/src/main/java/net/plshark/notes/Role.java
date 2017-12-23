@@ -1,5 +1,6 @@
 package net.plshark.notes;
 
+import java.util.Objects;
 import java.util.OptionalLong;
 
 /**
@@ -12,19 +13,24 @@ public class Role {
 
     /**
      * Create a new instance
+     * @param name the role name
      */
-    public Role() {
-
+    public Role(String name) {
+        this(OptionalLong.empty(), name);
     }
 
     /**
      * Create a new instance
      * @param id the role ID
-     * @param name the name
+     * @param name the role name
      */
     public Role(long id, String name) {
-        this.id = OptionalLong.of(id);
-        this.name = name;
+        this(OptionalLong.of(id), name);
+    }
+
+    private Role(OptionalLong id, String name) {
+        this.id = Objects.requireNonNull(id);
+        this.name = Objects.requireNonNull(name, "name cannot be null");
     }
 
     /**
@@ -43,6 +49,6 @@ public class Role {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = Objects.requireNonNull(name, "name cannot be null");
     }
 }

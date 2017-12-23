@@ -43,7 +43,8 @@ public class ExceptionHandlerControllerAdvice {
     @ExceptionHandler(ObjectNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleObjectNotFound(ObjectNotFoundException e, HttpServletRequest request) {
         log.debug("Object not found", e);
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(buildResponse(HttpStatus.NOT_FOUND, e, request.getRequestURI()));
     }
 
     /**

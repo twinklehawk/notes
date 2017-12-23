@@ -2,6 +2,7 @@ package net.plshark.notes.service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.inject.Named;
@@ -32,7 +33,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      * @param userRepository the user repository
      */
     public UserDetailsServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+        this.userRepository = Objects.requireNonNull(userRepository, "userRepository cannot be null");
     }
 
     @Override

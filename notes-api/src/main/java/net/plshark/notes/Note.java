@@ -116,4 +116,10 @@ public class Note {
     public void setContent(String content) {
         this.content = content;
     }
+
+    @Override
+    public String toString() {
+        return "Note [id=" + id + ", ownerId=" + ownerId + ", correlationId=" + correlationId + ", title=" + title
+                + ", content=" + content + "]";
+    }
 }
