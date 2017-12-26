@@ -35,20 +35,24 @@ public interface UserRepository {
      * Insert a new user
      * @param user the user to insert
      * @return the inserted user, will have the ID set
+     * @throws DataAccessException if the insert fails
      */
     User insert(User user);
 
     /**
-     * Update an existing user. The username cannot be changed after a user is
-     * created
-     * @param user the user to update
-     * @return the updated user
+     * Update an existing user's password
+     * @param id the ID of the user to update
+     * @param currentPassword the current password
+     * @param newPassword the new password
+     * @throws EmptyResultDataAccessException if no user exists with the ID or currentPassword
+     * @throws DataAccessException if the update fails
      */
-    User update(User user);
+    void updatePassword(long id, String currentPassword, String newPassword);
 
     /**
      * Delete a user by ID
      * @param userId the user ID
+     * @throws DataAccessException if the delete fails
      */
     void delete(long userId);
 
@@ -64,6 +68,7 @@ public interface UserRepository {
      * Grant a role to a user
      * @param userId the ID of the user to grant the role to
      * @param roleId the ID of the role to grant
+     * @throws DataAccessException if the insert fails
      */
     void insertUserRole(long userId, long roleId);
 
@@ -71,6 +76,7 @@ public interface UserRepository {
      * Remove a role to a user
      * @param userId the ID of the user to remove the role from
      * @param roleId the ID of the role to remove
+     * @throws DataAccessException if the delete fails
      */
     void deleteUserRole(long userId, long roleId);
 }

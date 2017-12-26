@@ -7,6 +7,7 @@ import java.util.Objects;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -26,7 +27,7 @@ public class JdbcUserRepository implements UserRepository {
     private static final String SELECT_BY_ID = "SELECT * FROM users WHERE id = ?";
     private static final String INSERT = "INSERT INTO users (username, password) VALUES (?, ?)";
     private static final String DELETE = "DELETE FROM users WHERE id = ?";
-    private static final String UPDATE = "UPDATE users SET password = ? WHERE id = ?";
+    private static final String UPDATE_PASSWORD = "UPDATE users SET password = ? WHERE id = ? AND password = ?";
     private static final String SELECT_ROLES_FOR_USER = "SELECT r.id id, r.name name FROM roles r INNER JOIN user_roles ur ON r.id = ur.role_id WHERE ur.user_id = ?";
     private static final String INSERT_USER_ROLE = "INSERT INTO user_roles (user_id, role_id) values (?, ?)";
     private static final String DELETE_USER_ROLE = "DELETE FROM user_roles WHERE user_id = ? AND role_id = ?";
@@ -78,15 +79,16 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
-    public User update(User user) {
-        if (!user.getId().isPresent())
-            throw new IllegalArgumentException("Cannot update user without ID");
-
-        jdbc.update(UPDATE, stmt -> {
-            stmt.setString(1, user.getPassword());
-            stmt.setLong(2, user.getId().getAsLong());
+    public void updatePassword(long id, String currentPassword, String newPassword) {
+        int updates = jdbc.update(UPDATE_PASSWORD, stmt -> {
+            stmt.setString(1, newPassword);
+            stmt.setLong(2, id);
+            stmt.setString(3, currentPassword);
         });
-        return user;
+        if (updates == 0)
+            throw new EmptyResultDataAccessException("No matching user for password update", 1);
+        else if (updates != 1)
+            throw new IllegalStateException("Invalid number of rows affected: " + updates);
     }
 
     @Override

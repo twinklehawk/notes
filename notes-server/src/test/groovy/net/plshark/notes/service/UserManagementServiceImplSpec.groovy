@@ -86,35 +86,25 @@ class UserManagementServiceImplSpec extends Specification {
     }
 
     def "new password is encoded when updating password"() {
-        userRepo.getForId(100) >> new User(100, "user", "current-encoded")
-        encoder.matches("current", "current-encoded") >> true
+        encoder.encode("current") >> "current-encoded"
         encoder.encode("new-pass") >> "new-pass-encoded"
 
         when:
         service.updateUserPassword(100, "current", "new-pass")
 
         then:
-        1 * userRepo.update({ User user -> user.password == "new-pass-encoded" })
+        1 * userRepo.updatePassword(100, "current-encoded", "new-pass-encoded")
     }
 
     def "no matching user when updating password throws exception"() {
-        userRepo.getForId(100) >> { throw new EmptyResultDataAccessException(1) }
+        encoder.encode("current") >> "current-encoded"
+        encoder.encode("new") >> "new-encoded"
+        userRepo.updatePassword(100, "current-encoded", "new-encoded") >> { throw new EmptyResultDataAccessException(1) }
 
         when:
         service.updateUserPassword(100, "current", "new")
 
         then:
         thrown(ObjectNotFoundException)
-    }
-
-    def "updating password with incorrect current password throws exception"() {
-        userRepo.getForId(100) >> new User(100, "user", "current-encoded")
-        encoder.matches("current", "current-encoded") >> false
-
-        when:
-        service.updateUserPassword(100, "current", "new-pass")
-
-        then:
-        thrown(IllegalArgumentException)
     }
 }

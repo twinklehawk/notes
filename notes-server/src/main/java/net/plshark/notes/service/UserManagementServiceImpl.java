@@ -98,23 +98,16 @@ public class UserManagementServiceImpl implements UserManagementService {
     @Override
     public void updateUserPassword(long userId, String currentPassword, String newPassword)
             throws ObjectNotFoundException {
-        // TODO this needs to be in a transaction or update needs to update password where password = currentPassword
         Objects.requireNonNull(currentPassword, "currentPassword cannot be null");
         Objects.requireNonNull(newPassword, "newPassword cannot be null");
 
-        User user;
+        String newPasswordEncoded = passwordEncoder.encode(newPassword);
+        String currentPasswordEncoded = passwordEncoder.encode(currentPassword);
 
         try {
-            user = userRepo.getForId(userId);
+            userRepo.updatePassword(userId, currentPasswordEncoded, newPasswordEncoded);
         } catch (EmptyResultDataAccessException e) {
-            throw new ObjectNotFoundException("No user for ID " + userId, e);
+            throw new ObjectNotFoundException("User not found", e);
         }
-
-        if (!passwordEncoder.matches(currentPassword, user.getPassword()))
-            // TODO better exception
-            throw new IllegalArgumentException("Invalid credentials");
-
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userRepo.update(user);
     }
 }

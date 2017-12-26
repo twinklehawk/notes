@@ -61,7 +61,7 @@ public class UsersController {
      * Change a user's password
      * @param userId the ID of the user
      * @param request the password change request
-     * @throws ObjectNotFoundException if the user was not found
+     * @throws ObjectNotFoundException if the user was not found or the current password was incorrect
      */
     @PostMapping(path = "/{id}/password")
     public void changePassword(@PathVariable("id") long userId, @RequestBody PasswordChangeRequest request)
@@ -73,9 +73,11 @@ public class UsersController {
      * Grant a role to a user
      * @param userId the ID of the user to grant to
      * @param roleId the ID of the role to grant
+     * @throws ObjectNotFoundException if the user or role does not exist
      */
     @PostMapping(path = "/{userId}/roles/{roleId}")
-    public void grantRole(@PathVariable("userId") long userId, @PathVariable("roleId") long roleId) {
+    public void grantRole(@PathVariable("userId") long userId, @PathVariable("roleId") long roleId)
+            throws ObjectNotFoundException {
         userMgmtService.grantRoleToUser(userId, roleId);
     }
 
@@ -83,9 +85,11 @@ public class UsersController {
      * Remove a role from a user
      * @param userId the ID of the user to remove the role from
      * @param roleId the ID of the role to remove
+     * @throws ObjectNotFoundException if the user does not exist
      */
     @DeleteMapping(path = "/{userId}/roles/{roleId}")
-    public void removeRole(@PathVariable("userId") long userId, @PathVariable("roleId") long roleId) {
+    public void removeRole(@PathVariable("userId") long userId, @PathVariable("roleId") long roleId)
+            throws ObjectNotFoundException {
         userMgmtService.removeRoleFromUser(userId, roleId);
     }
 }
