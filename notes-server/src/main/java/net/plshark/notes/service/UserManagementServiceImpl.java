@@ -52,7 +52,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     @Override
     public void deleteUser(long userId) {
-        // TODO delete rows from user_roles table
+        userRepo.deleteUserRolesForUser(userId);
         userRepo.delete(userId);
     }
 
@@ -66,7 +66,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     @Override
     public void deleteRole(long roleId) {
-        // TODO delete rows from user_roles table
+        userRepo.deleteUserRolesForRole(roleId);
         roleRepo.delete(roleId);
     }
 

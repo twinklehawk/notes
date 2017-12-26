@@ -79,4 +79,18 @@ public interface UserRepository {
      * @throws DataAccessException if the delete fails
      */
     void deleteUserRole(long userId, long roleId);
+
+    /**
+     * Delete all user roles for a user
+     * @param userId the user ID
+     * @throws DataAccessException if the delete fails
+     */
+    void deleteUserRolesForUser(long userId);
+
+    /**
+     * Delete all user roles for a role
+     * @param roleId the role ID
+     * @throws DataAccessException if the delete fails
+     */
+    void deleteUserRolesForRole(long roleId);
 }

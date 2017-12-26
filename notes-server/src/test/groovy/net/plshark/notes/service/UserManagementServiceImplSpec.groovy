@@ -107,4 +107,22 @@ class UserManagementServiceImplSpec extends Specification {
         then:
         thrown(ObjectNotFoundException)
     }
+
+    def "all roles for a user are removed when the user is deleted"() {
+        when:
+        service.deleteUser(100)
+
+        then:
+        1 * userRepo.deleteUserRolesForUser(100)
+        1 * userRepo.delete(100)
+    }
+
+    def "role is removed from all users when the role is deleted"() {
+        when:
+        service.deleteRole(200)
+
+        then:
+        1 * userRepo.deleteUserRolesForRole(200)
+        1 * roleRepo.delete(200)
+    }
 }
