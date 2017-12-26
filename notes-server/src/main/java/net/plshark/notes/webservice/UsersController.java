@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import net.plshark.notes.BadRequestException;
 import net.plshark.notes.ObjectNotFoundException;
 import net.plshark.notes.PasswordChangeRequest;
 import net.plshark.notes.User;
@@ -34,9 +35,13 @@ public class UsersController {
      * Insert a new user
      * @param user the user to insert
      * @return the inserted user
+     * @throws BadRequestException if attempting to insert a user with an ID already set
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public User insert(@RequestBody User user) {
+    public User insert(@RequestBody User user) throws BadRequestException {
+        if (user.getId().isPresent())
+            throw new BadRequestException("Cannot insert user with ID already set");
+
         User savedUser = userMgmtService.saveUser(user);
         // don't send back the password
         savedUser.setPassword(null);
