@@ -28,7 +28,7 @@ public class JdbcUserRepository implements UserRepository {
     private static final String DELETE = "DELETE FROM users WHERE id = ?";
     private static final String UPDATE = "UPDATE users SET password = ? WHERE id = ?";
     private static final String SELECT_ROLES_FOR_USER = "SELECT r.id id, r.name name FROM roles r INNER JOIN user_roles ur ON r.id = ur.role_id WHERE ur.user_id = ?";
-    private static final String INSERT_USER_ROLE = "INSERT INTO user_roles (user_id, role_id) values (SELECT id FROM users WHERE id = ?, SELECT id FROM roles WHERE id = ?)";
+    private static final String INSERT_USER_ROLE = "INSERT INTO user_roles (user_id, role_id) values (?, ?)";
     private static final String DELETE_USER_ROLE = "DELETE FROM user_roles WHERE user_id = ? AND role_id = ?";
 
     private final JdbcOperations jdbc;

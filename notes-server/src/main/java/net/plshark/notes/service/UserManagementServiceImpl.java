@@ -52,6 +52,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     @Override
     public void deleteUser(long userId) {
+        // TODO delete rows from user_roles table
         userRepo.delete(userId);
     }
 
@@ -65,18 +66,32 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     @Override
     public void deleteRole(long roleId) {
+        // TODO delete rows from user_roles table
         roleRepo.delete(roleId);
     }
 
     @Override
-    public void grantRoleToUser(long userId, long roleId) {
-        // TODO this should fail if user or role does not exist
+    public void grantRoleToUser(long userId, long roleId) throws ObjectNotFoundException {
+        try {
+            userRepo.getForId(userId);
+            roleRepo.getForId(roleId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ObjectNotFoundException("User or role not found", e);
+        }
+        // if something else is deleting users/roles at the same time as this runs, the row can be inserted
+        // with no matching user or role, but it doesn't really matter
         userRepo.insertUserRole(userId, roleId);
     }
 
     @Override
-    public void removeRoleFromUser(long userId, long roleId) {
-        // TODO this should fail if user does not exist
+    public void removeRoleFromUser(long userId, long roleId) throws ObjectNotFoundException {
+        try {
+            userRepo.getForId(userId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ObjectNotFoundException("User not found", e);
+        }
+        // if something else is deleting users at the same time as this runs, the row can be inserted
+        // with no matching user, but it doesn't really matter
         userRepo.deleteUserRole(userId, roleId);
     }
 

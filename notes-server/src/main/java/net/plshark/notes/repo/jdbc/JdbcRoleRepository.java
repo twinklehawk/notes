@@ -1,11 +1,13 @@
 package net.plshark.notes.repo.jdbc;
 
 import java.sql.PreparedStatement;
+import java.util.List;
 import java.util.Objects;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 
@@ -21,9 +23,10 @@ public class JdbcRoleRepository implements RoleRepository {
 
     private static final String INSERT = "INSERT INTO roles (name) VALUES (?)";
     private static final String DELETE = "DELETE FROM roles WHERE id = ?";
+    private static final String SELECT_BY_ID = "SELECT * FROM roles WHERE id = ?";
 
     private final JdbcOperations jdbc;
-    //private final RoleRowMapper roleRowMapper = new RoleRowMapper();
+    private final RoleRowMapper roleRowMapper = new RoleRowMapper();
 
     /**
      * Create a new instance
@@ -51,5 +54,11 @@ public class JdbcRoleRepository implements RoleRepository {
     @Override
     public void delete(long roleId) {
         jdbc.update(DELETE, stmt -> stmt.setLong(1, roleId));
+    }
+
+    @Override
+    public Role getForId(long id) {
+        List<Role> results = jdbc.query(SELECT_BY_ID, stmt -> stmt.setLong(1, id), roleRowMapper);
+        return DataAccessUtils.requiredSingleResult(results);
     }
 }
