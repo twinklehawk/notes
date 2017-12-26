@@ -1,5 +1,7 @@
 package net.plshark.notes.webservice;
 
+import java.util.Objects;
+
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +30,7 @@ public class UsersController {
      * @param userManagementService the service to use to modify users
      */
     public UsersController(UserManagementService userManagementService) {
-        this.userMgmtService = userManagementService;
+        this.userMgmtService = Objects.requireNonNull(userManagementService, "userManagementService cannot be null");
     }
 
     /**
