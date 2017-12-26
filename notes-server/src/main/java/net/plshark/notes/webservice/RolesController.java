@@ -1,5 +1,7 @@
 package net.plshark.notes.webservice;
 
+import java.util.Objects;
+
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +28,7 @@ public class RolesController {
      * @param userMgmtService the service to use to create, delete, and modify roles
      */
     public RolesController(UserManagementService userMgmtService) {
-        this.userMgmtService = userMgmtService;
+        this.userMgmtService = Objects.requireNonNull(userMgmtService, "userMgmtService cannot be null");
     }
 
     /**
