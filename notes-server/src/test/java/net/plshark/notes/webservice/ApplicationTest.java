@@ -20,7 +20,7 @@ public class ApplicationTest {
     @Inject
     private Application application;
 
-    // TODO make this an integration test instead of unit test
+    // TODO make this an integration test instead of unit test, create db integration tests
     /**
      * Verify the application context can be built
      */
