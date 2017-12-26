@@ -65,6 +65,6 @@ public class User {
     }
 
     public void setPassword(String password) {
-        this.password = Objects.requireNonNull(password, "password cannot be null");
+        this.password = password;
     }
 }
