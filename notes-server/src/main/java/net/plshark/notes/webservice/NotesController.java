@@ -21,7 +21,7 @@ import net.plshark.notes.service.NotesService;
  * Controller to provide web service methods for notes
  */
 @RestController
-@RequestMapping("notes")
+@RequestMapping("/notes")
 public class NotesController {
 
     private final NotesService notesService;
