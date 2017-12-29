@@ -18,19 +18,19 @@ class UserManagementServiceImplSpec extends Specification {
     UserManagementServiceImpl service = new UserManagementServiceImpl(userRepo, roleRepo, encoder)
 
     def "constructor does not accept null arguments"() {
-        when:
+        when: "user repository is null"
         new UserManagementServiceImpl(null, roleRepo, encoder)
 
         then:
         thrown(NullPointerException)
 
-        when:
+        when: "role repository is null"
         new UserManagementServiceImpl(userRepo, null, encoder)
 
         then:
         thrown(NullPointerException)
 
-        when:
+        when: "password encoder is null"
         new UserManagementServiceImpl(userRepo, roleRepo, null)
 
         then:
@@ -124,5 +124,59 @@ class UserManagementServiceImplSpec extends Specification {
         then:
         1 * userRepo.deleteUserRolesForRole(200)
         1 * roleRepo.delete(200)
+    }
+
+    def "saving a user passes the user through to the repository"() {
+        when:
+        service.saveUser(new User("user", "pass"))
+
+        then:
+        1 * userRepo.insert(new User("user", "pass"))
+    }
+
+    def "granting a role to a user should add the role to the user's role"() {
+        when:
+        service.grantRoleToUser(12, 34)
+
+        then:
+        1 * userRepo.insertUserRole(12, 34)
+    }
+
+    def "granting a role to a user that does not exist should throw an ObjectNotFoundException"() {
+        userRepo.getForId(100) >> { throw new EmptyResultDataAccessException(1) }
+
+        when:
+        service.grantRoleToUser(100, 200)
+
+        then:
+        thrown(ObjectNotFoundException)
+    }
+
+    def "granting a role that does not exist should throw an ObjectNotFoundException"() {
+        roleRepo.getForId(200) >> { throw new EmptyResultDataAccessException(1) }
+
+        when:
+        service.grantRoleToUser(100, 200)
+
+        then:
+        thrown(ObjectNotFoundException)
+    }
+
+    def "removing a role from a user should remove the role from the user's roles"() {
+        when:
+        service.removeRoleFromUser(100, 200)
+
+        then:
+        1 * userRepo.deleteUserRole(100, 200)
+    }
+
+    def "removing a role from a user that does not exist should throw an ObjectNotFoundException"() {
+        userRepo.getForId(100) >> { throw new EmptyResultDataAccessException(1) }
+
+        when:
+        service.removeRoleFromUser(100, 200)
+
+        then:
+        thrown(ObjectNotFoundException)
     }
 }
