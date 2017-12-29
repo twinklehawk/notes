@@ -66,7 +66,7 @@ class UserManagementServiceImplSpec extends Specification {
         service.saveUser(new User("user", "pass"))
 
         then:
-        1 * userRepo.insert({ User user -> user.password == "pass-encoded" })
+        1 * userRepo.insert(new User("user", "pass-encoded"))
     }
 
     def "cannot save role with ID set"() {
@@ -75,6 +75,14 @@ class UserManagementServiceImplSpec extends Specification {
 
         then:
         thrown(IllegalArgumentException)
+    }
+
+    def "saving a role passes role through"() {
+        when:
+        service.saveRole(new Role("name"))
+
+        then:
+        1 * roleRepo.insert(new Role("name"))
     }
 
     def "cannot update a user to have null password"() {
@@ -124,14 +132,6 @@ class UserManagementServiceImplSpec extends Specification {
         then:
         1 * userRepo.deleteUserRolesForRole(200)
         1 * roleRepo.delete(200)
-    }
-
-    def "saving a user passes the user through to the repository"() {
-        when:
-        service.saveUser(new User("user", "pass"))
-
-        then:
-        1 * userRepo.insert(new User("user", "pass"))
     }
 
     def "granting a role to a user should add the role to the user's role"() {
