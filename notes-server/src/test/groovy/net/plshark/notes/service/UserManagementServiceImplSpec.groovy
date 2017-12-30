@@ -8,30 +8,38 @@ import net.plshark.notes.Role
 import net.plshark.notes.User
 import net.plshark.notes.repo.RoleRepository
 import net.plshark.notes.repo.UserRepository
+import net.plshark.notes.repo.UserRolesRepository
 import spock.lang.Specification
 
 class UserManagementServiceImplSpec extends Specification {
 
     UserRepository userRepo = Mock()
     RoleRepository roleRepo = Mock()
+    UserRolesRepository userRolesRepo = Mock()
     PasswordEncoder encoder = Mock()
-    UserManagementServiceImpl service = new UserManagementServiceImpl(userRepo, roleRepo, encoder)
+    UserManagementServiceImpl service = new UserManagementServiceImpl(userRepo, roleRepo, userRolesRepo, encoder)
 
     def "constructor does not accept null arguments"() {
         when: "user repository is null"
-        new UserManagementServiceImpl(null, roleRepo, encoder)
+        new UserManagementServiceImpl(null, roleRepo, userRolesRepo, encoder)
 
         then:
         thrown(NullPointerException)
 
         when: "role repository is null"
-        new UserManagementServiceImpl(userRepo, null, encoder)
+        new UserManagementServiceImpl(userRepo, null, userRolesRepo, encoder)
+
+        then:
+        thrown(NullPointerException)
+
+        when: "user roles repository is null"
+        new UserManagementServiceImpl(userRepo, roleRepo, null, encoder)
 
         then:
         thrown(NullPointerException)
 
         when: "password encoder is null"
-        new UserManagementServiceImpl(userRepo, roleRepo, null)
+        new UserManagementServiceImpl(userRepo, roleRepo, userRolesRepo, null)
 
         then:
         thrown(NullPointerException)
@@ -121,7 +129,7 @@ class UserManagementServiceImplSpec extends Specification {
         service.deleteUser(100)
 
         then:
-        1 * userRepo.deleteUserRolesForUser(100)
+        1 * userRolesRepo.deleteUserRolesForUser(100)
         1 * userRepo.delete(100)
     }
 
@@ -130,7 +138,7 @@ class UserManagementServiceImplSpec extends Specification {
         service.deleteRole(200)
 
         then:
-        1 * userRepo.deleteUserRolesForRole(200)
+        1 * userRolesRepo.deleteUserRolesForRole(200)
         1 * roleRepo.delete(200)
     }
 
@@ -139,7 +147,7 @@ class UserManagementServiceImplSpec extends Specification {
         service.grantRoleToUser(12, 34)
 
         then:
-        1 * userRepo.insertUserRole(12, 34)
+        1 * userRolesRepo.insertUserRole(12, 34)
     }
 
     def "granting a role to a user that does not exist should throw an ObjectNotFoundException"() {
@@ -167,7 +175,7 @@ class UserManagementServiceImplSpec extends Specification {
         service.removeRoleFromUser(100, 200)
 
         then:
-        1 * userRepo.deleteUserRole(100, 200)
+        1 * userRolesRepo.deleteUserRole(100, 200)
     }
 
     def "removing a role from a user that does not exist should throw an ObjectNotFoundException"() {
