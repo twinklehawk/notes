@@ -24,7 +24,6 @@ import net.plshark.notes.repo.NotesRepository;
 public class JdbcNotesRepository implements NotesRepository {
 
     private static final String SELECT = "SELECT id, owner_id, correlation_id, title, content FROM notes WHERE id = ?";
-    private static final String SELECT_ALL = "SELECT * FROM notes";
     private static final String DELETE = "DELETE FROM notes WHERE id = ?";
     private static final String DELETE_ALL = "DELETE FROM notes";
     private static final String UPDATE = "UPDATE notes SET owner_id = ?, correlation_id = ?, title = ?, content = ? WHERE id = ?";
@@ -95,13 +94,5 @@ public class JdbcNotesRepository implements NotesRepository {
      */
     public void deleteAll() {
         jdbc.update(DELETE_ALL);
-    }
-
-    /**
-     * Retrieve all the notes
-     * @return all notes
-     */
-    public List<Note> getAll() {
-        return jdbc.query(SELECT_ALL, noteRowMapper);
     }
 }

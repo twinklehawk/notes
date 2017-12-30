@@ -3,6 +3,7 @@ package net.plshark.notes.repo.jdbc
 import javax.inject.Inject
 
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.JdbcUpdateAffectedIncorrectNumberOfRowsException
 import org.springframework.test.context.ActiveProfiles
 
@@ -84,9 +85,10 @@ class JdbcNotesRepositoryITSpec extends Specification {
 
         when:
         repo.delete(inserted.id.asLong)
+        repo.get(inserted.id.asLong)
 
-        then:
-        repo.getAll().empty
+        then: "get should throw an exception since the row should be gone"
+        thrown(EmptyResultDataAccessException)
     }
 
     def "no exception is thrown when a delete does not affect any rows"() {
@@ -94,6 +96,6 @@ class JdbcNotesRepositoryITSpec extends Specification {
         repo.delete(100)
 
         then:
-        repo.getAll().empty
+        notThrown(Exception)
     }
 }
