@@ -21,7 +21,7 @@ import net.plshark.notes.repo.UserRepository;
  */
 @Named
 @Singleton
-public class JdbcUserRepository implements UserRepository {
+public class JdbcUsersRepository implements UserRepository {
 
     private static final String SELECT_BY_USERNAME = "SELECT * FROM users WHERE username = ?";
     private static final String SELECT_BY_ID = "SELECT * FROM users WHERE id = ?";
@@ -42,7 +42,7 @@ public class JdbcUserRepository implements UserRepository {
      * Create a new instance
      * @param jdbc the JDBC object to use to interact with the database
      */
-    public JdbcUserRepository(JdbcOperations jdbc) {
+    public JdbcUsersRepository(JdbcOperations jdbc) {
         this.jdbc = Objects.requireNonNull(jdbc, "jdbc cannot be null");
     }
 

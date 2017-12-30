@@ -19,7 +19,7 @@ import net.plshark.notes.repo.RoleRepository;
  */
 @Named
 @Singleton
-public class JdbcRoleRepository implements RoleRepository {
+public class JdbcRolesRepository implements RoleRepository {
 
     private static final String INSERT = "INSERT INTO roles (name) VALUES (?)";
     private static final String DELETE = "DELETE FROM roles WHERE id = ?";
@@ -32,7 +32,7 @@ public class JdbcRoleRepository implements RoleRepository {
      * Create a new instance
      * @param jdbc the JDBC object to use to interact with the database
      */
-    public JdbcRoleRepository(JdbcOperations jdbc) {
+    public JdbcRolesRepository(JdbcOperations jdbc) {
         this.jdbc = Objects.requireNonNull(jdbc, "jdbc cannot be null");
     }
 
