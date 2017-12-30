@@ -11,8 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import net.plshark.notes.ObjectNotFoundException;
 import net.plshark.notes.Role;
 import net.plshark.notes.User;
-import net.plshark.notes.repo.RoleRepository;
-import net.plshark.notes.repo.UserRepository;
+import net.plshark.notes.repo.RolesRepository;
+import net.plshark.notes.repo.UsersRepository;
 import net.plshark.notes.repo.UserRolesRepository;
 
 /**
@@ -22,8 +22,8 @@ import net.plshark.notes.repo.UserRolesRepository;
 @Singleton
 public class UserManagementServiceImpl implements UserManagementService {
 
-    private final UserRepository userRepo;
-    private final RoleRepository roleRepo;
+    private final UsersRepository userRepo;
+    private final RolesRepository roleRepo;
     private final UserRolesRepository userRolesRepo;
     private final PasswordEncoder passwordEncoder;
 
@@ -34,7 +34,7 @@ public class UserManagementServiceImpl implements UserManagementService {
      * @param userRolesRepo the repository for accessing user roles
      * @param passwordEncoder the encoder to use to encode passwords
      */
-    public UserManagementServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
+    public UserManagementServiceImpl(UsersRepository userRepository, RolesRepository roleRepository,
             UserRolesRepository userRolesRepo, PasswordEncoder passwordEncoder) {
         this.userRepo = Objects.requireNonNull(userRepository, "userRepository cannot be null");
         this.roleRepo = Objects.requireNonNull(roleRepository, "roleRepository cannot be null");

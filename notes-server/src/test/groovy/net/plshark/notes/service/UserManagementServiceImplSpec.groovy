@@ -6,15 +6,15 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import net.plshark.notes.ObjectNotFoundException
 import net.plshark.notes.Role
 import net.plshark.notes.User
-import net.plshark.notes.repo.RoleRepository
-import net.plshark.notes.repo.UserRepository
+import net.plshark.notes.repo.RolesRepository
+import net.plshark.notes.repo.UsersRepository
 import net.plshark.notes.repo.UserRolesRepository
 import spock.lang.Specification
 
 class UserManagementServiceImplSpec extends Specification {
 
-    UserRepository userRepo = Mock()
-    RoleRepository roleRepo = Mock()
+    UsersRepository userRepo = Mock()
+    RolesRepository roleRepo = Mock()
     UserRolesRepository userRolesRepo = Mock()
     PasswordEncoder encoder = Mock()
     UserManagementServiceImpl service = new UserManagementServiceImpl(userRepo, roleRepo, userRolesRepo, encoder)

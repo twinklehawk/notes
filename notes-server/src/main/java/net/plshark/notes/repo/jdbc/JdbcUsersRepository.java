@@ -13,14 +13,14 @@ import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 
 import net.plshark.notes.User;
-import net.plshark.notes.repo.UserRepository;
+import net.plshark.notes.repo.UsersRepository;
 
 /**
  * User repository that uses JDBC
  */
 @Named
 @Singleton
-public class JdbcUsersRepository implements UserRepository {
+public class JdbcUsersRepository implements UsersRepository {
 
     private static final String SELECT_BY_USERNAME = "SELECT * FROM users WHERE username = ?";
     private static final String SELECT_BY_ID = "SELECT * FROM users WHERE id = ?";

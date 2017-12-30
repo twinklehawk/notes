@@ -17,7 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import net.plshark.notes.Role;
 import net.plshark.notes.User;
-import net.plshark.notes.repo.UserRepository;
+import net.plshark.notes.repo.UsersRepository;
 import net.plshark.notes.repo.UserRolesRepository;
 
 /**
@@ -27,7 +27,7 @@ import net.plshark.notes.repo.UserRolesRepository;
 @Singleton
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserRepository userRepo;
+    private final UsersRepository userRepo;
     private final UserRolesRepository userRolesRepo;
 
     /**
@@ -35,7 +35,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      * @param userRepo the user repository
      * @param userRolesRepo the user roles repository
      */
-    public UserDetailsServiceImpl(UserRepository userRepo, UserRolesRepository userRolesRepo) {
+    public UserDetailsServiceImpl(UsersRepository userRepo, UserRolesRepository userRolesRepo) {
         this.userRepo = Objects.requireNonNull(userRepo, "userRepository cannot be null");
         this.userRolesRepo = Objects.requireNonNull(userRolesRepo, "userRolesRepo cannot be null");
     }

@@ -8,7 +8,7 @@ import net.plshark.notes.User;
 /**
  * Repository for saving, deleting, and retrieving users
  */
-public interface UserRepository {
+public interface UsersRepository {
 
     /**
      * Get a user by user ID

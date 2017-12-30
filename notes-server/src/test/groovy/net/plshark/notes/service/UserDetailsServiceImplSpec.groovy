@@ -7,13 +7,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 
 import net.plshark.notes.Role
 import net.plshark.notes.User
-import net.plshark.notes.repo.UserRepository
+import net.plshark.notes.repo.UsersRepository
 import net.plshark.notes.repo.UserRolesRepository
 import spock.lang.Specification
 
 class UserDetailsServiceImplSpec extends Specification {
 
-    UserRepository usersRepo = Mock()
+    UsersRepository usersRepo = Mock()
     UserRolesRepository userRolesRepo = Mock()
 
     def "constructor does not accept null args"() {

@@ -12,14 +12,14 @@ import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 
 import net.plshark.notes.Role;
-import net.plshark.notes.repo.RoleRepository;
+import net.plshark.notes.repo.RolesRepository;
 
 /**
  * Role repository that uses JDBC
  */
 @Named
 @Singleton
-public class JdbcRolesRepository implements RoleRepository {
+public class JdbcRolesRepository implements RolesRepository {
 
     private static final String INSERT = "INSERT INTO roles (name) VALUES (?)";
     private static final String DELETE = "DELETE FROM roles WHERE id = ?";

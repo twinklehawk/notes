@@ -8,7 +8,7 @@ import net.plshark.notes.Role;
 /**
  * Repository for saving, deleting, and retrieving roles
  */
-public interface RoleRepository {
+public interface RolesRepository {
 
     /**
      * Get a role by ID
