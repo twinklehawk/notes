@@ -8,10 +8,11 @@ import org.springframework.test.context.ActiveProfiles
 
 import net.plshark.notes.Role
 import net.plshark.notes.webservice.Application
+import spock.lang.Specification
 
 @SpringBootTest(classes = Application.class)
 @ActiveProfiles("test")
-class JdbcRolesRepositoryITSpec {
+class JdbcRolesRepositoryITSpec extends Specification {
 
     @Inject
     JdbcRolesRepository repo
@@ -23,6 +24,9 @@ class JdbcRolesRepositoryITSpec {
         then:
         inserted.id.isPresent
         inserted.name == "test-role"
+
+        cleanup:
+        repo.delete(inserted.id.asLong)
     }
 
     def "can retrieve a previously inserted role by ID"() {
@@ -33,6 +37,9 @@ class JdbcRolesRepositoryITSpec {
 
         then:
         role == inserted
+
+        cleanup:
+        repo.delete(inserted.id.asLong)
     }
 
     def "can delete a previously inserted role by ID"() {
