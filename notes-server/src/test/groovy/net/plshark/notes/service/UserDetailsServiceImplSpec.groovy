@@ -42,8 +42,8 @@ class UserDetailsServiceImplSpec extends Specification {
         details.username == "user"
         details.password == "pass"
         details.authorities.size() == 2
-        details.authorities.contains(new SimpleGrantedAuthority("normal-user"))
-        details.authorities.contains(new SimpleGrantedAuthority("admin"))
+        details.authorities.contains(new SimpleGrantedAuthority("ROLE_normal-user"))
+        details.authorities.contains(new SimpleGrantedAuthority("ROLE_admin"))
     }
 
     def "UsernameNotFoundException thrown when no user is found for username"() {
