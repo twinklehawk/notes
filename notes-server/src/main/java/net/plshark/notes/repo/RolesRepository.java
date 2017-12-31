@@ -20,6 +20,15 @@ public interface RolesRepository {
     Role getForId(long id);
 
     /**
+     * Get a role by name
+     * @param name the role name
+     * @return the matching role
+     * @throws EmptyResultDataAccessException if there is no matching role
+     * @throws DataAccessException if the query fails
+     */
+    Role getForName(String name);
+
+    /**
      * Insert a new role
      * @param role the role to insert
      * @return the inserted role, will have the ID set

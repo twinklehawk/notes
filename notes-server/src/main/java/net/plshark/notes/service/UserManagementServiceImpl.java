@@ -114,4 +114,13 @@ public class UserManagementServiceImpl implements UserManagementService {
             throw new ObjectNotFoundException("User not found", e);
         }
     }
+
+    @Override
+    public Role getRoleByName(String name) throws ObjectNotFoundException {
+        try {
+            return roleRepo.getForName(name);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ObjectNotFoundException("Failed to find role " + name, e);
+        }
+    }
 }

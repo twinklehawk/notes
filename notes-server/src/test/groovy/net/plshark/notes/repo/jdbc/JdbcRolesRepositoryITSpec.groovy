@@ -42,6 +42,35 @@ class JdbcRolesRepositoryITSpec extends Specification {
         repo.delete(inserted.id.asLong)
     }
 
+    def "retrieving a role by ID when no role matches throws EmptyResultDataAccessException"() {
+        when:
+        Role role = repo.getForId(1000)
+
+        then:
+        thrown(EmptyResultDataAccessException)
+    }
+
+    def "can retrieve a previously inserted role by name"() {
+        Role inserted = repo.insert(new Role("test-role"))
+
+        when:
+        Role role = repo.getForName("test-role")
+
+        then:
+        role == inserted
+
+        cleanup:
+        repo.delete(inserted.id.asLong)
+    }
+
+    def "retrieving a role by name when no role matches throws EmptyResultDataAccessException"() {
+        when:
+        Role role = repo.getForName("test-role")
+
+        then:
+        thrown(EmptyResultDataAccessException)
+    }
+
     def "can delete a previously inserted role by ID"() {
         Role inserted = repo.insert(new Role("test-role"))
 
