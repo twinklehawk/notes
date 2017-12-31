@@ -187,4 +187,24 @@ class UserManagementServiceImplSpec extends Specification {
         then:
         thrown(ObjectNotFoundException)
     }
+
+    def "retrieving a role by name passes the name through"() {
+        roleRepo.getForName("name") >> new Role(1, "name")
+
+        when:
+        Role role = service.getRoleByName("name")
+
+        then:
+        role == new Role(1, "name")
+    }
+
+    def "an ObjectNotFoundException is thrown when no role matches the name"() {
+        roleRepo.getForName("name") >> { throw new EmptyResultDataAccessException(1) }
+
+        when:
+        service.getRoleByName("name")
+
+        then:
+        thrown(ObjectNotFoundException)
+    }
 }

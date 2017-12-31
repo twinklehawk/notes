@@ -88,6 +88,11 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
+    public void grantRoleToUser(User user, Role role) throws ObjectNotFoundException {
+        grantRoleToUser(user.getId().getAsLong(), role.getId().getAsLong());
+    }
+
+    @Override
     public void removeRoleFromUser(long userId, long roleId) throws ObjectNotFoundException {
         try {
             userRepo.getForId(userId);
@@ -112,6 +117,15 @@ public class UserManagementServiceImpl implements UserManagementService {
             userRepo.updatePassword(userId, currentPasswordEncoded, newPasswordEncoded);
         } catch (EmptyResultDataAccessException e) {
             throw new ObjectNotFoundException("User not found", e);
+        }
+    }
+
+    @Override
+    public Role getRoleByName(String name) throws ObjectNotFoundException {
+        try {
+            return roleRepo.getForName(name);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ObjectNotFoundException("Failed to find role " + name, e);
         }
     }
 }

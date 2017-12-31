@@ -18,6 +18,9 @@ import org.springframework.web.context.WebApplicationContext
 import com.fasterxml.jackson.databind.ObjectMapper
 
 import net.plshark.notes.Note
+import net.plshark.notes.Role
+import net.plshark.notes.User
+import net.plshark.notes.service.UserManagementService
 import spock.lang.Specification
 
 @SpringBootTest(classes = Application.class)
@@ -28,11 +31,25 @@ class WebSecurityConfigITSpec extends Specification {
     @Inject
     WebApplicationContext context
     @Inject
+    UserManagementService userMgmt
+    @Inject
     ObjectMapper mapper
     MockMvc mvc
+    User notesUser
 
     def setup() {
         mvc = MockMvcBuilders.webAppContextSetup(context).apply(SecurityMockMvcConfigurers.springSecurity()).build()
+
+        Role userRole = userMgmt.getRoleByName("notes-user")
+        Role adminRole = userMgmt.getRoleByName("notes-admin")
+
+        notesUser = userMgmt.saveUser(new User("test-user", "pass"))
+        userMgmt.grantRoleToUser(notesUser, userRole)
+    }
+
+    def cleanup() {
+        if (notesUser != null)
+            userMgmt.deleteUser(notesUser.id.asLong)
     }
 
     def "csrf tokens are required on post requests"() {
@@ -49,8 +66,32 @@ class WebSecurityConfigITSpec extends Specification {
     def "http basic authentication is enabled"() {
         expect:
         mvc.perform(get("/notes/1").with(csrf())).andExpect(status().isUnauthorized())
-        mvc.perform(get("/notes/1").with(csrf()).with(httpBasic("bad-user", "bad-pass"))).andExpect(status().isUnauthorized())
-        mvc.perform(get("/notes/1").with(csrf()).with(httpBasic("admin", "bad-pass"))).andExpect(status().isUnauthorized())
-        mvc.perform(get("/notes/1").with(csrf()).with(httpBasic("admin", "password"))).andExpect(status().isNotFound())
+        mvc.perform(get("/notes/1").with(csrf()).with(httpBasic("bad-user", "bad-pass")))
+            .andExpect(status().isUnauthorized())
+        mvc.perform(get("/notes/1").with(csrf()).with(httpBasic("test-user", "bad-pass")))
+            .andExpect(status().isUnauthorized())
+        mvc.perform(get("/notes/1").with(csrf()).with(httpBasic("test-user", "pass")))
+            .andExpect(status().isNotFound())
+    }
+
+    def "normal methods require notes-user role"() {
+        expect:
+        mvc.perform(get("/notes/1").with(csrf()).with(user("test-user").password("pass").roles("notes-admin")))
+            .andExpect(status().isForbidden())
+        mvc.perform(get("/notes/1").with(csrf()).with(user("test-user").password("pass").roles("notes-user")))
+            .andExpect(status().isNotFound())
+    }
+
+    def "admin methods require notes-admin role"() {
+        expect:
+        mvc.perform(delete("/users/100").with(csrf()).with(user("test-user").password("pass").roles("notes-user")))
+            .andExpect(status().isForbidden())
+        mvc.perform(delete("/users/100").with(csrf()).with(user("test-user").password("pass").roles("notes-admin")))
+            .andExpect(status().isOk())
+
+        mvc.perform(delete("/roles/100").with(csrf()).with(user("test-user").password("pass").roles("notes-user")))
+            .andExpect(status().isForbidden())
+        mvc.perform(delete("/roles/100").with(csrf()).with(user("test-user").password("pass").roles("notes-admin")))
+            .andExpect(status().isOk())
     }
 }

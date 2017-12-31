@@ -24,6 +24,7 @@ public class JdbcRolesRepository implements RolesRepository {
     private static final String INSERT = "INSERT INTO roles (name) VALUES (?)";
     private static final String DELETE = "DELETE FROM roles WHERE id = ?";
     private static final String SELECT_BY_ID = "SELECT * FROM roles WHERE id = ?";
+    private static final String SELECT_BY_NAME = "SELECT * FROM roles WHERE name = ?";
 
     private final JdbcOperations jdbc;
     private final RoleRowMapper roleRowMapper = new RoleRowMapper();
@@ -59,6 +60,13 @@ public class JdbcRolesRepository implements RolesRepository {
     @Override
     public Role getForId(long id) {
         List<Role> results = jdbc.query(SELECT_BY_ID, stmt -> stmt.setLong(1, id), roleRowMapper);
+        return DataAccessUtils.requiredSingleResult(results);
+    }
+
+    @Override
+    public Role getForName(String name) {
+        Objects.requireNonNull(name, "name cannot be null");
+        List<Role> results = jdbc.query(SELECT_BY_NAME, stmt -> stmt.setString(1, name), roleRowMapper);
         return DataAccessUtils.requiredSingleResult(results);
     }
 }

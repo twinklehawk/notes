@@ -32,6 +32,14 @@ public interface UserManagementService {
     void updateUserPassword(long userId, String currentPassword, String newPassword) throws ObjectNotFoundException;
 
     /**
+     * Retrieve a role by name
+     * @param name the role name
+     * @return the matching role
+     * @throws ObjectNotFoundException if the role does not exist
+     */
+    Role getRoleByName(String name) throws ObjectNotFoundException;
+
+    /**
      * Save a new role
      * @param role the role
      * @return the saved role
@@ -51,6 +59,14 @@ public interface UserManagementService {
      * @throws ObjectNotFoundException if the user or role does not exist
      */
     void grantRoleToUser(long userId, long roleId) throws ObjectNotFoundException;
+
+    /**
+     * Grant a role to a user
+     * @param user the user to grant the role to
+     * @param role the role to grant
+     * @throws ObjectNotFoundException if the user or role does not exist
+     */
+    void grantRoleToUser(User user, Role role) throws ObjectNotFoundException;
 
     /**
      * Remove a role from a user
