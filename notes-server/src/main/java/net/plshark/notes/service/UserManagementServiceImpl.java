@@ -11,8 +11,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import net.plshark.notes.ObjectNotFoundException;
 import net.plshark.notes.Role;
 import net.plshark.notes.User;
-import net.plshark.notes.repo.RoleRepository;
-import net.plshark.notes.repo.UserRepository;
+import net.plshark.notes.repo.RolesRepository;
+import net.plshark.notes.repo.UsersRepository;
+import net.plshark.notes.repo.UserRolesRepository;
 
 /**
  * UserManagementService implementation
@@ -21,20 +22,23 @@ import net.plshark.notes.repo.UserRepository;
 @Singleton
 public class UserManagementServiceImpl implements UserManagementService {
 
-    private final UserRepository userRepo;
-    private final RoleRepository roleRepo;
+    private final UsersRepository userRepo;
+    private final RolesRepository roleRepo;
+    private final UserRolesRepository userRolesRepo;
     private final PasswordEncoder passwordEncoder;
 
     /**
      * Create a new instance
      * @param userRepository the repository for accessing users
      * @param roleRepository the repository for accessing roles
+     * @param userRolesRepo the repository for accessing user roles
      * @param passwordEncoder the encoder to use to encode passwords
      */
-    public UserManagementServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
-            PasswordEncoder passwordEncoder) {
+    public UserManagementServiceImpl(UsersRepository userRepository, RolesRepository roleRepository,
+            UserRolesRepository userRolesRepo, PasswordEncoder passwordEncoder) {
         this.userRepo = Objects.requireNonNull(userRepository, "userRepository cannot be null");
         this.roleRepo = Objects.requireNonNull(roleRepository, "roleRepository cannot be null");
+        this.userRolesRepo = Objects.requireNonNull(userRolesRepo, "userRolesRepo cannot be null");
         this.passwordEncoder = Objects.requireNonNull(passwordEncoder, "passwordEncoder cannot be null");
     }
 
@@ -52,7 +56,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     @Override
     public void deleteUser(long userId) {
-        userRepo.deleteUserRolesForUser(userId);
+        userRolesRepo.deleteUserRolesForUser(userId);
         userRepo.delete(userId);
     }
 
@@ -66,7 +70,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     @Override
     public void deleteRole(long roleId) {
-        userRepo.deleteUserRolesForRole(roleId);
+        userRolesRepo.deleteUserRolesForRole(roleId);
         roleRepo.delete(roleId);
     }
 
@@ -80,7 +84,7 @@ public class UserManagementServiceImpl implements UserManagementService {
         }
         // if something else is deleting users/roles at the same time as this runs, the row can be inserted
         // with no matching user or role, but it doesn't really matter
-        userRepo.insertUserRole(userId, roleId);
+        userRolesRepo.insertUserRole(userId, roleId);
     }
 
     @Override
@@ -92,7 +96,7 @@ public class UserManagementServiceImpl implements UserManagementService {
         }
         // if something else is deleting users at the same time as this runs, the row can be inserted
         // with no matching user, but it doesn't really matter
-        userRepo.deleteUserRole(userId, roleId);
+        userRolesRepo.deleteUserRole(userId, roleId);
     }
 
     @Override

@@ -7,6 +7,9 @@ import spock.lang.Specification
 
 class NotesControllerSpec extends Specification {
 
+    NotesService service = Mock()
+    NotesController controller = new NotesController(service)
+
     def "nulls not allowed in constructor args"() {
         when:
         new NotesController(null)
@@ -16,8 +19,6 @@ class NotesControllerSpec extends Specification {
     }
 
     def "update with different IDs in URL and object treated as bad request"() {
-        NotesController controller = new NotesController(Mock(NotesService))
-
         when:
         controller.update(100, new Note(200, 1, 2, "", ""))
 
@@ -26,13 +27,42 @@ class NotesControllerSpec extends Specification {
     }
 
     def "update with no ID in object uses ID from URL"() {
-        NotesService service = Mock()
-        NotesController controller = new NotesController(service)
-
         when:
         controller.update(100, new Note(1, 2, "", ""))
 
         then:
         1 * service.save({ Note n -> n.id.asLong == 100 })
+    }
+
+    def "update passes the note through"() {
+        when:
+        controller.update(100, new Note(100, 1, 2, "", ""))
+
+        then:
+        1 * service.save(new Note(100, 1, 2, "", ""))
+    }
+
+    def "get passes the ID through"() {
+        when:
+        controller.get(2)
+
+        then:
+        1 * service.get(2)
+    }
+
+    def "insert passes the note through"() {
+        when:
+        controller.insert(new Note(100, 200, "title", "content"))
+
+        then:
+        1 * service.save(new Note(100, 200, "title", "content"))
+    }
+
+    def "delete passes the ID through"() {
+        when:
+        controller.delete(12)
+
+        then:
+        1 * service.delete(12)
     }
 }

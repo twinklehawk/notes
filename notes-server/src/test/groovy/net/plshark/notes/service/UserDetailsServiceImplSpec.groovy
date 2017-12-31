@@ -7,24 +7,33 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 
 import net.plshark.notes.Role
 import net.plshark.notes.User
-import net.plshark.notes.repo.UserRepository
+import net.plshark.notes.repo.UsersRepository
+import net.plshark.notes.repo.UserRolesRepository
 import spock.lang.Specification
 
 class UserDetailsServiceImplSpec extends Specification {
 
+    UsersRepository usersRepo = Mock()
+    UserRolesRepository userRolesRepo = Mock()
+
     def "constructor does not accept null args"() {
         when:
-        new UserDetailsServiceImpl(null)
+        new UserDetailsServiceImpl(null, userRolesRepo)
+
+        then:
+        thrown(NullPointerException)
+
+        when:
+        new UserDetailsServiceImpl(usersRepo, null)
 
         then:
         thrown(NullPointerException)
     }
 
     def "a user and its roles are mapped to the correct UserDetails"() {
-        UserRepository repo = Mock()
-        repo.getForUsername("user") >> new User(25, "user", "pass")
-        repo.getRolesForUser(25) >> Arrays.asList(new Role(3, "normal-user"), new Role(5, "admin"))
-        UserDetailsServiceImpl service = new UserDetailsServiceImpl(repo)
+        usersRepo.getForUsername("user") >> new User(25, "user", "pass")
+        userRolesRepo.getRolesForUser(25) >> Arrays.asList(new Role(3, "normal-user"), new Role(5, "admin"))
+        UserDetailsServiceImpl service = new UserDetailsServiceImpl(usersRepo, userRolesRepo)
 
         when:
         UserDetails details = service.loadUserByUsername("user")
@@ -33,14 +42,13 @@ class UserDetailsServiceImplSpec extends Specification {
         details.username == "user"
         details.password == "pass"
         details.authorities.size() == 2
-        details.authorities.contains(new SimpleGrantedAuthority("normal-user"))
-        details.authorities.contains(new SimpleGrantedAuthority("admin"))
+        details.authorities.contains(new SimpleGrantedAuthority("ROLE_normal-user"))
+        details.authorities.contains(new SimpleGrantedAuthority("ROLE_admin"))
     }
 
     def "UsernameNotFoundException thrown when no user is found for username"() {
-        UserRepository repo = Mock()
-        repo.getForUsername("user") >> { throw new EmptyResultDataAccessException(1) }
-        UserDetailsServiceImpl service = new UserDetailsServiceImpl(repo)
+        usersRepo.getForUsername("user") >> { throw new EmptyResultDataAccessException(1) }
+        UserDetailsServiceImpl service = new UserDetailsServiceImpl(usersRepo, userRolesRepo)
 
         when:
         service.loadUserByUsername("user")
@@ -50,10 +58,9 @@ class UserDetailsServiceImplSpec extends Specification {
     }
 
     def "empty roles returns no granted authorities"() {
-        UserRepository repo = Mock()
-        repo.getForUsername("user") >> new User(25, "user", "pass")
-        repo.getRolesForUser(25) >> Collections.emptyList()
-        UserDetailsServiceImpl service = new UserDetailsServiceImpl(repo)
+        usersRepo.getForUsername("user") >> new User(25, "user", "pass")
+        userRolesRepo.getRolesForUser(25) >> Collections.emptyList()
+        UserDetailsServiceImpl service = new UserDetailsServiceImpl(usersRepo, userRolesRepo)
 
         when:
         UserDetails details = service.loadUserByUsername("user")
