@@ -61,6 +61,14 @@ public interface UserManagementService {
     void grantRoleToUser(long userId, long roleId) throws ObjectNotFoundException;
 
     /**
+     * Grant a role to a user
+     * @param user the user to grant the role to
+     * @param role the role to grant
+     * @throws ObjectNotFoundException if the user or role does not exist
+     */
+    void grantRoleToUser(User user, Role role) throws ObjectNotFoundException;
+
+    /**
      * Remove a role from a user
      * @param userId the ID of the user to remove the role from
      * @param roleId the ID of the role to remove

@@ -24,10 +24,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-                // all requests must be authenticated
-                .anyRequest().authenticated().and()
+                .antMatchers("/users/**", "/roles/**")
+                    .hasRole("notes-admin")
+                .anyRequest()
+                    .hasRole("notes-user")
             // use basic authentication
-            .httpBasic();
+            .and().httpBasic();
     }
 
     @Override

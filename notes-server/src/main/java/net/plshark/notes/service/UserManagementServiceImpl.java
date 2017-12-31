@@ -88,6 +88,11 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
+    public void grantRoleToUser(User user, Role role) throws ObjectNotFoundException {
+        grantRoleToUser(user.getId().getAsLong(), role.getId().getAsLong());
+    }
+
+    @Override
     public void removeRoleFromUser(long userId, long roleId) throws ObjectNotFoundException {
         try {
             userRepo.getForId(userId);
