@@ -10,10 +10,9 @@ import javax.inject.Singleton;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.JdbcUpdateAffectedIncorrectNumberOfRowsException;
 import org.springframework.jdbc.core.JdbcOperations;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 
-import net.plshark.notes.Note;
+import net.plshark.notes.entity.NoteEntity;
 import net.plshark.notes.repo.NotesRepository;
 
 /**
@@ -30,7 +29,7 @@ public class JdbcNotesRepository implements NotesRepository {
     private static final String INSERT = "INSERT INTO notes (owner_id, correlation_id, title, content) VALUES (?, ?, ?, ?)";
 
     private final JdbcOperations jdbc;
-    private final RowMapper<Note> noteRowMapper;
+    private final NoteRowMapper noteRowMapper;
 
     /**
      * Create a new instance
@@ -42,13 +41,13 @@ public class JdbcNotesRepository implements NotesRepository {
     }
 
     @Override
-    public Note get(long id) {
-        List<Note> results = jdbc.query(SELECT, stmt -> stmt.setLong(1, id), noteRowMapper);
+    public NoteEntity get(long id) {
+        List<NoteEntity> results = jdbc.query(SELECT, stmt -> stmt.setLong(1, id), noteRowMapper);
         return DataAccessUtils.requiredSingleResult(results);
     }
 
     @Override
-    public Note insert(Note note) {
+    public NoteEntity insert(NoteEntity note) {
         if (note.getId().isPresent())
             throw new IllegalArgumentException("Cannot insert note with ID already set");
 
@@ -68,7 +67,7 @@ public class JdbcNotesRepository implements NotesRepository {
     }
 
     @Override
-    public Note update(Note note) {
+    public NoteEntity update(NoteEntity note) {
         if (!note.getId().isPresent())
             throw new IllegalArgumentException("Cannot update note without ID");
 

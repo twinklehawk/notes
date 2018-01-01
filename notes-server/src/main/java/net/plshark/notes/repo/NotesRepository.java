@@ -3,7 +3,7 @@ package net.plshark.notes.repo;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
-import net.plshark.notes.Note;
+import net.plshark.notes.entity.NoteEntity;
 
 /**
  * Repository for saving, retrieving, and deleting notes
@@ -17,7 +17,7 @@ public interface NotesRepository {
      * @throws EmptyResultDataAccessException if there is no matching note
      * @throws DataAccessException if the query fails
      */
-    Note get(long id);
+    NoteEntity get(long id);
 
     /**
      * Insert a new note
@@ -25,7 +25,7 @@ public interface NotesRepository {
      * @return the inserted note
      * @throws DataAccessException if the insert fails
      */
-    Note insert(Note note);
+    NoteEntity insert(NoteEntity note);
 
     /**
      * Update an existing note
@@ -33,7 +33,7 @@ public interface NotesRepository {
      * @return the updated note
      * @throws DataAccessException if the update fails
      */
-    Note update(Note note);
+    NoteEntity update(NoteEntity note);
 
     /**
      * Delete a note by ID

@@ -1,9 +1,8 @@
 package net.plshark.notes.repo.jdbc
 
 import java.sql.ResultSet
-import net.plshark.notes.Note
-import org.mockito.Mockito
 
+import net.plshark.notes.entity.NoteEntity
 import spock.lang.Specification
 
 class NoteRowMapperSpec extends Specification {
@@ -19,7 +18,7 @@ class NoteRowMapperSpec extends Specification {
         rs.getString("content") >> "note"
 
         when:
-        Note note = mapper.mapRow(rs, 1)
+        NoteEntity note = mapper.mapRow(rs, 1)
 
         then:
         note.id.asLong == 5

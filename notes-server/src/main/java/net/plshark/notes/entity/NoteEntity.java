@@ -1,113 +1,104 @@
-package net.plshark.notes;
+package net.plshark.notes.entity;
 
 import java.util.Objects;
 import java.util.OptionalLong;
 
 /**
- * Data for a note
+ * Entity class for holding additional data about a note
  */
-public class Note {
+public class NoteEntity {
 
     private Long id;
+    private long ownerId;
     private long correlationId;
     private String title;
     private String content;
 
     /**
-     * Create a new instance with a correlation ID of 0
+     * Create a new instance with an empty ID and a correlation ID of 0
+     * @param ownerId the owner ID
      * @param title the title
-     * @param content the content
+     * @param content the note content
      */
-    public Note(String title, String content) {
-        this(OptionalLong.empty(), 0, title, content);
+    public NoteEntity(long ownerId, String title, String content) {
+        this(OptionalLong.empty(), ownerId, 0, title, content);
     }
 
     /**
      * Create a new instance
      * @param id the ID
-     * @param correlationId the external ID
+     * @param ownerId the owner ID
+     * @param correlationId the correlation ID
      * @param title the title
-     * @param content the content
+     * @param content the note content
      */
-    public Note(long id, long correlationId, String title, String content) {
-        this(OptionalLong.of(id), correlationId, title, content);
+    public NoteEntity(long id, long ownerId, long correlationId, String title, String content) {
+        this(OptionalLong.of(id), ownerId, correlationId, title, content);
     }
 
     /**
      * Create a new instance
-     * @param id the ID
-     * @param correlationId the external ID
+     * @param id the ID, can be empty if the note has not been saved yet
+     * @param ownerId the owner ID
+     * @param correlationId the correlation ID
      * @param title the title
-     * @param content the content
+     * @param content the note content
      */
-    public Note(OptionalLong id, long correlationId, String title, String content) {
+    public NoteEntity(OptionalLong id, long ownerId, long correlationId, String title, String content) {
         id.ifPresent(l -> this.id = l);
+        this.ownerId = ownerId;
         this.correlationId = correlationId;
         this.title = Objects.requireNonNull(title, "title cannot be null");
         this.content = Objects.requireNonNull(content, "content cannot be null");
     }
 
     /**
-     * @return the ID, can be unset if the note has not been saved yet
+     * @return the ID, can be empty if the note has not been saved
      */
     public OptionalLong getId() {
         return id != null ? OptionalLong.of(id) : OptionalLong.empty();
     }
 
-    /**
-     * @param id the ID
-     */
     public void setId(long id) {
         this.id = id;
     }
 
-    /**
-     * @return an ID for use by external clients
-     */
+    public long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(long ownerId) {
+        this.ownerId = ownerId;
+    }
+
     public long getCorrelationId() {
         return correlationId;
     }
 
-    /**
-     * Set the correlation ID. If not set, the default is 0
-     * @param correlationId an ID for use by external clients
-     */
     public void setCorrelationId(long correlationId) {
         this.correlationId = correlationId;
     }
 
-    /**
-     * @return the title
-     */
     public String getTitle() {
         return title;
     }
 
-    /**
-     * @param title the title
-     */
     public void setTitle(String title) {
-        this.title = Objects.requireNonNull(title, "title cannot be null");
+        Objects.requireNonNull(title, "title cannot be null");
     }
 
-    /**
-     * @return the content
-     */
     public String getContent() {
         return content;
     }
 
-    /**
-     * @param content the content
-     */
     public void setContent(String content) {
         this.content = Objects.requireNonNull(content, "content cannot be null");
     }
 
     @Override
     public String toString() {
-        return "Note [id=" + id + ", correlationId=" + correlationId + ", title=" + title + ", content=" + content
-                + "]";
+        return "NoteEntity [id=" + id + ", ownerId=" + ownerId + ", correlationId=" + correlationId + ", title=" + title
+                + ", content=" + content + "]";
     }
 
     @Override
@@ -117,6 +108,7 @@ public class Note {
         result = prime * result + ((content == null) ? 0 : content.hashCode());
         result = prime * result + (int) (correlationId ^ (correlationId >>> 32));
         result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + (int) (ownerId ^ (ownerId >>> 32));
         result = prime * result + ((title == null) ? 0 : title.hashCode());
         return result;
     }
@@ -129,7 +121,7 @@ public class Note {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Note other = (Note) obj;
+        NoteEntity other = (NoteEntity) obj;
         if (content == null) {
             if (other.content != null)
                 return false;
@@ -141,6 +133,8 @@ public class Note {
             if (other.id != null)
                 return false;
         } else if (!id.equals(other.id))
+            return false;
+        if (ownerId != other.ownerId)
             return false;
         if (title == null) {
             if (other.title != null)

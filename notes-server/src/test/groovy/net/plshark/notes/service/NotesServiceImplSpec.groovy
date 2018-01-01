@@ -4,6 +4,7 @@ import org.springframework.dao.EmptyResultDataAccessException
 
 import net.plshark.notes.Note
 import net.plshark.notes.ObjectNotFoundException
+import net.plshark.notes.entity.NoteEntity
 import net.plshark.notes.repo.NotesRepository
 import spock.lang.Specification
 
@@ -21,29 +22,34 @@ class NotesServiceImplSpec extends Specification {
     }
 
     def "notes with no ID should be inserted"() {
+        repo.insert(_) >> new NoteEntity(1, 2, 3, "", "")
+
         when:
-        service.save(new Note(1, 2, "", ""))
+        Note note = service.save(new Note("", ""))
 
         then: "should insert since the note had no ID"
-        1 * repo.insert(_)
+        note == new Note(1, 3, "", "")
     }
 
     def "notes with ID should be updated"() {
+        repo.get(4) >> new NoteEntity(4, 1, 3, "title", "content")
+        repo.update(new NoteEntity(4, 1, 2, "", "")) >> new NoteEntity(4, 1, 2, "", "")
+
         when:
-        service.save(new Note(4, 1, 2, "", ""))
+        Note note = service.save(new Note(4, 2, "", ""))
 
         then: "should update since the ID was set"
-        1 * repo.update(_)
+        note == new Note(4, 2, "", "")
     }
 
     def "retrieving a note by ID should pass the ID through"() {
-        repo.get(100) >> new Note(100, 2, 3, "title", "content")
+        repo.get(100) >> new NoteEntity(100, 2, 3, "title", "content")
 
         when:
         Note note = service.get(100)
 
         then:
-        note == new Note(100, 2, 3, "title", "content")
+        note == new Note(100, 3, "title", "content")
     }
 
     def "attempting to retrieve a note that does not exist should throw an ObjectNotFoundException"() {

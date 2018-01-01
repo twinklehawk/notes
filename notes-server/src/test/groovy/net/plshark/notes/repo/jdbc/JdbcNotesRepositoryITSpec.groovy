@@ -7,7 +7,7 @@ import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.JdbcUpdateAffectedIncorrectNumberOfRowsException
 import org.springframework.test.context.ActiveProfiles
 
-import net.plshark.notes.Note
+import net.plshark.notes.entity.NoteEntity
 import net.plshark.notes.webservice.Application
 import spock.lang.Specification
 
@@ -23,10 +23,10 @@ class JdbcNotesRepositoryITSpec extends Specification {
     }
 
     def "get retrieves a previously inserted note by ID"() {
-        Note insertedNote = repo.insert(new Note(1, 0, "title", "content"))
+        NoteEntity insertedNote = repo.insert(new NoteEntity(1, "title", "content"))
 
         when:
-        Note note = repo.get(insertedNote.id.asLong)
+        NoteEntity note = repo.get(insertedNote.id.asLong)
 
         then:
         note == insertedNote
@@ -34,7 +34,7 @@ class JdbcNotesRepositoryITSpec extends Specification {
 
     def "inserting a note returns the inserted note with the ID set"() {
         when:
-        Note note = repo.insert(new Note(1, 0, "title", "content"))
+        NoteEntity note = repo.insert(new NoteEntity(1, "title", "content"))
 
         then:
         note.id.isPresent
@@ -46,18 +46,18 @@ class JdbcNotesRepositoryITSpec extends Specification {
 
     def "inserting a note with an ID set throws an exception"() {
         when:
-        repo.insert(new Note(1, 1, 0, "title", "content"))
+        repo.insert(new NoteEntity(1, 1, 0, "title", "content"))
 
         then:
         thrown(IllegalArgumentException)
     }
 
     def "a previously inserted note can be updated"() {
-        Note inserted = repo.insert(new Note(1, 0, "title", "content"))
+        NoteEntity inserted = repo.insert(new NoteEntity(1, "title", "content"))
 
         when:
         inserted.setContent("new content")
-        Note note = repo.update(inserted)
+        NoteEntity note = repo.update(inserted)
 
         then:
         note == inserted
@@ -66,7 +66,7 @@ class JdbcNotesRepositoryITSpec extends Specification {
 
     def "updating a note with no ID throws an exception"() {
         when:
-        repo.update(new Note(1, 0, "title", "content"))
+        repo.update(new NoteEntity(1, "title", "content"))
 
         then:
         thrown(IllegalArgumentException)
@@ -74,14 +74,14 @@ class JdbcNotesRepositoryITSpec extends Specification {
 
     def "when an update affects 0 rows an exception is thrown"() {
         when:
-        repo.update(new Note(100, 1, 0, "title", "content"))
+        repo.update(new NoteEntity(100, 1, 0, "title", "content"))
 
         then:
         thrown(JdbcUpdateAffectedIncorrectNumberOfRowsException)
     }
 
     def "a previously inserted note can be deleted"() {
-        Note inserted = repo.insert(new Note(1, 0, "title", "content"))
+        NoteEntity inserted = repo.insert(new NoteEntity(1, "title", "content"))
 
         when:
         repo.delete(inserted.id.asLong)

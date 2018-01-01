@@ -9,6 +9,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 import net.plshark.notes.Note;
 import net.plshark.notes.ObjectNotFoundException;
+import net.plshark.notes.entity.NoteEntity;
 import net.plshark.notes.repo.NotesRepository;
 
 /**
@@ -19,6 +20,7 @@ import net.plshark.notes.repo.NotesRepository;
 public class NotesServiceImpl implements NotesService {
 
     private final NotesRepository notesRepo;
+    private final NoteConverter converter = new NoteConverter();
 
     /**
      * Create a new instance
@@ -31,7 +33,7 @@ public class NotesServiceImpl implements NotesService {
     @Override
     public Note get(long id) throws ObjectNotFoundException {
         try {
-            return notesRepo.get(id);
+            return converter.from(notesRepo.get(id));
         } catch (EmptyResultDataAccessException e) {
             throw new ObjectNotFoundException("No note found for id " + id, e);
         }
@@ -39,12 +41,17 @@ public class NotesServiceImpl implements NotesService {
 
     @Override
     public Note save(Note note) {
-        Note savedNote;
-        if (note.getId().isPresent())
-            savedNote = notesRepo.update(note);
-        else
-            savedNote = notesRepo.insert(note);
-        return savedNote;
+        NoteEntity savedNote;
+        if (note.getId().isPresent()) {
+            NoteEntity currentNote = notesRepo.get(note.getId().getAsLong());
+            savedNote = notesRepo.update(converter.from(note, currentNote.getOwnerId()));
+        } else {
+            // TODO should be current user
+            long ownerId = 0;
+            NoteEntity entity = converter.from(note, ownerId);
+            savedNote = notesRepo.insert(entity);
+        }
+        return converter.from(savedNote);
     }
 
     @Override

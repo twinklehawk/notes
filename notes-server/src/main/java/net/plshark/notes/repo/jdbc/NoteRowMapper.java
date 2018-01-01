@@ -5,23 +5,16 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 
-import net.plshark.notes.Note;
+import net.plshark.notes.entity.NoteEntity;
 
 /**
  * Maps result rows to Note objects
  */
-class NoteRowMapper implements RowMapper<Note> {
+class NoteRowMapper implements RowMapper<NoteEntity> {
 
     @Override
-    public Note mapRow(ResultSet rs, int rowNum) throws SQLException {
-        Note note = new Note();
-
-        note.setId(rs.getLong("id"));
-        note.setOwnerId(rs.getLong("owner_id"));
-        note.setCorrelationId(rs.getLong("correlation_id"));
-        note.setTitle(rs.getString("title"));
-        note.setContent(rs.getString("content"));
-
-        return note;
+    public NoteEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
+        return new NoteEntity(rs.getLong("id"), rs.getLong("owner_id"), rs.getLong("correlation_id"),
+                rs.getString("title"), rs.getString("content"));
     }
 }

@@ -20,7 +20,7 @@ class NotesControllerSpec extends Specification {
 
     def "update with different IDs in URL and object treated as bad request"() {
         when:
-        controller.update(100, new Note(200, 1, 2, "", ""))
+        controller.update(100, new Note(200, 2, "", ""))
 
         then:
         thrown(BadRequestException)
@@ -28,7 +28,7 @@ class NotesControllerSpec extends Specification {
 
     def "update with no ID in object uses ID from URL"() {
         when:
-        controller.update(100, new Note(1, 2, "", ""))
+        controller.update(100, new Note("", ""))
 
         then:
         1 * service.save({ Note n -> n.id.asLong == 100 })
@@ -36,10 +36,10 @@ class NotesControllerSpec extends Specification {
 
     def "update passes the note through"() {
         when:
-        controller.update(100, new Note(100, 1, 2, "", ""))
+        controller.update(100, new Note(100, 2, "", ""))
 
         then:
-        1 * service.save(new Note(100, 1, 2, "", ""))
+        1 * service.save(new Note(100, 2, "", ""))
     }
 
     def "get passes the ID through"() {
