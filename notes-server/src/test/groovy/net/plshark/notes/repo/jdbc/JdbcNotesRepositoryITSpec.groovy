@@ -32,6 +32,26 @@ class JdbcNotesRepositoryITSpec extends Specification {
         note == insertedNote
     }
 
+    def "retrieving a note for a user retrieves notes with a matching owner ID"() {
+        NoteEntity insertedNote = repo.insert(new NoteEntity(1, "title", "content"))
+
+        when:
+        Optional<NoteEntity> note = repo.getByIdForUser(insertedNote.id.asLong, 1)
+
+        then:
+        note.get() == insertedNote
+    }
+
+    def "retrieving a note for a user does not return notes owned by another user"() {
+        NoteEntity insertedNote = repo.insert(new NoteEntity(1, "title", "content"))
+
+        when:
+        Optional<NoteEntity> note = repo.getByIdForUser(insertedNote.id.asLong, 2)
+
+        then:
+        !note.isPresent()
+    }
+
     def "inserting a note returns the inserted note with the ID set"() {
         when:
         NoteEntity note = repo.insert(new NoteEntity(1, "title", "content"))

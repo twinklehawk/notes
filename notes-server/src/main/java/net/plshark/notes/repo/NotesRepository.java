@@ -1,5 +1,7 @@
 package net.plshark.notes.repo;
 
+import java.util.Optional;
+
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
@@ -18,6 +20,15 @@ public interface NotesRepository {
      * @throws DataAccessException if the query fails
      */
     NoteEntity get(long id);
+
+    /**
+     * Get a note owned by a user
+     * @param id the note ID
+     * @param userId the owning user ID
+     * @return the matching note if found
+     * @throws DataAccessException if the query fails
+     */
+    Optional<NoteEntity> getByIdForUser(long id, long userId);
 
     /**
      * Insert a new note

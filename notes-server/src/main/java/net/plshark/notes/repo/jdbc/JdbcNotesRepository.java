@@ -3,6 +3,7 @@ package net.plshark.notes.repo.jdbc;
 import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -23,6 +24,7 @@ import net.plshark.notes.repo.NotesRepository;
 public class JdbcNotesRepository implements NotesRepository {
 
     private static final String SELECT = "SELECT id, owner_id, correlation_id, title, content FROM notes WHERE id = ?";
+    private static final String SELECT_FOR_OWNER = "SELECT id, owner_id, correlation_id, title, content FROM notes WHERE id = ? AND owner_id = ?";
     private static final String DELETE = "DELETE FROM notes WHERE id = ?";
     private static final String DELETE_ALL = "DELETE FROM notes";
     private static final String UPDATE = "UPDATE notes SET owner_id = ?, correlation_id = ?, title = ?, content = ? WHERE id = ?";
@@ -44,6 +46,15 @@ public class JdbcNotesRepository implements NotesRepository {
     public NoteEntity get(long id) {
         List<NoteEntity> results = jdbc.query(SELECT, stmt -> stmt.setLong(1, id), noteRowMapper);
         return DataAccessUtils.requiredSingleResult(results);
+    }
+
+    @Override
+    public Optional<NoteEntity> getByIdForUser(long id, long userId) {
+        List<NoteEntity> results = jdbc.query(SELECT_FOR_OWNER, stmt -> {
+            stmt.setLong(1, id);
+            stmt.setLong(2, userId);
+        }, noteRowMapper);
+        return Optional.ofNullable(DataAccessUtils.singleResult(results));
     }
 
     @Override
