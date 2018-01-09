@@ -1,14 +1,12 @@
 package net.plshark.notes.service;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.springframework.dao.EmptyResultDataAccessException;
-
 import net.plshark.notes.Note;
-import net.plshark.notes.ObjectNotFoundException;
 import net.plshark.notes.entity.NoteEntity;
 import net.plshark.notes.repo.NotesRepository;
 
@@ -31,12 +29,8 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public Note get(long id) throws ObjectNotFoundException {
-        try {
-            return converter.from(notesRepo.get(id));
-        } catch (EmptyResultDataAccessException e) {
-            throw new ObjectNotFoundException("No note found for id " + id, e);
-        }
+    public Optional<Note> getForUser(long id, long userId) {
+        return notesRepo.getByIdForUser(id, userId).map(note -> converter.from(note));
     }
 
     @Override

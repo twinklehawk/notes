@@ -1,9 +1,6 @@
 package net.plshark.notes.service
 
-import org.springframework.dao.EmptyResultDataAccessException
-
 import net.plshark.notes.Note
-import net.plshark.notes.ObjectNotFoundException
 import net.plshark.notes.entity.NoteEntity
 import net.plshark.notes.repo.NotesRepository
 import spock.lang.Specification
@@ -42,24 +39,24 @@ class NotesServiceImplSpec extends Specification {
         note == new Note(4, 2, "", "")
     }
 
-    def "retrieving a note by ID should pass the ID through"() {
-        repo.get(100) >> new NoteEntity(100, 2, 3, "title", "content")
+    def "retrieving a note by ID for a user should pass the IDs through"() {
+        repo.getByIdForUser(100, 200) >> Optional.of(new NoteEntity(100, 2, 3, "title", "content"))
 
         when:
-        Note note = service.get(100)
+        Optional<Note> note = service.getForUser(100, 200)
 
         then:
-        note == new Note(100, 3, "title", "content")
+        note.get() == new Note(100, 3, "title", "content")
     }
 
-    def "attempting to retrieve a note that does not exist should throw an ObjectNotFoundException"() {
-        repo.get(100) >> { throw new EmptyResultDataAccessException(1) }
+    def "attempting to retrieve a note that does not exist should return an empty optional"() {
+        repo.getByIdForUser(100, 200) >> { Optional.empty() }
 
         when:
-        service.get(100)
+        Optional<Note> note = service.getForUser(100, 200)
 
         then:
-        thrown(ObjectNotFoundException)
+        !note.isPresent()
     }
 
     def "deleting a note should pass the ID through"() {

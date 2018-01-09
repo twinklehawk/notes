@@ -1,7 +1,8 @@
 package net.plshark.notes.service;
 
+import java.util.Optional;
+
 import net.plshark.notes.Note;
-import net.plshark.notes.ObjectNotFoundException;
 
 /**
  * Service for notes
@@ -9,12 +10,12 @@ import net.plshark.notes.ObjectNotFoundException;
 public interface NotesService {
 
     /**
-     * Get a note by ID
+     * Get a note by ID for a user
      * @param id the note ID
+     * @param userId the ID of the current user
      * @return the matching note
-     * @throws ObjectNotFoundException if the matching note was not found
      */
-    Note get(long id) throws ObjectNotFoundException;
+    Optional<Note> getForUser(long id, long userId);
 
     /**
      * Save a note

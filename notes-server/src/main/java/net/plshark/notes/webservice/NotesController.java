@@ -42,12 +42,14 @@ public class NotesController {
     /**
      * Get a note by ID
      * @param id the note ID
+     * @param auth the currently authenticated user
      * @return the matching note
      * @throws ObjectNotFoundException if the note was not found
      */
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Note get(@PathVariable("id") long id) throws ObjectNotFoundException {
-        return notesService.get(id);
+    public Note get(@PathVariable("id") long id, Authentication auth) throws ObjectNotFoundException {
+        return notesService.getForUser(id, userAuthService.getUserIdForAuthentication(auth))
+                .orElseThrow(() -> new ObjectNotFoundException("No note found for id " + id));
     }
 
     /**

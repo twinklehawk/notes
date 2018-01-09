@@ -4,6 +4,7 @@ import org.springframework.security.core.Authentication
 
 import net.plshark.notes.BadRequestException
 import net.plshark.notes.Note
+import net.plshark.notes.ObjectNotFoundException
 import net.plshark.notes.service.NotesService
 import net.plshark.notes.service.UserAuthenticationService
 import spock.lang.Specification
@@ -46,6 +47,7 @@ class NotesControllerSpec extends Specification {
 
     def "update passes the note through and retrieves the current user ID"() {
         userAuthService.getUserIdForAuthentication(_) >> 15
+
         when:
         controller.update(100, new Note(100, 2, "", ""), Mock(Authentication))
 
@@ -53,12 +55,25 @@ class NotesControllerSpec extends Specification {
         1 * notesService.save(new Note(100, 2, "", ""), 15)
     }
 
-    def "get passes the ID through"() {
+    def "get passes the ID through and retrieves the current user ID"() {
+        userAuthService.getUserIdForAuthentication(_) >> 15
+        notesService.getForUser(2, 15) >> Optional.of(new Note("title", "cont"))
+
         when:
-        controller.get(2)
+        Note note = controller.get(2, Mock(Authentication))
 
         then:
-        1 * notesService.get(2)
+        note == new Note("title", "cont")
+    }
+
+    def "an ObjectNotFoundException is thrown when no note matches a get request"() {
+        notesService.getForUser(2, 0) >> Optional.empty()
+
+        when:
+        controller.get(2, Mock(Authentication))
+
+        then:
+        thrown(ObjectNotFoundException)
     }
 
     def "insert passes the note through and retrieves the current user ID"() {
