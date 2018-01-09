@@ -29,6 +29,7 @@ public interface NotesService {
     /**
      * Delete a note by ID
      * @param id the ID of the note to delete
+     * @param userId the ID of the current user
      */
-    void delete(long id);
+    void deleteForUser(long id, long userId);
 }

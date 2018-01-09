@@ -52,4 +52,12 @@ public interface NotesRepository {
      * @throws DataAccessException if the delete fails
      */
     void delete(long id);
+
+    /**
+     * Delete a note owned by a user
+     * @param id the note ID
+     * @param userId the owning user ID
+     * @throws DataAccessException if the delete fails
+     */
+    void deleteByIdForUser(long id, long userId);
 }

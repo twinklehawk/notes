@@ -61,9 +61,9 @@ class NotesServiceImplSpec extends Specification {
 
     def "deleting a note should pass the ID through"() {
         when:
-        service.delete(100)
+        service.deleteForUser(100, 200)
 
         then:
-        1 * repo.delete(100)
+        1 * repo.deleteByIdForUser(100, 200)
     }
 }

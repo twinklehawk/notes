@@ -87,9 +87,10 @@ public class NotesController {
     /**
      * Delete a note by ID
      * @param id the note ID
+     * @param auth the currently authenticated user
      */
     @DeleteMapping(path = "/{id}")
-    public void delete(@PathVariable("id") long id) {
-        notesService.delete(id);
+    public void delete(@PathVariable("id") long id, Authentication auth) {
+        notesService.deleteForUser(id, userAuthService.getUserIdForAuthentication(auth));
     }
 }

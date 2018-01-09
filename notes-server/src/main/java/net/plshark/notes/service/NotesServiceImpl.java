@@ -47,7 +47,7 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public void delete(long id) {
-        notesRepo.delete(id);
+    public void deleteForUser(long id, long userId) {
+        notesRepo.deleteByIdForUser(id, userId);
     }
 }

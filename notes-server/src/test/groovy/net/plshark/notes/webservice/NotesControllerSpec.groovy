@@ -87,10 +87,12 @@ class NotesControllerSpec extends Specification {
     }
 
     def "delete passes the ID through"() {
+        userAuthService.getUserIdForAuthentication(_) >> 15
+
         when:
-        controller.delete(12)
+        controller.delete(12, Mock(Authentication))
 
         then:
-        1 * notesService.delete(12)
+        1 * notesService.deleteForUser(12, 15)
     }
 }

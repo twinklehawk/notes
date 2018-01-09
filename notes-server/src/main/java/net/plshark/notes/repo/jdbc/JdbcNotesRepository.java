@@ -26,6 +26,7 @@ public class JdbcNotesRepository implements NotesRepository {
     private static final String SELECT = "SELECT id, owner_id, correlation_id, title, content FROM notes WHERE id = ?";
     private static final String SELECT_FOR_OWNER = "SELECT id, owner_id, correlation_id, title, content FROM notes WHERE id = ? AND owner_id = ?";
     private static final String DELETE = "DELETE FROM notes WHERE id = ?";
+    private static final String DELETE_FOR_OWNER = "DELETE FROM notes WHERE id = ? AND owner_id = ?";
     private static final String DELETE_ALL = "DELETE FROM notes";
     private static final String UPDATE = "UPDATE notes SET owner_id = ?, correlation_id = ?, title = ?, content = ? WHERE id = ?";
     private static final String INSERT = "INSERT INTO notes (owner_id, correlation_id, title, content) VALUES (?, ?, ?, ?)";
@@ -97,6 +98,14 @@ public class JdbcNotesRepository implements NotesRepository {
     @Override
     public void delete(long id) {
         jdbc.update(DELETE, stmt -> stmt.setLong(1, id));
+    }
+
+    @Override
+    public void deleteByIdForUser(long id, long userId) {
+        jdbc.update(DELETE_FOR_OWNER, stmt -> {
+            stmt.setLong(1, id);
+            stmt.setLong(2, userId);
+        });
     }
 
     /**

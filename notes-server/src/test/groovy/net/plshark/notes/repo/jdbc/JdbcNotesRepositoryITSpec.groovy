@@ -118,4 +118,34 @@ class JdbcNotesRepositoryITSpec extends Specification {
         then:
         notThrown(Exception)
     }
+
+    def "a previously inserted note can be deleted by ID and owner ID"() {
+        NoteEntity inserted = repo.insert(new NoteEntity(1, "title", "content"))
+
+        when:
+        repo.deleteByIdForUser(inserted.id.asLong, 1)
+        repo.get(inserted.id.asLong)
+
+        then: "get should throw an exception since the row should be gone"
+        thrown(EmptyResultDataAccessException)
+    }
+
+    def "deleting by ID and owner ID should not affect another user's notes"() {
+        NoteEntity inserted = repo.insert(new NoteEntity(1, "title", "content"))
+
+        when:
+        repo.deleteByIdForUser(inserted.id.asLong, 2)
+        NoteEntity note = repo.get(inserted.id.asLong)
+
+        then:
+        note == inserted
+    }
+
+    def "no exception is thrown when a delete by owner does not affect any rows"() {
+        when:
+        repo.deleteByIdForUser(100, 1)
+
+        then:
+        notThrown(Exception)
+    }
 }
