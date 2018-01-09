@@ -3,6 +3,7 @@ package net.plshark.notes.service;
 import java.util.Optional;
 
 import net.plshark.notes.Note;
+import net.plshark.notes.ObjectNotFoundException;
 
 /**
  * Service for notes
@@ -23,8 +24,9 @@ public interface NotesService {
      *            note for this ID will be updated
      * @param userId the ID of the user saving the note
      * @return the saved note
+     * @throws ObjectNotFoundException if the note has an ID but cannot be found
      */
-    Note save(Note note, long userId);
+    Note save(Note note, long userId) throws ObjectNotFoundException;
 
     /**
      * Delete a note by ID

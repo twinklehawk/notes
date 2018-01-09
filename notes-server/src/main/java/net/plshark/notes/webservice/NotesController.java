@@ -53,13 +53,14 @@ public class NotesController {
     }
 
     /**
-     * Insert a new note
-     * @param note the note to insert
+     * Insert a new note or update an existing note
+     * @param note the note to insert or update if the ID is set
      * @param auth the currently authenticated user
-     * @return the inserted note
+     * @return the inserted or updated note
+     * @throws ObjectNotFoundException if the note has an ID but cannot be found
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Note insert(@RequestBody Note note, Authentication auth) {
+    public Note insert(@RequestBody Note note, Authentication auth) throws ObjectNotFoundException {
         return notesService.save(note, userAuthService.getUserIdForAuthentication(auth));
     }
 
@@ -72,10 +73,11 @@ public class NotesController {
      * @return the updated note
      * @throws BadRequestException if the note ID is present and does not match
      *             {@code id}
+     * @throws ObjectNotFoundException if the note ID is present but the note is not found
      */
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Note update(@PathVariable("id") long id, @RequestBody Note note, Authentication auth)
-            throws BadRequestException {
+            throws BadRequestException, ObjectNotFoundException {
         if (!note.getId().isPresent())
             note.setId(id);
         else if (note.getId().getAsLong() != id)

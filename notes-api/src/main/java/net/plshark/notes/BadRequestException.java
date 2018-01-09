@@ -14,4 +14,13 @@ public class BadRequestException extends Exception {
     public BadRequestException(String message) {
         super(message);
     }
+
+    /**
+     * Create a new instance
+     * @param message the detail message
+     * @param cause the cause
+     */
+    public BadRequestException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

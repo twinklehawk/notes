@@ -1,6 +1,7 @@
 package net.plshark.notes.service
 
 import net.plshark.notes.Note
+import net.plshark.notes.ObjectNotFoundException
 import net.plshark.notes.entity.NoteEntity
 import net.plshark.notes.repo.NotesRepository
 import spock.lang.Specification
@@ -37,6 +38,16 @@ class NotesServiceImplSpec extends Specification {
 
         then: "should update since the ID was set"
         note == new Note(4, 2, "", "")
+    }
+
+    def "updating a note for another user should throw ObjectNotFoundException"() {
+        repo.get(4) >> new NoteEntity(4, 2, 3, "title", "content")
+
+        when:
+        service.save(new Note(4, 2, "", ""), 1)
+
+        then:
+        thrown(ObjectNotFoundException)
     }
 
     def "retrieving a note by ID for a user should pass the IDs through"() {

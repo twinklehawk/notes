@@ -7,6 +7,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import net.plshark.notes.Note;
+import net.plshark.notes.ObjectNotFoundException;
 import net.plshark.notes.entity.NoteEntity;
 import net.plshark.notes.repo.NotesRepository;
 
@@ -34,10 +35,12 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public Note save(Note note, long userId) {
+    public Note save(Note note, long userId) throws ObjectNotFoundException {
         NoteEntity savedNote;
         if (note.getId().isPresent()) {
             NoteEntity currentNote = notesRepo.get(note.getId().getAsLong());
+            if (userId != currentNote.getOwnerId())
+                throw new ObjectNotFoundException("No note found for ID " + note.getId().getAsLong());
             savedNote = notesRepo.update(converter.from(note, currentNote.getOwnerId()));
         } else {
             NoteEntity entity = converter.from(note, userId);
