@@ -21,11 +21,11 @@ class NotesServiceImplSpec extends Specification {
         thrown(NullPointerException)
     }
 
-    def "notes with no ID should be inserted"() {
-        repo.insert(_) >> new NoteEntity(1, 2, 3, "", "")
+    def "notes with no ID should be inserted and owner ID set to current user"() {
+        repo.insert({ NoteEntity entity -> entity.ownerId == 2 }) >> new NoteEntity(1, 2, 3, "", "")
 
         when:
-        Note note = service.save(new Note("", ""))
+        Note note = service.save(new Note("", ""), 2)
 
         then: "should insert since the note had no ID"
         note == new Note(1, 3, "", "")
@@ -36,7 +36,7 @@ class NotesServiceImplSpec extends Specification {
         repo.update(new NoteEntity(4, 1, 2, "", "")) >> new NoteEntity(4, 1, 2, "", "")
 
         when:
-        Note note = service.save(new Note(4, 2, "", ""))
+        Note note = service.save(new Note(4, 2, "", ""), 1)
 
         then: "should update since the ID was set"
         note == new Note(4, 2, "", "")

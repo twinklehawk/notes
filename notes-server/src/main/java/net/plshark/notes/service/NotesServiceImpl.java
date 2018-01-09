@@ -40,15 +40,13 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public Note save(Note note) {
+    public Note save(Note note, long userId) {
         NoteEntity savedNote;
         if (note.getId().isPresent()) {
             NoteEntity currentNote = notesRepo.get(note.getId().getAsLong());
             savedNote = notesRepo.update(converter.from(note, currentNote.getOwnerId()));
         } else {
-            // TODO should be current user
-            long ownerId = 0;
-            NoteEntity entity = converter.from(note, ownerId);
+            NoteEntity entity = converter.from(note, userId);
             savedNote = notesRepo.insert(entity);
         }
         return converter.from(savedNote);

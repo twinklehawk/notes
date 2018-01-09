@@ -20,9 +20,10 @@ public interface NotesService {
      * Save a note
      * @param note the note to save. If the note's ID is not empty, the existing
      *            note for this ID will be updated
+     * @param userId the ID of the user saving the note
      * @return the saved note
      */
-    Note save(Note note);
+    Note save(Note note, long userId);
 
     /**
      * Delete a note by ID

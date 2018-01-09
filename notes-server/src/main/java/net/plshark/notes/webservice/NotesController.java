@@ -3,6 +3,7 @@ package net.plshark.notes.webservice;
 import java.util.Objects;
 
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,7 @@ import net.plshark.notes.BadRequestException;
 import net.plshark.notes.Note;
 import net.plshark.notes.ObjectNotFoundException;
 import net.plshark.notes.service.NotesService;
+import net.plshark.notes.service.UserAuthenticationService;
 
 /**
  * Controller to provide web service methods for notes
@@ -25,13 +27,16 @@ import net.plshark.notes.service.NotesService;
 public class NotesController {
 
     private final NotesService notesService;
+    private final UserAuthenticationService userAuthService;
 
     /**
      * Create a new instance
      * @param notesService the service to use for notes
+     * @param userAuthService the service to use to retrieve authenticated user information
      */
-    public NotesController(NotesService notesService) {
+    public NotesController(NotesService notesService, UserAuthenticationService userAuthService) {
         this.notesService = Objects.requireNonNull(notesService, "notesService cannot be null");
+        this.userAuthService = Objects.requireNonNull(userAuthService, "userAuthService cannot be null");
     }
 
     /**
@@ -48,11 +53,12 @@ public class NotesController {
     /**
      * Insert a new note
      * @param note the note to insert
+     * @param auth the currently authenticated user
      * @return the inserted note
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Note insert(@RequestBody Note note) {
-        return notesService.save(note);
+    public Note insert(@RequestBody Note note, Authentication auth) {
+        return notesService.save(note, userAuthService.getUserIdForAuthentication(auth));
     }
 
     /**
@@ -60,18 +66,20 @@ public class NotesController {
      * @param id the ID of the note to update
      * @param note the note fields to update. ID is optional, but if present must
      *            match {@code id}
+     * @param auth the currently authenticated user
      * @return the updated note
      * @throws BadRequestException if the note ID is present and does not match
      *             {@code id}
      */
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Note update(@PathVariable("id") long id, @RequestBody Note note) throws BadRequestException {
+    public Note update(@PathVariable("id") long id, @RequestBody Note note, Authentication auth)
+            throws BadRequestException {
         if (!note.getId().isPresent())
             note.setId(id);
         else if (note.getId().getAsLong() != id)
             throw new BadRequestException("Note ID must match ID in path");
 
-        return notesService.save(note);
+        return notesService.save(note, userAuthService.getUserIdForAuthentication(auth));
     }
 
     /**
