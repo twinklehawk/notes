@@ -9,7 +9,7 @@ class UserRowMapperSpec extends Specification {
 
     UserRowMapper mapper = new UserRowMapper()
 
-    def "row mapped to note"() {
+    def "row mapped to user"() {
         ResultSet rs = Mock()
         rs.getLong("id") >> 5L
         rs.getString("username") >> "admin"
