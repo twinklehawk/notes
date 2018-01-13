@@ -40,14 +40,23 @@ public class Role {
         return id;
     }
 
+    /**
+     * @param id the role ID
+     */
     public void setId(long id) {
         this.id = OptionalLong.of(id);
     }
 
+    /**
+     * @return the role name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @param name the role name
+     */
     public void setName(String name) {
         this.name = Objects.requireNonNull(name, "name cannot be null");
     }

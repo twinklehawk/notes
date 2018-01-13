@@ -48,22 +48,37 @@ public class User {
         return id;
     }
 
+    /**
+     * @param id the user ID
+     */
     public void setId(long id) {
         this.id = OptionalLong.of(id);
     }
 
+    /**
+     * @return the username
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * @param username the username
+     */
     public void setUsername(String username) {
         this.username = Objects.requireNonNull(username, "username cannot be null");
     }
 
+    /**
+     * @return the password
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * @param password the password
+     */
     public void setPassword(String password) {
         this.password = password;
     }

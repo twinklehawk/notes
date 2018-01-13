@@ -59,38 +59,65 @@ public class NoteEntity {
         return id != null ? OptionalLong.of(id) : OptionalLong.empty();
     }
 
+    /**
+     * @param id the note ID
+     */
     public void setId(long id) {
         this.id = id;
     }
 
+    /**
+     * @return the user ID of the owner
+     */
     public long getOwnerId() {
         return ownerId;
     }
 
+    /**
+     * @param ownerId the user ID of the owner
+     */
     public void setOwnerId(long ownerId) {
         this.ownerId = ownerId;
     }
 
+    /**
+     * @return the external ID, defaults to 0
+     */
     public long getCorrelationId() {
         return correlationId;
     }
 
+    /**
+     * @param correlationId the external ID
+     */
     public void setCorrelationId(long correlationId) {
         this.correlationId = correlationId;
     }
 
+    /**
+     * @return the note title
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * @param title the note title
+     */
     public void setTitle(String title) {
         Objects.requireNonNull(title, "title cannot be null");
     }
 
+    /**
+     * @return the note content
+     */
     public String getContent() {
         return content;
     }
 
+    /**
+     * @param content the note content
+     */
     public void setContent(String content) {
         this.content = Objects.requireNonNull(content, "content cannot be null");
     }
