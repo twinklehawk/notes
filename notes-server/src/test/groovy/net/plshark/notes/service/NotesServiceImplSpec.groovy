@@ -8,7 +8,7 @@ import spock.lang.Specification
 class NotesServiceImplSpec extends Specification {
 
     NotesRepository notesRepo = Mock()
-    NotePermissionsService permissionService = Mock()
+    UserNotePermissionsService permissionService = Mock()
     NotesServiceImpl service = new NotesServiceImpl(notesRepo, permissionService)
 
     def "constructor does not accept null"() {

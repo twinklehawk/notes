@@ -20,14 +20,14 @@ import net.plshark.notes.repo.NotesRepository;
 public class NotesServiceImpl implements NotesService {
 
     private final NotesRepository notesRepo;
-    private final NotePermissionsService permissionService;
+    private final UserNotePermissionsService permissionService;
 
     /**
      * Create a new instance
      * @param notesRepo the repository to use to store notes
      * @param permissionService the service to check user permissions for notes
      */
-    public NotesServiceImpl(NotesRepository notesRepo, NotePermissionsService permissionService) {
+    public NotesServiceImpl(NotesRepository notesRepo, UserNotePermissionsService permissionService) {
         this.notesRepo = Objects.requireNonNull(notesRepo, "notesRepo cannot be null");
         this.permissionService = Objects.requireNonNull(permissionService, "permissionService cannot be null");
     }

@@ -4,14 +4,14 @@ import net.plshark.notes.UserNotePermission
 import net.plshark.notes.repo.UserNotePermissionsRepository
 import spock.lang.Specification
 
-class NotePermissionsServiceImplSpec extends Specification {
+class UserNotePermissionsServiceImplSpec extends Specification {
 
     UserNotePermissionsRepository permissionRepo = Mock()
-    NotePermissionsServiceImpl service = new NotePermissionsServiceImpl(permissionRepo)
+    UserNotePermissionsServiceImpl service = new UserNotePermissionsServiceImpl(permissionRepo)
 
     def "null arguments are not accepted in the constructor"() {
         when:
-        new NotePermissionsServiceImpl(null)
+        new UserNotePermissionsServiceImpl(null)
 
         then:
         thrown(NullPointerException)

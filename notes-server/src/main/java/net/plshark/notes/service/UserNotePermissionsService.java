@@ -3,7 +3,7 @@ package net.plshark.notes.service;
 /**
  * Service for working with a user's permissions for notes
  */
-public interface NotePermissionsService {
+public interface UserNotePermissionsService {
 
     /**
      * Check if a user has read permission for a note

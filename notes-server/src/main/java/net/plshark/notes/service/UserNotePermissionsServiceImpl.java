@@ -13,7 +13,7 @@ import net.plshark.notes.repo.UserNotePermissionsRepository;
  */
 @Named
 @Singleton
-public class NotePermissionsServiceImpl implements NotePermissionsService {
+public class UserNotePermissionsServiceImpl implements UserNotePermissionsService {
 
     private final UserNotePermissionsRepository permissionRepo;
 
@@ -21,7 +21,7 @@ public class NotePermissionsServiceImpl implements NotePermissionsService {
      * Create a new instance
      * @param permissionRepo the repository for retrieving and storing user permissions on notes
      */
-    public NotePermissionsServiceImpl(UserNotePermissionsRepository permissionRepo) {
+    public UserNotePermissionsServiceImpl(UserNotePermissionsRepository permissionRepo) {
         this.permissionRepo = Objects.requireNonNull(permissionRepo, "permissionRepo cannot be null");
     }
 
