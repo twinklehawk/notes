@@ -1,10 +1,13 @@
 package net.plshark.notes.service;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import net.plshark.notes.NotePermission;
+import net.plshark.notes.ObjectNotFoundException;
 import net.plshark.notes.UserNotePermission;
 import net.plshark.notes.repo.UserNotePermissionsRepository;
 
@@ -13,7 +16,7 @@ import net.plshark.notes.repo.UserNotePermissionsRepository;
  */
 @Named
 @Singleton
-public class UserNotePermissionsServiceImpl implements UserNotePermissionsService {
+public class UserNotePermissionsServiceImpl implements UserNotePermissionsService, NotePermissionsService {
 
     private final UserNotePermissionsRepository permissionRepo;
 
@@ -48,5 +51,30 @@ public class UserNotePermissionsServiceImpl implements UserNotePermissionsServic
     @Override
     public void deletePermissionsForNote(long noteId) {
         permissionRepo.deleteByNote(noteId);
+    }
+
+    @Override
+    public void setPermissionForUser(long id, long userId, long currentUserId, NotePermission permission)
+            throws ObjectNotFoundException {
+        if (!userIsOwner(id, currentUserId))
+            throw new ObjectNotFoundException("No note found for ID " + id);
+
+        Optional<UserNotePermission> currentPermission = permissionRepo.getByUserAndNote(userId, id);
+        if (currentPermission.isPresent()) {
+            UserNotePermission p = currentPermission.get();
+            p.setReadable(permission.isReadable());
+            p.setWritable(permission.isWritable());
+            permissionRepo.update(p);
+        } else {
+            permissionRepo.insert(new UserNotePermission(userId, id, permission.isReadable(), permission.isWritable()));
+        }
+    }
+
+    @Override
+    public void removePermissionForUser(long id, long userId, long currentUserId) throws ObjectNotFoundException {
+        if (!userIsOwner(id, currentUserId))
+            throw new ObjectNotFoundException("No note found for ID " + id);
+
+        permissionRepo.deleteByUserAndNote(userId, id);
     }
 }

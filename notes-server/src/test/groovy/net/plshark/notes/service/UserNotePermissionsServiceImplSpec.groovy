@@ -1,5 +1,7 @@
 package net.plshark.notes.service
 
+import net.plshark.notes.NotePermission
+import net.plshark.notes.ObjectNotFoundException
 import net.plshark.notes.UserNotePermission
 import net.plshark.notes.repo.UserNotePermissionsRepository
 import spock.lang.Specification
@@ -87,5 +89,57 @@ class UserNotePermissionsServiceImplSpec extends Specification {
 
         then:
         1 * permissionRepo.insert({ UserNotePermission p -> p.noteId == 20 && p.userId == 10 && p.readable && p.writable && p.owner })
+    }
+
+    def "setting permissions when no permissions exist creates a new row"() {
+        permissionRepo.getByUserAndNote(10, 20) >> Optional.of(new UserNotePermission(10, 20, true, true, true))
+        permissionRepo.getByUserAndNote(5, 20) >> Optional.empty()
+
+        when:
+        service.setPermissionForUser(20, 5, 10, NotePermission.create(true, true))
+
+        then:
+        1 * permissionRepo.insert(new UserNotePermission(5, 20, true, true, false))
+    }
+
+    def "setting permissions when permissions exist updates the existing row"() {
+        permissionRepo.getByUserAndNote(10, 20) >> Optional.of(new UserNotePermission(10, 20, true, true, true))
+        permissionRepo.getByUserAndNote(5, 20) >> Optional.of(new UserNotePermission(5, 20, false, false, false))
+
+        when:
+        service.setPermissionForUser(20, 5, 10, NotePermission.create(true, true))
+
+        then:
+        1 * permissionRepo.update(new UserNotePermission(5, 20, true, true, false))
+    }
+
+    def "attempting to set permissions when not the note owner throws an ObjectNotFoundException"() {
+        permissionRepo.getByUserAndNote(10, 20) >> Optional.of(new UserNotePermission(10, 20, true, true, false))
+
+        when:
+        service.setPermissionForUser(20, 5, 10, NotePermission.create(true, true))
+
+        then:
+        thrown(ObjectNotFoundException)
+    }
+
+    def "removing permissions from a user deletes the permissions row"() {
+        permissionRepo.getByUserAndNote(10, 20) >> Optional.of(new UserNotePermission(10, 20, true, true, true))
+
+        when:
+        service.removePermissionForUser(20, 5, 10)
+
+        then:
+        1 * permissionRepo.deleteByUserAndNote(5, 20)
+    }
+
+    def "attempting to remove permissions when not the owner throws an ObjectNotFoundException"() {
+        permissionRepo.getByUserAndNote(10, 20) >> Optional.of(new UserNotePermission(10, 20, true, true, false))
+
+        when:
+        service.removePermissionForUser(20, 5, 10)
+
+        then:
+        thrown(ObjectNotFoundException)
     }
 }
