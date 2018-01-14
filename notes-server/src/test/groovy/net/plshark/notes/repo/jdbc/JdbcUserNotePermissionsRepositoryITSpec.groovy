@@ -3,6 +3,7 @@ package net.plshark.notes.repo.jdbc
 import javax.inject.Inject
 
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.jdbc.JdbcUpdateAffectedIncorrectNumberOfRowsException
 import org.springframework.test.context.ActiveProfiles
 
 import net.plshark.notes.UserNotePermission
@@ -81,5 +82,25 @@ class JdbcUserNotePermissionsRepositoryITSpec extends Specification {
 
         cleanup:
         repo.deleteByUserAndNote(1, 1)
+    }
+
+    def "can update an existing permission"() {
+        repo.insert(new UserNotePermission(1, 1, true, true))
+
+        when:
+        repo.update(new UserNotePermission(1, 1, true, false))
+        UserNotePermission permission = repo.getByUserAndNote(1, 1).get()
+
+        then:
+        permission.readable == true
+        permission.writable == false
+    }
+
+    def "a JdbcUpdateAffectedIncorrectNumberOfRowsException is thrown if no rows are updated"() {
+        when:
+        repo.update(new UserNotePermission(100, 200, true, true))
+
+        then:
+        thrown(JdbcUpdateAffectedIncorrectNumberOfRowsException)
     }
 }

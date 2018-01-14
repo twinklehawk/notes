@@ -29,6 +29,14 @@ public interface UserNotePermissionsRepository {
     UserNotePermission insert(UserNotePermission permission);
 
     /**
+     * Update an existing permission
+     * @param permission the permission to update
+     * @return the updated permission
+     * @throws DataAccessException if the update fails
+     */
+    UserNotePermission update(UserNotePermission permission);
+
+    /**
      * Delete a user's permission for a note
      * @param userId the user ID
      * @param noteId the note ID

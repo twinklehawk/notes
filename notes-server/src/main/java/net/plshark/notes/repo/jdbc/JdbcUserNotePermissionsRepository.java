@@ -7,6 +7,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.jdbc.JdbcUpdateAffectedIncorrectNumberOfRowsException;
 import org.springframework.jdbc.core.JdbcOperations;
 
 import net.plshark.notes.UserNotePermission;
@@ -21,6 +22,7 @@ public class JdbcUserNotePermissionsRepository implements UserNotePermissionsRep
 
     private static final String GET_BY_USER_NOTE = "SELECT * FROM user_note_permissions WHERE user_id = ? AND note_id = ?";
     private static final String INSERT = "INSERT INTO user_note_permissions (user_id, note_id, readable, writable) VALUES (?, ?, ?, ?)";
+    private static final String UPDATE = "UPDATE user_note_permissions SET readable = ?, writable = ? WHERE user_id = ? AND note_id = ?";
     private static final String DELETE_BY_USER_NOTE = "DELETE FROM user_note_permissions WHERE user_id = ? AND note_id = ?";
     private static final String DELETE_BY_NOTE = "DELETE FROM user_note_permissions WHERE note_id = ?";
 
@@ -68,5 +70,18 @@ public class JdbcUserNotePermissionsRepository implements UserNotePermissionsRep
         jdbc.update(DELETE_BY_NOTE, stmt -> {
             stmt.setLong(1, noteId);
          });
+    }
+
+    @Override
+    public UserNotePermission update(UserNotePermission permission) {
+        int updates = jdbc.update(UPDATE, stmt-> {
+            stmt.setBoolean(1, permission.isReadable());
+            stmt.setBoolean(2, permission.isWritable());
+            stmt.setLong(3, permission.getUserId());
+            stmt.setLong(4, permission.getNoteId());
+        });
+        if (updates != 1)
+            throw new JdbcUpdateAffectedIncorrectNumberOfRowsException(UPDATE, 1, updates);
+        return permission;
     }
 }
