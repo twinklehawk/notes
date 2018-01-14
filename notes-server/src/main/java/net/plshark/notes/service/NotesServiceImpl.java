@@ -6,6 +6,8 @@ import java.util.Optional;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import net.plshark.notes.Note;
 import net.plshark.notes.ObjectNotFoundException;
 import net.plshark.notes.repo.NotesRepository;
@@ -50,9 +52,11 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
+    @Transactional
     public void deleteForUser(long id, long userId) throws ObjectNotFoundException {
         if (!permissionService.userIsOwner(id, userId))
             throw new ObjectNotFoundException("No note found for ID " + id);
         notesRepo.delete(id);
+        permissionService.deletePermissionsForNote(id);
     }
 }

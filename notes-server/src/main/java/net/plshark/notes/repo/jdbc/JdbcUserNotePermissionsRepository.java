@@ -22,6 +22,7 @@ public class JdbcUserNotePermissionsRepository implements UserNotePermissionsRep
     private static final String GET_BY_USER_NOTE = "SELECT * FROM user_note_permissions WHERE user_id = ? AND note_id = ?";
     private static final String INSERT = "INSERT INTO user_note_permissions (user_id, note_id, readable, writable) VALUES (?, ?, ?, ?)";
     private static final String DELETE_BY_USER_NOTE = "DELETE FROM user_note_permissions WHERE user_id = ? AND note_id = ?";
+    private static final String DELETE_BY_NOTE = "DELETE FROM user_note_permissions WHERE note_id = ?";
 
     private final JdbcOperations jdbc;
     private final UserNotePermissionRowMapper permMapper = new UserNotePermissionRowMapper();
@@ -59,6 +60,13 @@ public class JdbcUserNotePermissionsRepository implements UserNotePermissionsRep
         jdbc.update(DELETE_BY_USER_NOTE, stmt -> {
             stmt.setLong(1, userId);
             stmt.setLong(2, noteId);
+         });
+    }
+
+    @Override
+    public void deleteByNote(long noteId) {
+        jdbc.update(DELETE_BY_NOTE, stmt -> {
+            stmt.setLong(1, noteId);
          });
     }
 }

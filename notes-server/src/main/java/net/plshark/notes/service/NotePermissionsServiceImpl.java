@@ -44,4 +44,9 @@ public class NotePermissionsServiceImpl implements NotePermissionsService {
     public boolean userIsOwner(long noteId, long userId) {
         return permissionRepo.getByUserAndNote(userId, noteId).map(permission -> permission.isOwner()).orElse(false);
     }
+
+    @Override
+    public void deletePermissionsForNote(long noteId) {
+        permissionRepo.deleteByNote(noteId);
+    }
 }

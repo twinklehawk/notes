@@ -97,6 +97,7 @@ class NotesServiceImplSpec extends Specification {
 
         then:
         1 * notesRepo.delete(100)
+        1 * permissionService.deletePermissionsForNote(100)
     }
 
     def "attempting to delete a note not owned by the user should throw an ObjectNotFoundException"() {

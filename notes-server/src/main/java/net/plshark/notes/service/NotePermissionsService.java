@@ -35,4 +35,10 @@ public interface NotePermissionsService {
      * @param userId the user ID of the owner
      */
     void grantOwnerPermissions(long noteId, long userId);
+
+    /**
+     * Delete all permissions for a note
+     * @param noteId the note ID
+     */
+    void deletePermissionsForNote(long noteId);
 }

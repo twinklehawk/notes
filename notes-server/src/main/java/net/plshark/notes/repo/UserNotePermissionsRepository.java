@@ -34,4 +34,10 @@ public interface UserNotePermissionsRepository {
      * @param noteId the note ID
      */
     void deleteByUserAndNote(long userId, long noteId);
+
+    /**
+     * Delete all permissions for a note
+     * @param noteId the note ID
+     */
+    void deleteByNote(long noteId);
 }
