@@ -26,6 +26,7 @@ class JdbcUserNotePermissionsRepositoryITSpec extends Specification {
         permission.noteId == 2
         permission.readable == true
         permission.writable == true
+        permission.owner == false
 
         cleanup:
         repo.deleteByUserAndNote(1, 2)

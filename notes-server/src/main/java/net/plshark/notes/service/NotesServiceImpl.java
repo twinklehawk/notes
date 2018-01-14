@@ -8,7 +8,6 @@ import javax.inject.Singleton;
 
 import net.plshark.notes.Note;
 import net.plshark.notes.ObjectNotFoundException;
-import net.plshark.notes.entity.NoteEntity;
 import net.plshark.notes.repo.NotesRepository;
 
 /**
@@ -19,38 +18,41 @@ import net.plshark.notes.repo.NotesRepository;
 public class NotesServiceImpl implements NotesService {
 
     private final NotesRepository notesRepo;
-    private final NoteConverter converter = new NoteConverter();
+    private final NotePermissionsService permissionService;
 
     /**
      * Create a new instance
      * @param notesRepo the repository to use to store notes
+     * @param permissionService the service to check user permissions for notes
      */
-    public NotesServiceImpl(NotesRepository notesRepo) {
+    public NotesServiceImpl(NotesRepository notesRepo, NotePermissionsService permissionService) {
         this.notesRepo = Objects.requireNonNull(notesRepo, "notesRepo cannot be null");
+        this.permissionService = Objects.requireNonNull(permissionService, "permissionService cannot be null");
     }
 
     @Override
     public Optional<Note> getForUser(long id, long userId) {
-        return notesRepo.getByIdForUser(id, userId).map(note -> converter.from(note));
+        return permissionService.userHasReadPermission(id, userId) ? notesRepo.get(id) : Optional.empty();
     }
 
     @Override
     public Note save(Note note, long userId) throws ObjectNotFoundException {
-        NoteEntity savedNote;
+        Note savedNote;
         if (note.getId().isPresent()) {
-            NoteEntity currentNote = notesRepo.get(note.getId().getAsLong());
-            if (userId != currentNote.getOwnerId())
+            if (!permissionService.userHasWritePermission(note.getId().getAsLong(), userId))
                 throw new ObjectNotFoundException("No note found for ID " + note.getId().getAsLong());
-            savedNote = notesRepo.update(converter.from(note, currentNote.getOwnerId()));
+            savedNote = notesRepo.update(note);
         } else {
-            NoteEntity entity = converter.from(note, userId);
-            savedNote = notesRepo.insert(entity);
+            savedNote = notesRepo.insert(note);
+            permissionService.grantOwnerPermissions(savedNote.getId().getAsLong(), userId);
         }
-        return converter.from(savedNote);
+        return savedNote;
     }
 
     @Override
-    public void deleteForUser(long id, long userId) {
-        notesRepo.deleteByIdForUser(id, userId);
+    public void deleteForUser(long id, long userId) throws ObjectNotFoundException {
+        if (!permissionService.userIsOwner(id, userId))
+            throw new ObjectNotFoundException("No note found for ID " + id);
+        notesRepo.delete(id);
     }
 }

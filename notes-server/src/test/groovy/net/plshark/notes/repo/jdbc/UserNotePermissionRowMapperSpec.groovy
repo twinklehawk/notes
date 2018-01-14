@@ -15,6 +15,7 @@ class UserNotePermissionRowMapperSpec extends Specification {
         rs.getLong("note_id") >> 6L
         rs.getBoolean("readable") >> true
         rs.getBoolean("writable") >> false
+        rs.getBoolean("owner") >> false
 
         when:
         UserNotePermission perm = mapper.mapRow(rs, 1)
@@ -24,5 +25,6 @@ class UserNotePermissionRowMapperSpec extends Specification {
         perm.noteId == 6
         perm.readable == true
         perm.writable == false
+        perm.owner == false
     }
 }

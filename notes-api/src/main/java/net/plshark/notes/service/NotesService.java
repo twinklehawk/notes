@@ -13,8 +13,8 @@ public interface NotesService {
     /**
      * Get a note by ID for a user
      * @param id the note ID
-     * @param userId the ID of the current user
-     * @return the matching note
+     * @param userId the ID of the current user. The user should own or have read privileges on the note
+     * @return the matching note, or an empty optional if the note was not found for the user
      */
     Optional<Note> getForUser(long id, long userId);
 
@@ -32,6 +32,7 @@ public interface NotesService {
      * Delete a note by ID
      * @param id the ID of the note to delete
      * @param userId the ID of the current user
+     * @throws ObjectNotFoundException if the note could not be found
      */
-    void deleteForUser(long id, long userId);
+    void deleteForUser(long id, long userId) throws ObjectNotFoundException;
 }

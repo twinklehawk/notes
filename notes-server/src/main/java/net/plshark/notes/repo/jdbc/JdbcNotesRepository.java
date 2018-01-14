@@ -13,7 +13,7 @@ import org.springframework.jdbc.JdbcUpdateAffectedIncorrectNumberOfRowsException
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 
-import net.plshark.notes.entity.NoteEntity;
+import net.plshark.notes.Note;
 import net.plshark.notes.repo.NotesRepository;
 
 /**
@@ -23,13 +23,11 @@ import net.plshark.notes.repo.NotesRepository;
 @Singleton
 public class JdbcNotesRepository implements NotesRepository {
 
-    private static final String SELECT = "SELECT id, owner_id, correlation_id, title, content FROM notes WHERE id = ?";
-    private static final String SELECT_FOR_OWNER = "SELECT id, owner_id, correlation_id, title, content FROM notes WHERE id = ? AND owner_id = ?";
+    private static final String SELECT = "SELECT * FROM notes WHERE id = ?";
     private static final String DELETE = "DELETE FROM notes WHERE id = ?";
-    private static final String DELETE_FOR_OWNER = "DELETE FROM notes WHERE id = ? AND owner_id = ?";
     private static final String DELETE_ALL = "DELETE FROM notes";
-    private static final String UPDATE = "UPDATE notes SET owner_id = ?, correlation_id = ?, title = ?, content = ? WHERE id = ?";
-    private static final String INSERT = "INSERT INTO notes (owner_id, correlation_id, title, content) VALUES (?, ?, ?, ?)";
+    private static final String UPDATE = "UPDATE notes SET correlation_id = ?, title = ?, content = ? WHERE id = ?";
+    private static final String INSERT = "INSERT INTO notes (correlation_id, title, content) VALUES (?, ?, ?)";
 
     private final JdbcOperations jdbc;
     private final NoteRowMapper noteRowMapper;
@@ -44,22 +42,13 @@ public class JdbcNotesRepository implements NotesRepository {
     }
 
     @Override
-    public NoteEntity get(long id) {
-        List<NoteEntity> results = jdbc.query(SELECT, stmt -> stmt.setLong(1, id), noteRowMapper);
-        return DataAccessUtils.requiredSingleResult(results);
-    }
-
-    @Override
-    public Optional<NoteEntity> getByIdForUser(long id, long userId) {
-        List<NoteEntity> results = jdbc.query(SELECT_FOR_OWNER, stmt -> {
-            stmt.setLong(1, id);
-            stmt.setLong(2, userId);
-        }, noteRowMapper);
+    public Optional<Note> get(long id) {
+        List<Note> results = jdbc.query(SELECT, stmt -> stmt.setLong(1, id), noteRowMapper);
         return Optional.ofNullable(DataAccessUtils.singleResult(results));
     }
 
     @Override
-    public NoteEntity insert(NoteEntity note) {
+    public Note insert(Note note) {
         if (note.getId().isPresent())
             throw new IllegalArgumentException("Cannot insert note with ID already set");
 
@@ -67,10 +56,9 @@ public class JdbcNotesRepository implements NotesRepository {
         jdbc.update(con -> {
             PreparedStatement stmt = con.prepareStatement(INSERT, new int[] { 1 });
 
-            stmt.setLong(1, note.getOwnerId());
-            stmt.setLong(2, note.getCorrelationId());
-            stmt.setString(3, note.getTitle());
-            stmt.setString(4, note.getContent());
+            stmt.setLong(1, note.getCorrelationId());
+            stmt.setString(2, note.getTitle());
+            stmt.setString(3, note.getContent());
 
             return stmt;
         }, holder);
@@ -79,16 +67,15 @@ public class JdbcNotesRepository implements NotesRepository {
     }
 
     @Override
-    public NoteEntity update(NoteEntity note) {
+    public Note update(Note note) {
         if (!note.getId().isPresent())
             throw new IllegalArgumentException("Cannot update note without ID");
 
         int updated = jdbc.update(UPDATE, stmt -> {
-            stmt.setLong(1, note.getOwnerId());
-            stmt.setLong(2, note.getCorrelationId());
-            stmt.setString(3, note.getTitle());
-            stmt.setString(4, note.getContent());
-            stmt.setLong(5, note.getId().getAsLong());
+            stmt.setLong(1, note.getCorrelationId());
+            stmt.setString(2, note.getTitle());
+            stmt.setString(3, note.getContent());
+            stmt.setLong(4, note.getId().getAsLong());
         });
         if (updated != 1)
             throw new JdbcUpdateAffectedIncorrectNumberOfRowsException(UPDATE, 1, updated);
@@ -97,15 +84,8 @@ public class JdbcNotesRepository implements NotesRepository {
 
     @Override
     public void delete(long id) {
+        // TODO consider throwing exception since service layer does
         jdbc.update(DELETE, stmt -> stmt.setLong(1, id));
-    }
-
-    @Override
-    public void deleteByIdForUser(long id, long userId) {
-        jdbc.update(DELETE_FOR_OWNER, stmt -> {
-            stmt.setLong(1, id);
-            stmt.setLong(2, userId);
-        });
     }
 
     /**

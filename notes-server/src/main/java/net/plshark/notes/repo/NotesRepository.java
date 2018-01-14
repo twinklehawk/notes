@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
-import net.plshark.notes.entity.NoteEntity;
+import net.plshark.notes.Note;
 
 /**
  * Repository for saving, retrieving, and deleting notes
@@ -19,16 +19,7 @@ public interface NotesRepository {
      * @throws EmptyResultDataAccessException if there is no matching note
      * @throws DataAccessException if the query fails
      */
-    NoteEntity get(long id);
-
-    /**
-     * Get a note owned by a user
-     * @param id the note ID
-     * @param userId the owning user ID
-     * @return the matching note if found
-     * @throws DataAccessException if the query fails
-     */
-    Optional<NoteEntity> getByIdForUser(long id, long userId);
+    Optional<Note> get(long id);
 
     /**
      * Insert a new note
@@ -36,7 +27,7 @@ public interface NotesRepository {
      * @return the inserted note
      * @throws DataAccessException if the insert fails
      */
-    NoteEntity insert(NoteEntity note);
+    Note insert(Note note);
 
     /**
      * Update an existing note
@@ -44,7 +35,7 @@ public interface NotesRepository {
      * @return the updated note
      * @throws DataAccessException if the update fails
      */
-    NoteEntity update(NoteEntity note);
+    Note update(Note note);
 
     /**
      * Delete a note by ID
@@ -52,12 +43,4 @@ public interface NotesRepository {
      * @throws DataAccessException if the delete fails
      */
     void delete(long id);
-
-    /**
-     * Delete a note owned by a user
-     * @param id the note ID
-     * @param userId the owning user ID
-     * @throws DataAccessException if the delete fails
-     */
-    void deleteByIdForUser(long id, long userId);
 }

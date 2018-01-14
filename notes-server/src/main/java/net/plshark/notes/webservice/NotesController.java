@@ -90,9 +90,10 @@ public class NotesController {
      * Delete a note by ID
      * @param id the note ID
      * @param auth the currently authenticated user
+     * @throws ObjectNotFoundException if the note is not found
      */
     @DeleteMapping(path = "/{id}")
-    public void delete(@PathVariable("id") long id, Authentication auth) {
+    public void delete(@PathVariable("id") long id, Authentication auth) throws ObjectNotFoundException {
         notesService.deleteForUser(id, userAuthService.getUserIdForAuthentication(auth));
     }
 }

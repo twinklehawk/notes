@@ -9,6 +9,7 @@ public class UserNotePermission {
     private final long noteId;
     private boolean readable;
     private boolean writable;
+    private boolean owner;
 
     /**
      * Create a new instance with no permissions
@@ -16,7 +17,18 @@ public class UserNotePermission {
      * @param noteId the note ID
      */
     public UserNotePermission(long userId, long noteId) {
-        this(userId, noteId, false, false);
+        this(userId, noteId, false, false, false);
+    }
+
+    /**
+     * Create a new instance that does not own the note
+     * @param userId the user ID
+     * @param noteId the note ID
+     * @param readable if the user can read the note
+     * @param writable if the user can modify the note
+     */
+    public UserNotePermission(long userId, long noteId, boolean readable, boolean writable) {
+        this(userId, noteId, readable, writable, false);
     }
 
     /**
@@ -25,12 +37,14 @@ public class UserNotePermission {
      * @param noteId the note ID
      * @param readable if the user can read the note
      * @param writable if the user can modify the note
+     * @param owner if the user owns the note
      */
-    public UserNotePermission(long userId, long noteId, boolean readable, boolean writable) {
+    public UserNotePermission(long userId, long noteId, boolean readable, boolean writable, boolean owner) {
         this.userId = userId;
         this.noteId = noteId;
         this.readable = readable;
         this.writable = writable;
+        this.owner = owner;
     }
 
     /**
@@ -75,10 +89,24 @@ public class UserNotePermission {
         this.writable = writable;
     }
 
+    /**
+     * @return if the user is the owner of the note
+     */
+    public boolean isOwner() {
+        return owner;
+    }
+
+    /**
+     * @param owner if the user is the owner of the note
+     */
+    public void setOwner(boolean owner) {
+        this.owner = owner;
+    }
+
     @Override
     public String toString() {
         return "UserNotePermission [userId=" + userId + ", noteId=" + noteId + ", readable=" + readable + ", writable="
-                + writable + "]";
+                + writable + ", owner=" + owner + "]";
     }
 
     @Override
@@ -86,6 +114,7 @@ public class UserNotePermission {
         final int prime = 31;
         int result = 1;
         result = prime * result + (int) (noteId ^ (noteId >>> 32));
+        result = prime * result + (owner ? 1231 : 1237);
         result = prime * result + (readable ? 1231 : 1237);
         result = prime * result + (int) (userId ^ (userId >>> 32));
         result = prime * result + (writable ? 1231 : 1237);
@@ -102,6 +131,8 @@ public class UserNotePermission {
             return false;
         UserNotePermission other = (UserNotePermission) obj;
         if (noteId != other.noteId)
+            return false;
+        if (owner != other.owner)
             return false;
         if (readable != other.readable)
             return false;
