@@ -1,6 +1,5 @@
 package net.plshark.notes.repo.jdbc;
 
-import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Objects;
 
@@ -52,12 +51,13 @@ public class JdbcUsersRepository implements UsersRepository {
             throw new IllegalArgumentException("Cannot insert user with ID already set");
 
         GeneratedKeyHolder holder = new GeneratedKeyHolder();
-        jdbc.update(con -> {
-                PreparedStatement stmt = con.prepareStatement(INSERT, new int[] { 1 });
-                stmt.setString(1, user.getUsername());
-                stmt.setString(2, user.getPassword());
-                return stmt;
-            }, holder);
+        jdbc.update(new SafePreparedStatementCreator(
+                con -> con.prepareStatement(INSERT, new int[] { 1 }),
+                stmt-> {
+                    stmt.setString(1, user.getUsername());
+                    stmt.setString(2, user.getPassword());
+                }),
+            holder);
         user.setId(holder.getKey().longValue());
         return user;
     }

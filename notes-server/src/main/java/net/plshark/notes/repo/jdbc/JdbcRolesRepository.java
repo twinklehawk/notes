@@ -1,6 +1,5 @@
 package net.plshark.notes.repo.jdbc;
 
-import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,11 +42,10 @@ public class JdbcRolesRepository implements RolesRepository {
             throw new IllegalArgumentException("Cannot insert role with ID already set");
 
         GeneratedKeyHolder holder = new GeneratedKeyHolder();
-        jdbc.update(con -> {
-                PreparedStatement stmt = con.prepareStatement(INSERT, new int[] { 1 });
-                stmt.setString(1, role.getName());
-                return stmt;
-            }, holder);
+        jdbc.update(new SafePreparedStatementCreator(
+                con -> con.prepareStatement(INSERT, new int[] { 1 }),
+                stmt -> stmt.setString(1, role.getName())),
+            holder);
         role.setId(holder.getKey().longValue());
         return role;
     }

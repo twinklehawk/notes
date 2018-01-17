@@ -1,6 +1,5 @@
 package net.plshark.notes.repo.jdbc;
 
-import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -53,15 +52,14 @@ public class JdbcNotesRepository implements NotesRepository {
             throw new IllegalArgumentException("Cannot insert note with ID already set");
 
         GeneratedKeyHolder holder = new GeneratedKeyHolder();
-        jdbc.update(con -> {
-            PreparedStatement stmt = con.prepareStatement(INSERT, new int[] { 1 });
-
-            stmt.setLong(1, note.getCorrelationId());
-            stmt.setString(2, note.getTitle());
-            stmt.setString(3, note.getContent());
-
-            return stmt;
-        }, holder);
+        jdbc.update(new SafePreparedStatementCreator(
+                con -> con.prepareStatement(INSERT, new int[] { 1 }),
+                stmt -> {
+                    stmt.setLong(1, note.getCorrelationId());
+                    stmt.setString(2, note.getTitle());
+                    stmt.setString(3, note.getContent());
+                }),
+            holder);
         note.setId(holder.getKey().longValue());
         return note;
     }
