@@ -95,5 +95,35 @@ public class UserDetailsServiceImpl implements UserAuthenticationService {
             userRoles.forEach(role -> authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName())));
             return new UserInfo(user.getId().getAsLong(), user.getUsername(), user.getPassword(), authorities);
         }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(super.toString()).append(": ");
+            sb.append("UserID: ").append(this.userId);
+            return sb.toString();
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = super.hashCode();
+            result = prime * result + (int) (userId ^ (userId >>> 32));
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (!super.equals(obj))
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            UserInfo other = (UserInfo) obj;
+            if (userId != other.userId)
+                return false;
+            return true;
+        }
     }
 }
