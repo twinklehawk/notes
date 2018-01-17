@@ -2,6 +2,7 @@ plugins {
 	id 'java'
     id 'groovy'
     id 'org.springframework.boot' version '1.5.9.RELEASE'
+    id 'com.github.spotbugs' version '1.6.0'
 }
 
 dependencies {

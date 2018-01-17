@@ -2,6 +2,7 @@ plugins {
 	id 'java'
     id 'groovy'
 	id 'net.ltgt.apt' version '0.13'
+    id 'com.github.spotbugs' version '1.6.0'
 }
 
 dependencies {
