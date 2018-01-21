@@ -10,7 +10,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
- * Sprint configuration for the notes JDBC repository
+ * Spring configuration for the notes JDBC repository
  */
 @Configuration
 @ComponentScan

@@ -8,15 +8,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import javax.inject.Inject
 
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.web.WebAppConfiguration
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.RequestPostProcessor
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
 import com.fasterxml.jackson.databind.ObjectMapper
 
+import net.plshark.auth.throttle.impl.LoginAttemptServiceImpl
 import net.plshark.notes.Note
 import net.plshark.notes.Role
 import net.plshark.notes.User
@@ -72,6 +75,23 @@ class WebSecurityConfigITSpec extends Specification {
             .andExpect(status().isUnauthorized())
         mvc.perform(get("/notes/1").with(csrf()).with(httpBasic("test-user", "pass")))
             .andExpect(status().isNotFound())
+    }
+
+    def "too many failed login attempts are blocked"() {
+        RequestPostProcessor remoteAddr = new RequestPostProcessor() {
+            MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                request.setRemoteAddr("192.168.1.2")
+                return request
+            }
+        }
+
+        expect:
+        // because the throttling filter is before the basic auth, the throttling filter does not start blocking requests until maxAttempts + 2
+        for (int i = 0; i < LoginAttemptServiceImpl.DEFAULT_MAX_ATTEMPTS + 1; ++i)
+            mvc.perform(get("/notes/1").with(remoteAddr).with(csrf()).with(httpBasic("lockout-user", "bad-pass")))
+                .andExpect(status().isUnauthorized())
+        mvc.perform(get("/notes/1").with(remoteAddr).with(csrf()).with(httpBasic("lockout-user", "bad-pass")))
+            .andExpect(status().isTooManyRequests())
     }
 
     def "normal methods require notes-user role"() {

@@ -40,6 +40,13 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
         this(DEFAULT_MAX_ATTEMPTS, DEFAULT_LOGIN_TIME_FRAME);
     }
 
+    /**
+     * Create a new instance
+     * @param maxAttempts the maximum failed authentication attempts in the time frame before future
+     *            attempts will be blocked
+     * @param timeFrameMinutes the number of minutes before resetting the failed attempt count after a
+     *            failed login attempt
+     */
     public LoginAttemptServiceImpl(int maxAttempts, long timeFrameMinutes) {
         this.maxAttempts = maxAttempts;
         this.timeFrameMinutes = timeFrameMinutes;
