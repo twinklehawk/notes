@@ -4,6 +4,7 @@ plugins {
 	id 'net.ltgt.apt' version '0.13'
     id 'com.github.spotbugs' version '1.6.0'
     id 'com.jfrog.bintray' version '1.7.3'
+    id 'maven-publish'
 }
 
 dependencies {
@@ -23,7 +24,7 @@ bintray {
     key = System.getenv('BINTRAY_KEY')
     publish = true
     override = true
-    configurations = ['archives']
+    publications = ['mavenJava']
     pkg {
         repo = 'plshark'
         name = 'net.plshark.notes'
@@ -34,6 +35,14 @@ bintray {
         githubRepo = 'twinklehawk/notes'
         version {
             name = '0.1.0'
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
         }
     }
 }
