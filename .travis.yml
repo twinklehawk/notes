@@ -10,7 +10,8 @@ cache:
   - "$HOME/.gradle/caches/"
   - "$HOME/.gradle/wrapper/"
 deploy:
+  skip_cleanup: true
   provider: script
   script: ./gradlew bintrayUpload
   on:
-    all_branches: true
+    branch: master
