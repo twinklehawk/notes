@@ -21,8 +21,8 @@ dependencies {
 bintray {
     user = 'twinklehawk'
     key = System.getenv('BINTRAY_KEY')
-    publish = false
-    override = false
+    publish = true
+    override = true
     configurations = ['archives']
     pkg {
         repo = 'plshark'
