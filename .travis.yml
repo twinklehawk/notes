@@ -12,5 +12,3 @@ cache:
 deploy:
   provider: script
   script: ./gradlew bintrayUpload
-  on:
-    branch: master
