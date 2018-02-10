@@ -28,7 +28,7 @@ bintray {
     user = 'twinklehawk'
     key = System.getenv('BINTRAY_KEY')
     publish = true
-    override = true
+    override = false
     publications = ['mavenJava']
     pkg {
         repo = 'plshark'
