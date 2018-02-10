@@ -27,7 +27,7 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 bintray {
     user = 'twinklehawk'
     key = System.getenv('BINTRAY_KEY')
-    publish = true
+    publish = false
     override = false
     publications = ['mavenJava']
     pkg {
