@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import net.plshark.notes.BadRequestException;
-import net.plshark.notes.Role;
-import net.plshark.notes.service.UserManagementService;
+import net.plshark.BadRequestException;
+import net.plshark.users.Role;
+import net.plshark.users.service.UserManagementService;
 
 /**
  * Controller to provide web service methods for roles

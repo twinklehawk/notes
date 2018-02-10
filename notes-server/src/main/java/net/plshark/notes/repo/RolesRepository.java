@@ -3,7 +3,7 @@ package net.plshark.notes.repo;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
-import net.plshark.notes.Role;
+import net.plshark.users.Role;
 
 /**
  * Repository for saving, deleting, and retrieving roles

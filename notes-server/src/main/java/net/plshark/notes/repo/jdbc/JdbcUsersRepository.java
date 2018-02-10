@@ -11,8 +11,8 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 
-import net.plshark.notes.User;
 import net.plshark.notes.repo.UsersRepository;
+import net.plshark.users.User;
 
 /**
  * User repository that uses JDBC

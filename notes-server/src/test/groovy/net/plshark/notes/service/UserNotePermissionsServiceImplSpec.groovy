@@ -1,7 +1,7 @@
 package net.plshark.notes.service
 
+import net.plshark.ObjectNotFoundException
 import net.plshark.notes.NotePermission
-import net.plshark.notes.ObjectNotFoundException
 import net.plshark.notes.UserNotePermission
 import net.plshark.notes.repo.UserNotePermissionsRepository
 import spock.lang.Specification

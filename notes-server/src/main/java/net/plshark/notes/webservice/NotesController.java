@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import net.plshark.notes.BadRequestException;
+import net.plshark.BadRequestException;
+import net.plshark.ObjectNotFoundException;
 import net.plshark.notes.Note;
-import net.plshark.notes.ObjectNotFoundException;
 import net.plshark.notes.service.NotesService;
 import net.plshark.notes.service.UserAuthenticationService;
 

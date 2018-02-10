@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.dao.DataAccessException;
 
-import net.plshark.notes.Role;
+import net.plshark.users.Role;
 
 /**
  * Repository for adding and removing roles for users

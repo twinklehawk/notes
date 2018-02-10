@@ -1,9 +1,9 @@
 package net.plshark.notes.webservice
 
-import net.plshark.notes.BadRequestException
-import net.plshark.notes.PasswordChangeRequest
-import net.plshark.notes.User
-import net.plshark.notes.service.UserManagementService
+import net.plshark.BadRequestException
+import net.plshark.users.PasswordChangeRequest
+import net.plshark.users.User
+import net.plshark.users.service.UserManagementService
 import spock.lang.Specification
 
 class UsersControllerSpec extends Specification {

@@ -1,4 +1,4 @@
-package net.plshark.notes;
+package net.plshark;
 
 /**
  * Exception that indicates an object was not found

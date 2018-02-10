@@ -3,11 +3,11 @@ package net.plshark.notes.service
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.security.crypto.password.PasswordEncoder
 
-import net.plshark.notes.ObjectNotFoundException
-import net.plshark.notes.Role
-import net.plshark.notes.User
+import net.plshark.ObjectNotFoundException
 import net.plshark.notes.repo.RolesRepository
 import net.plshark.notes.repo.UsersRepository
+import net.plshark.users.Role
+import net.plshark.users.User
 import net.plshark.notes.repo.UserRolesRepository
 import spock.lang.Specification
 

@@ -8,8 +8,8 @@ import javax.inject.Singleton;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import net.plshark.ObjectNotFoundException;
 import net.plshark.notes.Note;
-import net.plshark.notes.ObjectNotFoundException;
 import net.plshark.notes.repo.NotesRepository;
 
 /**

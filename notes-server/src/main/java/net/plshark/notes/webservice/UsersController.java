@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import net.plshark.notes.BadRequestException;
-import net.plshark.notes.ObjectNotFoundException;
-import net.plshark.notes.PasswordChangeRequest;
-import net.plshark.notes.User;
-import net.plshark.notes.service.UserManagementService;
+import net.plshark.BadRequestException;
+import net.plshark.ObjectNotFoundException;
+import net.plshark.users.PasswordChangeRequest;
+import net.plshark.users.User;
+import net.plshark.users.service.UserManagementService;
 
 /**
  * Controller providing web service methods for users

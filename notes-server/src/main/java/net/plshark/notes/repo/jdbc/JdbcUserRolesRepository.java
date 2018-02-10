@@ -8,8 +8,8 @@ import javax.inject.Singleton;
 
 import org.springframework.jdbc.core.JdbcOperations;
 
-import net.plshark.notes.Role;
 import net.plshark.notes.repo.UserRolesRepository;
+import net.plshark.users.Role;
 
 /**
  * User roles repository that uses JDBC

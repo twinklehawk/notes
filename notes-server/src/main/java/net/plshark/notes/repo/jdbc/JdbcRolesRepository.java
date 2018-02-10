@@ -10,8 +10,8 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 
-import net.plshark.notes.Role;
 import net.plshark.notes.repo.RolesRepository;
+import net.plshark.users.Role;
 
 /**
  * Role repository that uses JDBC

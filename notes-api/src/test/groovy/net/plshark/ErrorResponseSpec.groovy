@@ -1,4 +1,4 @@
-package net.plshark.notes
+package net.plshark
 
 import spock.lang.*
 import java.time.OffsetDateTime

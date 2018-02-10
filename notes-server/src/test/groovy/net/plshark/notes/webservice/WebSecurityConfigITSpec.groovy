@@ -21,9 +21,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 
 import net.plshark.auth.throttle.impl.LoginAttemptServiceImpl
 import net.plshark.notes.Note
-import net.plshark.notes.Role
-import net.plshark.notes.User
-import net.plshark.notes.service.UserManagementService
+import net.plshark.users.Role
+import net.plshark.users.User
+import net.plshark.users.service.UserManagementService
 import spock.lang.Specification
 
 @SpringBootTest(classes = Application.class)

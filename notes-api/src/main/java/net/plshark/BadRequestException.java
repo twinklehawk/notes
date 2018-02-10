@@ -1,4 +1,4 @@
-package net.plshark.notes;
+package net.plshark;
 
 /**
  * Exception indicating a request was invalid

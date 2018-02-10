@@ -2,9 +2,9 @@ package net.plshark.notes.webservice
 
 import org.springframework.security.core.Authentication
 
-import net.plshark.notes.BadRequestException
+import net.plshark.BadRequestException
+import net.plshark.ObjectNotFoundException
 import net.plshark.notes.Note
-import net.plshark.notes.ObjectNotFoundException
 import net.plshark.notes.service.NotesService
 import net.plshark.notes.service.UserAuthenticationService
 import spock.lang.Specification

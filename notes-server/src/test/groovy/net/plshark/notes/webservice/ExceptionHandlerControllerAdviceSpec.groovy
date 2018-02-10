@@ -5,8 +5,8 @@ import javax.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.web.HttpRequestMethodNotSupportedException
 
-import net.plshark.notes.BadRequestException
-import net.plshark.notes.ObjectNotFoundException
+import net.plshark.BadRequestException
+import net.plshark.ObjectNotFoundException
 import spock.lang.Specification
 
 class ExceptionHandlerControllerAdviceSpec extends Specification {

@@ -6,9 +6,9 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.test.context.ActiveProfiles
 
-import net.plshark.notes.Role
-import net.plshark.notes.User
 import net.plshark.notes.webservice.Application
+import net.plshark.users.Role
+import net.plshark.users.User
 import spock.lang.Specification
 
 @SpringBootTest(classes = Application.class)

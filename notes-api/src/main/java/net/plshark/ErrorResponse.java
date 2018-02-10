@@ -1,10 +1,12 @@
-package net.plshark.notes;
+package net.plshark;
 
 import java.time.OffsetDateTime;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.auto.value.AutoValue;
+
+import net.plshark.AutoValue_ErrorResponse;
 
 /**
  * Response containing information about an exception

@@ -1,8 +1,8 @@
-package net.plshark.notes.service;
+package net.plshark.users.service;
 
-import net.plshark.notes.ObjectNotFoundException;
-import net.plshark.notes.Role;
-import net.plshark.notes.User;
+import net.plshark.ObjectNotFoundException;
+import net.plshark.users.Role;
+import net.plshark.users.User;
 
 /**
  * Service for modifying users and roles

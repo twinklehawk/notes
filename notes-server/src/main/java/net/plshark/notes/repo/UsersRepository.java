@@ -3,7 +3,7 @@ package net.plshark.notes.repo;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
-import net.plshark.notes.User;
+import net.plshark.users.User;
 
 /**
  * Repository for saving, deleting, and retrieving users

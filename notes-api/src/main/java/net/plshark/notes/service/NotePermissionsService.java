@@ -1,7 +1,7 @@
 package net.plshark.notes.service;
 
+import net.plshark.ObjectNotFoundException;
 import net.plshark.notes.NotePermission;
-import net.plshark.notes.ObjectNotFoundException;
 
 /**
  * Service for modifying a user's permissions to interact with notes

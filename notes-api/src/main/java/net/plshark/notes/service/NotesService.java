@@ -2,8 +2,8 @@ package net.plshark.notes.service;
 
 import java.util.Optional;
 
+import net.plshark.ObjectNotFoundException;
 import net.plshark.notes.Note;
-import net.plshark.notes.ObjectNotFoundException;
 
 /**
  * Service for notes

@@ -1,8 +1,8 @@
 package net.plshark.notes.webservice
 
-import net.plshark.notes.BadRequestException
-import net.plshark.notes.Role
-import net.plshark.notes.service.UserManagementService
+import net.plshark.BadRequestException
+import net.plshark.users.Role
+import net.plshark.users.service.UserManagementService
 import spock.lang.Specification
 
 class RolesControllerSpec extends Specification {

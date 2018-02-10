@@ -2,7 +2,7 @@ package net.plshark.notes.repo.jdbc
 
 import java.sql.ResultSet
 
-import net.plshark.notes.User
+import net.plshark.users.User
 import spock.lang.Specification
 
 class UserRowMapperSpec extends Specification {

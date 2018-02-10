@@ -10,9 +10,9 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import net.plshark.notes.BadRequestException;
-import net.plshark.notes.ErrorResponse;
-import net.plshark.notes.ObjectNotFoundException;
+import net.plshark.BadRequestException;
+import net.plshark.ErrorResponse;
+import net.plshark.ObjectNotFoundException;
 
 /**
  * Controller advice for handling exceptions

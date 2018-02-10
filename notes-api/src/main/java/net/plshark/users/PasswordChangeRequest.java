@@ -1,8 +1,10 @@
-package net.plshark.notes;
+package net.plshark.users;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.auto.value.AutoValue;
+
+import net.plshark.users.AutoValue_PasswordChangeRequest;
 
 /**
  * Request for changing a user's password

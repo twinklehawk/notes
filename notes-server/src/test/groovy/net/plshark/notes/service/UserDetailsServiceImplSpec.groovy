@@ -6,11 +6,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 
-import net.plshark.notes.Role
-import net.plshark.notes.User
 import net.plshark.notes.repo.UserRolesRepository
 import net.plshark.notes.repo.UsersRepository
 import net.plshark.notes.service.UserDetailsServiceImpl.UserInfo
+import net.plshark.users.Role
+import net.plshark.users.User
 import spock.lang.Specification
 
 class UserDetailsServiceImplSpec extends Specification {

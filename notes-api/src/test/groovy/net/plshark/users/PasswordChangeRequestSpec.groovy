@@ -1,5 +1,6 @@
-package net.plshark.notes
+package net.plshark.users
 
+import net.plshark.users.PasswordChangeRequest
 import spock.lang.*
 
 class PasswordChangeRequestSpec extends Specification {

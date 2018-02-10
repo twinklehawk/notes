@@ -6,8 +6,8 @@ import java.util.Optional;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import net.plshark.ObjectNotFoundException;
 import net.plshark.notes.NotePermission;
-import net.plshark.notes.ObjectNotFoundException;
 import net.plshark.notes.UserNotePermission;
 import net.plshark.notes.repo.UserNotePermissionsRepository;
 

@@ -2,7 +2,7 @@ package net.plshark.notes.repo.jdbc
 
 import java.sql.ResultSet
 
-import net.plshark.notes.Role
+import net.plshark.users.Role
 import spock.lang.Specification
 
 class RoleRowMapperSpec extends Specification {

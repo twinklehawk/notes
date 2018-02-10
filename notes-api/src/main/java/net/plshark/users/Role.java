@@ -1,4 +1,4 @@
-package net.plshark.notes;
+package net.plshark.users;
 
 import java.util.Objects;
 import java.util.OptionalLong;
