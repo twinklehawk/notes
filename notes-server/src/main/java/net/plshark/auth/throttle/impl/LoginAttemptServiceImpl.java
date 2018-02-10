@@ -48,9 +48,21 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
      *            failed login attempt
      */
     public LoginAttemptServiceImpl(int maxAttempts, long timeFrameMinutes) {
+        this(maxAttempts, timeFrameMinutes, TimeUnit.MINUTES);
+    }
+
+    /**
+     * Create a new instance
+     * @param maxAttempts the maximum failed authentication attempts in the time frame before future
+     *            attempts will be blocked
+     * @param timeFrame the amount of time before resetting the failed attempt count after a
+     *            failed login attempt
+     * @param timeFrameUnit the units for {@code timeFrame}
+     */
+    LoginAttemptServiceImpl(int maxAttempts, long timeFrame, TimeUnit timeFrameUnit) {
         this.maxAttempts = maxAttempts;
-        this.timeFrameMinutes = timeFrameMinutes;
-        cache = CacheBuilder.newBuilder().expireAfterWrite(timeFrameMinutes, TimeUnit.MINUTES)
+        this.timeFrameMinutes = TimeUnit.MINUTES.convert(timeFrame, timeFrameUnit);
+        cache = CacheBuilder.newBuilder().expireAfterWrite(timeFrame, timeFrameUnit)
                 .build(new CacheLoader<String, AtomicInteger>() {
                     @Override
                     public AtomicInteger load(String key) throws Exception {
