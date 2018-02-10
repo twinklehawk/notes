@@ -1,4 +1,4 @@
-package net.plshark.notes.repo;
+package net.plshark.users.repo;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package net.plshark.notes.repo.jdbc;
+package net.plshark.users.repo.jdbc;
 
 import java.util.List;
 import java.util.Objects;
@@ -10,8 +10,9 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 
-import net.plshark.notes.repo.RolesRepository;
+import net.plshark.jdbc.SafePreparedStatementCreator;
 import net.plshark.users.Role;
+import net.plshark.users.repo.RolesRepository;
 
 /**
  * Role repository that uses JDBC

@@ -1,4 +1,4 @@
-package net.plshark.notes.service;
+package net.plshark.users.service;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import net.plshark.ObjectNotFoundException;
 import net.plshark.notes.NotePermission;
 import net.plshark.notes.service.NotePermissionsService;
-import net.plshark.notes.service.UserAuthenticationService;
+import net.plshark.users.service.UserAuthenticationService;
 
 /**
  * Controller for modifying a user's permissions for a note

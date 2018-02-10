@@ -1,4 +1,4 @@
-package net.plshark.notes.repo.jdbc
+package net.plshark.users.repo.jdbc
 
 import javax.inject.Inject
 
@@ -6,10 +6,11 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.test.context.ActiveProfiles
 
-import net.plshark.notes.repo.RolesRepository
 import net.plshark.notes.webservice.Application
 import net.plshark.users.Role
 import net.plshark.users.User
+import net.plshark.users.repo.RolesRepository
+import net.plshark.users.repo.jdbc.JdbcUserRolesRepository
 import spock.lang.Specification
 
 @SpringBootTest(classes = Application.class)

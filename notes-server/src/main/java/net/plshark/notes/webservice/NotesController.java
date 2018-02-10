@@ -17,7 +17,7 @@ import net.plshark.BadRequestException;
 import net.plshark.ObjectNotFoundException;
 import net.plshark.notes.Note;
 import net.plshark.notes.service.NotesService;
-import net.plshark.notes.service.UserAuthenticationService;
+import net.plshark.users.service.UserAuthenticationService;
 
 /**
  * Controller to provide web service methods for notes

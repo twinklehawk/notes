@@ -4,7 +4,7 @@ import org.springframework.security.core.Authentication
 
 import net.plshark.notes.NotePermission
 import net.plshark.notes.service.NotePermissionsService
-import net.plshark.notes.service.UserAuthenticationService
+import net.plshark.users.service.UserAuthenticationService
 import spock.lang.Specification
 
 class NotePermissionsControllerSpec extends Specification {

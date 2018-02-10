@@ -1,4 +1,4 @@
-package net.plshark.notes.service;
+package net.plshark.users.service;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -16,10 +16,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import net.plshark.notes.repo.UsersRepository;
 import net.plshark.users.Role;
 import net.plshark.users.User;
-import net.plshark.notes.repo.UserRolesRepository;
+import net.plshark.users.repo.UserRolesRepository;
+import net.plshark.users.repo.UsersRepository;
 
 /**
  * Implementation of the UserDetailsService

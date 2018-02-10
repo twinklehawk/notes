@@ -1,5 +1,6 @@
-package net.plshark.notes.repo.jdbc
+package net.plshark.users.repo.jdbc
 
+import net.plshark.users.repo.jdbc.JdbcUsersRepository
 import spock.lang.Specification
 
 class JdbcUsersRepositorySpec extends Specification {

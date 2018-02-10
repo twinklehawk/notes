@@ -1,4 +1,4 @@
-package net.plshark.notes.repo.jdbc
+package net.plshark.jdbc
 
 import java.sql.Connection
 import java.sql.PreparedStatement

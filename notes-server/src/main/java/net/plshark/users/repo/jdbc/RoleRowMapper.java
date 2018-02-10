@@ -1,4 +1,4 @@
-package net.plshark.notes.repo.jdbc;
+package net.plshark.users.repo.jdbc;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

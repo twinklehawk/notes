@@ -12,6 +12,7 @@ import org.springframework.jdbc.JdbcUpdateAffectedIncorrectNumberOfRowsException
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 
+import net.plshark.jdbc.SafePreparedStatementCreator;
 import net.plshark.notes.Note;
 import net.plshark.notes.repo.NotesRepository;
 

@@ -1,4 +1,4 @@
-package net.plshark.notes.repo.jdbc
+package net.plshark.users.repo.jdbc
 
 import javax.inject.Inject
 
@@ -9,6 +9,7 @@ import org.springframework.test.context.ActiveProfiles
 import net.plshark.notes.webservice.Application
 import net.plshark.users.Role
 import net.plshark.users.User
+import net.plshark.users.repo.jdbc.JdbcUsersRepository
 import spock.lang.Specification
 
 @SpringBootTest(classes = Application.class)

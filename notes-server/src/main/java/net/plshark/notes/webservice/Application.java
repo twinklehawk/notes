@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Import;
 
 import net.plshark.notes.repo.jdbc.NotesRepoJdbcConfig;
 import net.plshark.notes.service.NotesServiceConfig;
+import net.plshark.users.repo.jdbc.UsersRepoJdbcConfig;
+import net.plshark.users.service.UsersServiceConfig;
 
 /**
  * Application entry point
@@ -13,7 +15,9 @@ import net.plshark.notes.service.NotesServiceConfig;
 @SpringBootApplication
 @Import({
     NotesServiceConfig.class,
-    NotesRepoJdbcConfig.class
+    NotesRepoJdbcConfig.class,
+    UsersServiceConfig.class,
+    UsersRepoJdbcConfig.class
 })
 public class Application {
 

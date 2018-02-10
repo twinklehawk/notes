@@ -1,8 +1,9 @@
-package net.plshark.notes.repo.jdbc
+package net.plshark.users.repo.jdbc
 
 import java.sql.ResultSet
 
 import net.plshark.users.Role
+import net.plshark.users.repo.jdbc.RoleRowMapper
 import spock.lang.Specification
 
 class RoleRowMapperSpec extends Specification {

@@ -1,14 +1,15 @@
-package net.plshark.notes.service
+package net.plshark.users.service
 
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.security.crypto.password.PasswordEncoder
 
 import net.plshark.ObjectNotFoundException
-import net.plshark.notes.repo.RolesRepository
-import net.plshark.notes.repo.UsersRepository
 import net.plshark.users.Role
 import net.plshark.users.User
-import net.plshark.notes.repo.UserRolesRepository
+import net.plshark.users.repo.RolesRepository
+import net.plshark.users.repo.UserRolesRepository
+import net.plshark.users.repo.UsersRepository
+import net.plshark.users.service.UserManagementServiceImpl
 import spock.lang.Specification
 
 class UserManagementServiceImplSpec extends Specification {

@@ -6,7 +6,7 @@ import net.plshark.BadRequestException
 import net.plshark.ObjectNotFoundException
 import net.plshark.notes.Note
 import net.plshark.notes.service.NotesService
-import net.plshark.notes.service.UserAuthenticationService
+import net.plshark.users.service.UserAuthenticationService
 import spock.lang.Specification
 
 class NotesControllerSpec extends Specification {

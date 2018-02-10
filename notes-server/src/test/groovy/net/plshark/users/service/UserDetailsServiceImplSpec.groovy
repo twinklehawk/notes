@@ -1,4 +1,4 @@
-package net.plshark.notes.service
+package net.plshark.users.service
 
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -6,11 +6,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 
-import net.plshark.notes.repo.UserRolesRepository
-import net.plshark.notes.repo.UsersRepository
-import net.plshark.notes.service.UserDetailsServiceImpl.UserInfo
 import net.plshark.users.Role
 import net.plshark.users.User
+import net.plshark.users.repo.UserRolesRepository
+import net.plshark.users.repo.UsersRepository
+import net.plshark.users.service.UserDetailsServiceImpl
+import net.plshark.users.service.UserDetailsServiceImpl.UserInfo
 import spock.lang.Specification
 
 class UserDetailsServiceImplSpec extends Specification {
