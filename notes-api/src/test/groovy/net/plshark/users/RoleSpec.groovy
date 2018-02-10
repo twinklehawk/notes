@@ -11,7 +11,7 @@ class RoleSpec extends Specification {
 
         then:
         role.id != null
-        !role.id.isPresent
+        !role.id.present
         role.name == "name"
     }
 
@@ -20,8 +20,8 @@ class RoleSpec extends Specification {
         Role role = new Role(12, "name")
 
         then:
-        role.id.isPresent
-        role.id.asLong == 12
+        role.id.present
+        role.id.get() == 12
         role.name == "name"
     }
 

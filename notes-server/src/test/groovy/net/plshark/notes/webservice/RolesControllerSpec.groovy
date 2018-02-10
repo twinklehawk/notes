@@ -31,7 +31,7 @@ class RolesControllerSpec extends Specification {
         controller.insert(new Role("admin"))
 
         then:
-        1 * service.saveRole({ Role role -> !role.id.isPresent && role.name == "admin" })
+        1 * service.saveRole({ Role role -> !role.id.present && role.name == "admin" })
     }
 
     def "delete passes ID through to service"() {

@@ -1,12 +1,13 @@
 package net.plshark.notes.service;
 
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.base.Optional;
 
 import net.plshark.ObjectNotFoundException;
 import net.plshark.notes.Note;
@@ -34,19 +35,20 @@ public class NotesServiceImpl implements NotesService {
 
     @Override
     public Optional<Note> getForUser(long id, long userId) {
-        return permissionService.userHasReadPermission(id, userId) ? notesRepo.get(id) : Optional.empty();
+        return permissionService.userHasReadPermission(id, userId) ? Optional.fromJavaUtil(notesRepo.get(id))
+                : Optional.absent();
     }
 
     @Override
     public Note save(Note note, long userId) throws ObjectNotFoundException {
         Note savedNote;
         if (note.getId().isPresent()) {
-            if (!permissionService.userHasWritePermission(note.getId().getAsLong(), userId))
-                throw new ObjectNotFoundException("No note found for ID " + note.getId().getAsLong());
+            if (!permissionService.userHasWritePermission(note.getId().get(), userId))
+                throw new ObjectNotFoundException("No note found for ID " + note.getId().get());
             savedNote = notesRepo.update(note);
         } else {
             savedNote = notesRepo.insert(note);
-            permissionService.grantOwnerPermissions(savedNote.getId().getAsLong(), userId);
+            permissionService.grantOwnerPermissions(savedNote.getId().get(), userId);
         }
         return savedNote;
     }

@@ -47,8 +47,7 @@ public class JdbcRolesRepository implements RolesRepository {
                 con -> con.prepareStatement(INSERT, new int[] { 1 }),
                 stmt -> stmt.setString(1, role.getName())),
             holder);
-        role.setId(holder.getKey().longValue());
-        return role;
+        return new Role(holder.getKey().longValue(), role.getName());
     }
 
     @Override

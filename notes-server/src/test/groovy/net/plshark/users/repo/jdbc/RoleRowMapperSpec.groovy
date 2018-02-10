@@ -19,7 +19,7 @@ class RoleRowMapperSpec extends Specification {
         Role role = mapper.mapRow(rs, 1)
 
         then:
-        role.id.asLong == 5
+        role.id.get() == 5
         role.name == "admin"
     }
 }

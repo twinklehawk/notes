@@ -23,24 +23,24 @@ class JdbcRolesRepositoryITSpec extends Specification {
         Role inserted = repo.insert(new Role("test-role"))
 
         then:
-        inserted.id.isPresent
+        inserted.id.isPresent()
         inserted.name == "test-role"
 
         cleanup:
-        repo.delete(inserted.id.asLong)
+        repo.delete(inserted.id.get())
     }
 
     def "can retrieve a previously inserted role by ID"() {
         Role inserted = repo.insert(new Role("test-role"))
 
         when:
-        Role role = repo.getForId(inserted.id.asLong)
+        Role role = repo.getForId(inserted.id.get())
 
         then:
         role == inserted
 
         cleanup:
-        repo.delete(inserted.id.asLong)
+        repo.delete(inserted.id.get())
     }
 
     def "retrieving a role by ID when no role matches throws EmptyResultDataAccessException"() {
@@ -61,7 +61,7 @@ class JdbcRolesRepositoryITSpec extends Specification {
         role == inserted
 
         cleanup:
-        repo.delete(inserted.id.asLong)
+        repo.delete(inserted.id.get())
     }
 
     def "retrieving a role by name when no role matches throws EmptyResultDataAccessException"() {
@@ -76,8 +76,8 @@ class JdbcRolesRepositoryITSpec extends Specification {
         Role inserted = repo.insert(new Role("test-role"))
 
         when:
-        repo.delete(inserted.id.asLong)
-        repo.getForId(inserted.id.asLong)
+        repo.delete(inserted.id.get())
+        repo.getForId(inserted.id.get())
 
         then: "get should throw an exception since the row should be gone"
         thrown(EmptyResultDataAccessException)

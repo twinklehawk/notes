@@ -9,17 +9,10 @@ class UserSpec extends Specification {
         User user
 
         when:
-        user = new User()
-
-        then:
-        user.id != null
-        !user.id.isPresent
-
-        when:
         user = new User("name", "pass")
 
         then:
         user.id != null
-        !user.id.isPresent
+        !user.id.present
     }
 }

@@ -52,7 +52,7 @@ class WebSecurityConfigITSpec extends Specification {
 
     def cleanup() {
         if (notesUser != null)
-            userMgmt.deleteUser(notesUser.id.asLong)
+            userMgmt.deleteUser(notesUser.id.get())
     }
 
     def "csrf tokens are required on post requests"() {

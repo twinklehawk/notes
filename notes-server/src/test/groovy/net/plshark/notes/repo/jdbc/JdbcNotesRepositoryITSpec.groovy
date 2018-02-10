@@ -26,7 +26,7 @@ class JdbcNotesRepositoryITSpec extends Specification {
         Note insertedNote = repo.insert(new Note("title", "content"))
 
         when:
-        Note note = repo.get(insertedNote.id.asLong).get()
+        Note note = repo.get(insertedNote.id.get()).get()
 
         then:
         note == insertedNote
@@ -37,7 +37,7 @@ class JdbcNotesRepositoryITSpec extends Specification {
         Note note = repo.insert(new Note("title", "content"))
 
         then:
-        note.id.isPresent
+        note.id.isPresent()
         note.correlationId == 0
         note.title == "title"
         note.content == "content"
@@ -60,7 +60,7 @@ class JdbcNotesRepositoryITSpec extends Specification {
 
         then:
         note == inserted
-        repo.get(note.id.asLong).get().content == "new content"
+        repo.get(note.id.get()).get().content == "new content"
     }
 
     def "updating a note with no ID throws an exception"() {
@@ -83,10 +83,10 @@ class JdbcNotesRepositoryITSpec extends Specification {
         Note inserted = repo.insert(new Note("title", "content"))
 
         when:
-        repo.delete(inserted.id.asLong)
+        repo.delete(inserted.id.get())
 
         then:
-        !repo.get(inserted.id.asLong).isPresent()
+        !repo.get(inserted.id.get()).isPresent()
     }
 
     def "no exception is thrown when a delete does not affect any rows"() {

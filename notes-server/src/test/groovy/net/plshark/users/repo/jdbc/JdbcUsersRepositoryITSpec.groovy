@@ -24,25 +24,25 @@ class JdbcUsersRepositoryITSpec extends Specification {
         User inserted = repo.insert(new User("name", "pass"))
 
         then:
-        inserted.id.isPresent
+        inserted.id.isPresent()
         inserted.username == "name"
         inserted.password == "pass"
 
         cleanup:
-        repo.delete(inserted.id.asLong)
+        repo.delete(inserted.id.get())
     }
 
     def "can retrieve a previously inserted user by ID"() {
         User inserted = repo.insert(new User("name", "pass"))
 
         when:
-        User user = repo.getForId(inserted.id.asLong)
+        User user = repo.getForId(inserted.id.get())
 
         then:
         user == inserted
 
         cleanup:
-        repo.delete(inserted.id.asLong)
+        repo.delete(inserted.id.get())
     }
 
     def "can retrieve  previously inserted user by username"() {
@@ -55,15 +55,15 @@ class JdbcUsersRepositoryITSpec extends Specification {
         user == inserted
 
         cleanup:
-        repo.delete(inserted.id.asLong)
+        repo.delete(inserted.id.get())
     }
 
     def "can delete a previously inserted user by ID"() {
         User inserted = repo.insert(new User("name", "pass"))
 
         when:
-        repo.delete(inserted.id.asLong)
-        repo.getForId(inserted.id.asLong)
+        repo.delete(inserted.id.get())
+        repo.getForId(inserted.id.get())
 
         then: "should throw an exception since the row should be gone"
         thrown(EmptyResultDataAccessException)
@@ -81,33 +81,33 @@ class JdbcUsersRepositoryITSpec extends Specification {
         User inserted = repo.insert(new User("name", "pass"))
 
         when:
-        repo.updatePassword(inserted.id.asLong, "pass", "new-pass")
-        User user = repo.getForId(inserted.id.asLong)
+        repo.updatePassword(inserted.id.get(), "pass", "new-pass")
+        User user = repo.getForId(inserted.id.get())
 
         then:
         user.password == "new-pass"
 
         cleanup:
-        repo.delete(inserted.id.asLong)
+        repo.delete(inserted.id.get())
     }
 
     def "update password should throw an EmptyResultDataAccessException if the current password is wrong"() {
         User inserted = repo.insert(new User("name", "pass"))
 
         when:
-        repo.updatePassword(inserted.id.asLong, "wrong-pass", "new-pass")
+        repo.updatePassword(inserted.id.get(), "wrong-pass", "new-pass")
 
         then:
         thrown(EmptyResultDataAccessException)
 
         when:
-        User user = repo.getForId(inserted.id.asLong)
+        User user = repo.getForId(inserted.id.get())
 
         then:
         user.password == "pass"
 
         cleanup:
-        repo.delete(inserted.id.asLong)
+        repo.delete(inserted.id.get())
     }
 
     def "update password should throw an EmptyResultDataAccessException if no user has the ID"() {

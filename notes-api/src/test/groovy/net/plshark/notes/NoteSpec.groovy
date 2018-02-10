@@ -11,13 +11,7 @@ class NoteSpec extends Specification {
         note = new Note("title", "content")
 
         then:
-        !note.id.isPresent
-
-        when:
-        note = new Note(OptionalLong.empty(), 0, "title", "content")
-
-        then:
-        !note.id.isPresent
+        !note.id.present
     }
 
     def "null constructor args are not allowed"() {
@@ -35,18 +29,6 @@ class NoteSpec extends Specification {
 
         when:
         new Note(null, 0, "", "")
-
-        then:
-        thrown(NullPointerException)
-
-        when:
-        new Note(OptionalLong.empty(), 0, null, "")
-
-        then:
-        thrown(NullPointerException)
-
-        when:
-        new Note(OptionalLong.empty(), 0, "", null)
 
         then:
         thrown(NullPointerException)

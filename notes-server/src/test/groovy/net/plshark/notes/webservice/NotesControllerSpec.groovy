@@ -2,6 +2,8 @@ package net.plshark.notes.webservice
 
 import org.springframework.security.core.Authentication
 
+import com.google.common.base.Optional
+
 import net.plshark.BadRequestException
 import net.plshark.ObjectNotFoundException
 import net.plshark.notes.Note
@@ -42,7 +44,7 @@ class NotesControllerSpec extends Specification {
         controller.update(100, new Note("", ""), Mock(Authentication))
 
         then:
-        1 * notesService.save({ Note n -> n.id.asLong == 100 }, 0)
+        1 * notesService.save({ Note n -> n.id.get() == 100 }, 0)
     }
 
     def "update passes the note through and retrieves the current user ID"() {
@@ -67,7 +69,7 @@ class NotesControllerSpec extends Specification {
     }
 
     def "an ObjectNotFoundException is thrown when no note matches a get request"() {
-        notesService.getForUser(2, 0) >> Optional.empty()
+        notesService.getForUser(2, 0) >> Optional.absent()
 
         when:
         controller.get(2, Mock(Authentication))

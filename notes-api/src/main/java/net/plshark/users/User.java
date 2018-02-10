@@ -1,23 +1,18 @@
 package net.plshark.users;
 
 import java.util.Objects;
-import java.util.OptionalLong;
+import com.google.common.base.Optional;
 
 /**
  * Data for a user
  */
 public class User {
 
-    private OptionalLong id = OptionalLong.empty();
+    private Long id;
     private String username;
     private String password;
 
-    /**
-     * Create a new instance
-     */
-    public User() {
-
-    }
+    // TODO sort out constructors, null check
 
     /**
      * Create a new instance
@@ -36,7 +31,7 @@ public class User {
      * @param password the password
      */
     public User(long id, String username, String password) {
-        this.id = OptionalLong.of(id);
+        this.id = id;
         this.username = username;
         this.password = password;
     }
@@ -44,15 +39,8 @@ public class User {
     /**
      * @return the ID, not set if the user has not been saved yet
      */
-    public OptionalLong getId() {
-        return id;
-    }
-
-    /**
-     * @param id the user ID
-     */
-    public void setId(long id) {
-        this.id = OptionalLong.of(id);
+    public Optional<Long> getId() {
+        return Optional.fromNullable(id);
     }
 
     /**

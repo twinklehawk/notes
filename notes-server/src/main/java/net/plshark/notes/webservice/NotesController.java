@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.common.base.Optional;
+
 import net.plshark.BadRequestException;
 import net.plshark.ObjectNotFoundException;
 import net.plshark.notes.Note;
@@ -48,8 +50,10 @@ public class NotesController {
      */
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Note get(@PathVariable("id") long id, Authentication auth) throws ObjectNotFoundException {
-        return notesService.getForUser(id, userAuthService.getUserIdForAuthentication(auth))
-                .orElseThrow(() -> new ObjectNotFoundException("No note found for id " + id));
+        Optional<Note> note = notesService.getForUser(id, userAuthService.getUserIdForAuthentication(auth));
+        if (!note.isPresent())
+            throw new ObjectNotFoundException("No note found for id " + id);
+        return note.get();
     }
 
     /**
@@ -79,8 +83,8 @@ public class NotesController {
     public Note update(@PathVariable("id") long id, @RequestBody Note note, Authentication auth)
             throws BadRequestException, ObjectNotFoundException {
         if (!note.getId().isPresent())
-            note.setId(id);
-        else if (note.getId().getAsLong() != id)
+            note = new Note(id, note.getCorrelationId(), note.getTitle(), note.getContent());
+        else if (note.getId().get() != id)
             throw new BadRequestException("Note ID must match ID in path");
 
         return notesService.save(note, userAuthService.getUserIdForAuthentication(auth));

@@ -1,14 +1,14 @@
 package net.plshark.users;
 
 import java.util.Objects;
-import java.util.OptionalLong;
+import com.google.common.base.Optional;
 
 /**
  * Data for a role
  */
 public class Role {
 
-    private OptionalLong id;
+    private Long id;
     private String name;
 
     /**
@@ -16,7 +16,7 @@ public class Role {
      * @param name the role name
      */
     public Role(String name) {
-        this(OptionalLong.empty(), name);
+        this(Optional.<Long>absent(), name);
     }
 
     /**
@@ -25,26 +25,20 @@ public class Role {
      * @param name the role name
      */
     public Role(long id, String name) {
-        this(OptionalLong.of(id), name);
+        this(Optional.of(id), name);
     }
 
-    private Role(OptionalLong id, String name) {
-        this.id = Objects.requireNonNull(id);
+    private Role(Optional<Long> id, String name) {
+        if (id.isPresent())
+            this.id = id.get();
         this.name = Objects.requireNonNull(name, "name cannot be null");
     }
 
     /**
      * @return the ID, can be empty if not saved yet
      */
-    public OptionalLong getId() {
-        return id;
-    }
-
-    /**
-     * @param id the role ID
-     */
-    public void setId(long id) {
-        this.id = OptionalLong.of(id);
+    public Optional<Long> getId() {
+        return Optional.fromNullable(id);
     }
 
     /**

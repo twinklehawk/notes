@@ -59,8 +59,7 @@ public class JdbcUsersRepository implements UsersRepository {
                     stmt.setString(2, user.getPassword());
                 }),
             holder);
-        user.setId(holder.getKey().longValue());
-        return user;
+        return new User(holder.getKey().longValue(), user.getUsername(), user.getPassword());
     }
 
     @Override

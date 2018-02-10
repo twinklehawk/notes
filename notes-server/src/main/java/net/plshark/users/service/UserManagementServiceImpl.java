@@ -90,7 +90,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     @Override
     public void grantRoleToUser(User user, Role role) throws ObjectNotFoundException {
-        grantRoleToUser(user.getId().getAsLong(), role.getId().getAsLong());
+        grantRoleToUser(user.getId().get(), role.getId().get());
     }
 
     @Override

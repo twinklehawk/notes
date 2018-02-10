@@ -1,5 +1,7 @@
 package net.plshark.notes.service
 
+import com.google.common.base.Optional
+
 import net.plshark.ObjectNotFoundException
 import net.plshark.notes.Note
 import net.plshark.notes.repo.NotesRepository
@@ -59,7 +61,7 @@ class NotesServiceImplSpec extends Specification {
 
     def "retrieving a note by ID for a user should pass the IDs through"() {
         permissionService.userHasReadPermission(100, 200) >> true
-        notesRepo.get(100) >> Optional.of(new Note(100, 3, "title", "content"))
+        notesRepo.get(100) >> java.util.Optional.of(new Note(100, 3, "title", "content"))
 
         when:
         Optional<Note> note = service.getForUser(100, 200)
@@ -70,7 +72,7 @@ class NotesServiceImplSpec extends Specification {
 
     def "attempting to retrieve a note that does not exist should return an empty optional"() {
         permissionService.userHasReadPermission(100, 200) >> true
-        notesRepo.get(100) >> { Optional.empty() }
+        notesRepo.get(100) >> { java.util.Optional.empty() }
 
         when:
         Optional<Note> note = service.getForUser(100, 200)

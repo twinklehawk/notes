@@ -31,48 +31,48 @@ class JdbcUserRolesRepositoryITSpec extends Specification {
 
     def cleanup() {
         if (testRole1 != null)
-            rolesRepo.delete(testRole1.id.asLong)
+            rolesRepo.delete(testRole1.id.get())
         if (testRole2 != null)
-            rolesRepo.delete(testRole2.id.asLong)
+            rolesRepo.delete(testRole2.id.get())
     }
 
     def "can add a role to a user"() {
         when:
-        repo.insertUserRole(100, testRole1.id.asLong)
+        repo.insertUserRole(100, testRole1.id.get())
 
         then:
-        repo.getRolesForUser(100).stream().anyMatch{role -> role.id.asLong == testRole1.id.asLong}
+        repo.getRolesForUser(100).stream().anyMatch{role -> role.id.get() == testRole1.id.get()}
 
         cleanup:
         repo.deleteUserRolesForUser(100)
     }
 
     def "can retrieve all roles for a user"() {
-        repo.insertUserRole(100, testRole1.id.asLong)
-        repo.insertUserRole(100, testRole2.id.asLong)
+        repo.insertUserRole(100, testRole1.id.get())
+        repo.insertUserRole(100, testRole2.id.get())
 
         when:
         List<Role> roles = repo.getRolesForUser(100)
 
         then:
         roles.size() == 2
-        roles.stream().anyMatch{role -> role.id.asLong == testRole1.id.asLong}
-        roles.stream().anyMatch{role -> role.id.asLong == testRole2.id.asLong}
+        roles.stream().anyMatch{role -> role.id.get() == testRole1.id.get()}
+        roles.stream().anyMatch{role -> role.id.get() == testRole2.id.get()}
 
         cleanup:
         repo.deleteUserRolesForUser(100)
     }
 
     def "retrieving roles for a user does not return roles for other users"() {
-        repo.insertUserRole(100, testRole1.id.asLong)
-        repo.insertUserRole(200, testRole2.id.asLong)
+        repo.insertUserRole(100, testRole1.id.get())
+        repo.insertUserRole(200, testRole2.id.get())
 
         when:
         List<Role> roles = repo.getRolesForUser(100)
 
         then:
         roles.size() == 1
-        roles.stream().anyMatch{role -> role.id.asLong == testRole1.id.asLong}
+        roles.stream().anyMatch{role -> role.id.get() == testRole1.id.get()}
 
         cleanup:
         repo.deleteUserRolesForUser(100)
@@ -80,10 +80,10 @@ class JdbcUserRolesRepositoryITSpec extends Specification {
     }
 
     def "can delete an existing user role"() {
-        repo.insertUserRole(100, testRole1.id.asLong)
+        repo.insertUserRole(100, testRole1.id.get())
 
         when:
-        repo.deleteUserRole(100, testRole1.id.asLong)
+        repo.deleteUserRole(100, testRole1.id.get())
 
         then:
         repo.getRolesForUser(100).size() == 0
@@ -98,8 +98,8 @@ class JdbcUserRolesRepositoryITSpec extends Specification {
     }
 
     def "can delete all roles for a user"() {
-        repo.insertUserRole(100, testRole1.id.asLong)
-        repo.insertUserRole(100, testRole2.id.asLong)
+        repo.insertUserRole(100, testRole1.id.get())
+        repo.insertUserRole(100, testRole2.id.get())
 
         when:
         repo.deleteUserRolesForUser(100)
@@ -109,8 +109,8 @@ class JdbcUserRolesRepositoryITSpec extends Specification {
     }
 
     def "deleting all roles for a user does not affect other users"() {
-        repo.insertUserRole(100, testRole1.id.asLong)
-        repo.insertUserRole(200, testRole2.id.asLong)
+        repo.insertUserRole(100, testRole1.id.get())
+        repo.insertUserRole(200, testRole2.id.get())
 
         when:
         repo.deleteUserRolesForUser(100)
@@ -125,11 +125,11 @@ class JdbcUserRolesRepositoryITSpec extends Specification {
     }
 
     def "can remove a role from all users"() {
-        repo.insertUserRole(100, testRole1.id.asLong)
-        repo.insertUserRole(200, testRole1.id.asLong)
+        repo.insertUserRole(100, testRole1.id.get())
+        repo.insertUserRole(200, testRole1.id.get())
 
         when:
-        repo.deleteUserRolesForRole(testRole1.id.asLong)
+        repo.deleteUserRolesForRole(testRole1.id.get())
 
         then:
         repo.getRolesForUser(100).size() == 0
@@ -137,11 +137,11 @@ class JdbcUserRolesRepositoryITSpec extends Specification {
     }
 
     def "removing a role from all users does not affect other roles"() {
-        repo.insertUserRole(100, testRole1.id.asLong)
-        repo.insertUserRole(200, testRole2.id.asLong)
+        repo.insertUserRole(100, testRole1.id.get())
+        repo.insertUserRole(200, testRole2.id.get())
 
         when:
-        repo.deleteUserRolesForRole(testRole1.id.asLong)
+        repo.deleteUserRolesForRole(testRole1.id.get())
 
         then:
         repo.getRolesForUser(100).size() == 0

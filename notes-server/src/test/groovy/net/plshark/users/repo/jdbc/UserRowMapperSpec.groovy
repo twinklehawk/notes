@@ -20,7 +20,7 @@ class UserRowMapperSpec extends Specification {
         User user = mapper.mapRow(rs, 1)
 
         then:
-        user.id.asLong == 5
+        user.id.get() == 5
         user.username == "admin"
         user.password == "54321"
     }

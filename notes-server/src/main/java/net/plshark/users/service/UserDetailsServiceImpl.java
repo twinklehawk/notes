@@ -49,7 +49,7 @@ public class UserDetailsServiceImpl implements UserAuthenticationService {
         } catch (DataAccessException e) {
             throw new UsernameNotFoundException("No matching user for " + username, e);
         }
-        List<Role> userRoles = userRolesRepo.getRolesForUser(user.getId().getAsLong());
+        List<Role> userRoles = userRolesRepo.getRolesForUser(user.getId().get());
 
         return UserInfo.forUser(user, userRoles);
     }
@@ -61,7 +61,7 @@ public class UserDetailsServiceImpl implements UserAuthenticationService {
         if (auth.getPrincipal() instanceof UserInfo)
             userId = ((UserInfo) auth.getPrincipal()).getUserId();
         else
-            userId = userRepo.getForUsername(auth.getName()).getId().getAsLong();
+            userId = userRepo.getForUsername(auth.getName()).getId().get();
 
         return userId;
     }
@@ -93,7 +93,7 @@ public class UserDetailsServiceImpl implements UserAuthenticationService {
         public static UserInfo forUser(User user, List<Role> userRoles) {
             Set<GrantedAuthority> authorities = new HashSet<>(userRoles.size());
             userRoles.forEach(role -> authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName())));
-            return new UserInfo(user.getId().getAsLong(), user.getUsername(), user.getPassword(), authorities);
+            return new UserInfo(user.getId().get(), user.getUsername(), user.getPassword(), authorities);
         }
 
         @Override
