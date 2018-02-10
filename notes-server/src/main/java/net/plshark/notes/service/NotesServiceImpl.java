@@ -35,8 +35,8 @@ public class NotesServiceImpl implements NotesService {
 
     @Override
     public Optional<Note> getForUser(long id, long userId) {
-        return permissionService.userHasReadPermission(id, userId) ? Optional.fromJavaUtil(notesRepo.get(id))
-                : Optional.absent();
+        boolean canRead = permissionService.userHasReadPermission(id, userId);
+        return canRead ? notesRepo.get(id).map(note -> Optional.of(note)).orElse(Optional.absent()) : Optional.absent();
     }
 
     @Override
