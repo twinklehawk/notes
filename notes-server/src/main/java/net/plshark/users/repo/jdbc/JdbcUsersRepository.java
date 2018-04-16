@@ -2,6 +2,7 @@ package net.plshark.users.repo.jdbc;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -40,10 +41,10 @@ public class JdbcUsersRepository implements UsersRepository {
     }
 
     @Override
-    public User getForUsername(String username) {
+    public Optional<User> getForUsername(String username) {
         Objects.requireNonNull(username, "username cannot be null");
         List<User> results = jdbc.query(SELECT_BY_USERNAME, stmt -> stmt.setString(1, username), userRowMapper);
-        return DataAccessUtils.requiredSingleResult(results);
+        return Optional.ofNullable(DataAccessUtils.singleResult(results));
     }
 
     @Override
@@ -68,9 +69,9 @@ public class JdbcUsersRepository implements UsersRepository {
     }
 
     @Override
-    public User getForId(long id) {
+    public Optional<User> getForId(long id) {
         List<User> results = jdbc.query(SELECT_BY_ID, stmt -> stmt.setLong(1, id), userRowMapper);
-        return DataAccessUtils.requiredSingleResult(results);
+        return Optional.ofNullable(DataAccessUtils.singleResult(results));
     }
 
     @Override

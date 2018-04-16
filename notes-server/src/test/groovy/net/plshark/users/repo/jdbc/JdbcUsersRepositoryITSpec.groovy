@@ -36,7 +36,7 @@ class JdbcUsersRepositoryITSpec extends Specification {
         User inserted = repo.insert(new User("name", "pass"))
 
         when:
-        User user = repo.getForId(inserted.id.get())
+        User user = repo.getForId(inserted.id.get()).get()
 
         then:
         user == inserted
@@ -49,7 +49,7 @@ class JdbcUsersRepositoryITSpec extends Specification {
         User inserted = repo.insert(new User("name", "pass"))
 
         when:
-        User user = repo.getForUsername("name")
+        User user = repo.getForUsername("name").get()
 
         then:
         user == inserted
@@ -63,10 +63,10 @@ class JdbcUsersRepositoryITSpec extends Specification {
 
         when:
         repo.delete(inserted.id.get())
-        repo.getForId(inserted.id.get())
+        Optional<User> retrieved = repo.getForId(inserted.id.get())
 
-        then: "should throw an exception since the row should be gone"
-        thrown(EmptyResultDataAccessException)
+        then: "should return empty since the row should be gone"
+        !retrieved.isPresent()
     }
 
     def "no exception is thrown when attempting to delete a user that does not exist"() {
@@ -82,7 +82,7 @@ class JdbcUsersRepositoryITSpec extends Specification {
 
         when:
         repo.updatePassword(inserted.id.get(), "pass", "new-pass")
-        User user = repo.getForId(inserted.id.get())
+        User user = repo.getForId(inserted.id.get()).get()
 
         then:
         user.password.get() == "new-pass"
@@ -101,7 +101,7 @@ class JdbcUsersRepositoryITSpec extends Specification {
         thrown(EmptyResultDataAccessException)
 
         when:
-        User user = repo.getForId(inserted.id.get())
+        User user = repo.getForId(inserted.id.get()).get()
 
         then:
         user.password.get() == "pass"

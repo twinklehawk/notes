@@ -1,5 +1,7 @@
 package net.plshark.users.service;
 
+import java.util.Optional;
+
 import net.plshark.ObjectNotFoundException;
 import net.plshark.users.Role;
 import net.plshark.users.User;
@@ -35,9 +37,8 @@ public interface UserManagementService {
      * Retrieve a role by name
      * @param name the role name
      * @return the matching role
-     * @throws ObjectNotFoundException if the role does not exist
      */
-    Role getRoleByName(String name) throws ObjectNotFoundException;
+    Optional<Role> getRoleByName(String name);
 
     /**
      * Save a new role

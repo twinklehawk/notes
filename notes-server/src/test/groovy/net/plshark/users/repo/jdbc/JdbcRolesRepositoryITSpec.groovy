@@ -34,7 +34,7 @@ class JdbcRolesRepositoryITSpec extends Specification {
         Role inserted = repo.insert(new Role("test-role"))
 
         when:
-        Role role = repo.getForId(inserted.id.get())
+        Role role = repo.getForId(inserted.id.get()).get()
 
         then:
         role == inserted
@@ -43,19 +43,16 @@ class JdbcRolesRepositoryITSpec extends Specification {
         repo.delete(inserted.id.get())
     }
 
-    def "retrieving a role by ID when no role matches throws EmptyResultDataAccessException"() {
-        when:
-        Role role = repo.getForId(1000)
-
-        then:
-        thrown(EmptyResultDataAccessException)
+    def "retrieving a role by ID when no role matches returns an empty optional"() {
+        expect:
+        repo.getForId(1000).isPresent() == false
     }
 
     def "can retrieve a previously inserted role by name"() {
         Role inserted = repo.insert(new Role("test-role"))
 
         when:
-        Role role = repo.getForName("test-role")
+        Role role = repo.getForName("test-role").get()
 
         then:
         role == inserted
@@ -66,10 +63,10 @@ class JdbcRolesRepositoryITSpec extends Specification {
 
     def "retrieving a role by name when no role matches throws EmptyResultDataAccessException"() {
         when:
-        Role role = repo.getForName("test-role")
+        Optional<Role> role = repo.getForName("test-role")
 
         then:
-        thrown(EmptyResultDataAccessException)
+        role.isPresent() == false
     }
 
     def "can delete a previously inserted role by ID"() {
@@ -77,10 +74,10 @@ class JdbcRolesRepositoryITSpec extends Specification {
 
         when:
         repo.delete(inserted.id.get())
-        repo.getForId(inserted.id.get())
+        Optional<Role> retrieved = repo.getForId(inserted.id.get())
 
-        then: "get should throw an exception since the row should be gone"
-        thrown(EmptyResultDataAccessException)
+        then: "get should return empty since the row should be gone"
+        retrieved.isPresent() == false
     }
 
     def "no exception is thrown when attempting to delete a role that does not exist"() {

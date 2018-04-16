@@ -9,7 +9,6 @@ import java.util.Set;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -43,12 +42,8 @@ public class UserDetailsServiceImpl implements UserAuthenticationService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user;
-        try {
-            user = userRepo.getForUsername(username);
-        } catch (DataAccessException e) {
-            throw new UsernameNotFoundException("No matching user for " + username, e);
-        }
+        User user = userRepo.getForUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("No matching user for " + username));
         List<Role> userRoles = userRolesRepo.getRolesForUser(user.getId().get());
 
         return UserInfo.forUser(user, userRoles);
@@ -61,7 +56,7 @@ public class UserDetailsServiceImpl implements UserAuthenticationService {
         if (auth.getPrincipal() instanceof UserInfo)
             userId = ((UserInfo) auth.getPrincipal()).getUserId();
         else
-            userId = userRepo.getForUsername(auth.getName()).getId().get();
+            userId = userRepo.getForUsername(auth.getName()).get().getId().get();
 
         return userId;
     }
