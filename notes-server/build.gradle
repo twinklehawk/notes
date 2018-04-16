@@ -1,7 +1,8 @@
 plugins {
 	id 'java'
     id 'groovy'
-    id 'org.springframework.boot' version '1.5.9.RELEASE'
+    id 'org.springframework.boot' version '2.0.1.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.5.RELEASE'
     id 'com.github.spotbugs' version '1.6.0'
 }
 
@@ -26,5 +27,6 @@ dependencies {
     runtime 'com.h2database:h2'
     runtime 'org.flywaydb:flyway-core'
     
+    // TODO remove
     runtime('org.springframework.boot:spring-boot-properties-migrator')
 }
