@@ -2,7 +2,6 @@ language: java
 env:
   global:
     secure: q+2gL4nJ9ewGfICESInPZjRQkh+fdqUPaESOeh9W1670tUt42tgoCvRS9Yh7hEeKXMQx/dmbtnzKVA6GiPlLHhYn5tmJxmPhCugHRc6C5/cSeclskXFuKhZw68RiJtl4SL2cbriGWDdDBI2WtYfK+0Rhjcfxjx69xq1sEdCP6dgranqL4q+AHY4uZjm4Ht9asW5g7ZzWUxclZOD3VfMLMQKoiCbZJbojSlLAu7QDr++E6dB9oaYfWrcO7kposke4AiDeS/yFYU/dV6yQv0hhWreMRstz2o7zGpeSGeWkiVdVeOz6byT1zx3UFH7GMQmvhmwgmtlbC5KvG/zxdVNiSP/CjsUwfz2fOwB34fjj9mJrRyRl2ypDd3bUB8Q3mMIHd1lp+GwKxOQFIo6232sLMF9eye3wr3DvgnWOL0/wlL0xRD4QQcneagJftPb3JLhiyGBQAfbaRBpwite1f3a7iQwYKLkIdkreGvTH4cDaZXQykeDhCBFE+QyAcoGbwR8N4g7C9W7Zh6nTNTKNuwYvb+ZTPw4U9jAo0oOrP5l+oEqwIsoCvl7t4Q5EzrvHS+tMSUN/ySYjvNtjUOKP2EESqDv9+WXA5t/xJmWOwPAQHWwTpUWXqvbqXEWS50EZ7J24vFfpQZX3YPOMOHqNC2K89zNmYAXrtNvrAAYuw7MBR4E=
-script: ./gradlew build
 before_cache:
 - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
 - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -13,6 +12,6 @@ cache:
 deploy:
   skip_cleanup: true
   provider: script
-  script: ./gradlew bintrayUpload
+  script: ./gradlew build bintrayUpload -x test
   on:
-    branch: master
+    branch: deploy
