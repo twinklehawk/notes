@@ -34,7 +34,7 @@ class UsersControllerSpec extends Specification {
         User user = controller.insert(new User("name", "pass"))
 
         then:
-        user.password == null
+        user.password.present == false
     }
 
     def "delete passes the user ID through to be deleted"() {

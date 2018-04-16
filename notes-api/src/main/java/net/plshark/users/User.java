@@ -12,27 +12,24 @@ public class User {
     private String username;
     private String password;
 
-    // TODO sort out constructors, null check
-
     /**
      * Create a new instance
      * @param username the username
      * @param password the password
      */
     public User(String username, String password) {
-        this.username = username;
-        this.password = password;
+        this(null, username, password);
     }
 
     /**
      * Create a new instance
-     * @param id the user ID
+     * @param id the user ID, can be null
      * @param username the username
-     * @param password the password
+     * @param password the password, can be null
      */
-    public User(long id, String username, String password) {
+    public User(Long id, String username, String password) {
         this.id = id;
-        this.username = username;
+        this.username = Objects.requireNonNull(username);
         this.password = password;
     }
 
@@ -58,14 +55,14 @@ public class User {
     }
 
     /**
-     * @return the password
+     * @return the password, can be null when hiding the password
      */
-    public String getPassword() {
-        return password;
+    public Optional<String> getPassword() {
+        return Optional.ofNullable(password);
     }
 
     /**
-     * @param password the password
+     * @param password the password, can be null
      */
     public void setPassword(String password) {
         this.password = password;

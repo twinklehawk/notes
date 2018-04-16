@@ -47,10 +47,8 @@ public class UserManagementServiceImpl implements UserManagementService {
     public User saveUser(User user) {
         if (user.getId().isPresent())
             throw new IllegalArgumentException("Updating a user is not supported");
-        Objects.requireNonNull(user.getUsername(), "username cannot be null");
-        Objects.requireNonNull(user.getPassword(), "password cannot be null");
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword().get()));
 
         return userRepo.insert(user);
     }

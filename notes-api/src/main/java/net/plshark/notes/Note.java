@@ -19,30 +19,18 @@ public class Note {
      * @param content the content
      */
     public Note(String title, String content) {
-        this(Optional.<Long>empty(), 0, title, content);
+        this(null, 0, title, content);
     }
 
     /**
      * Create a new instance
-     * @param id the ID
+     * @param id the ID, can be null
      * @param correlationId the external ID
      * @param title the title
      * @param content the content
      */
     public Note(Long id, long correlationId, String title, String content) {
-        this(Optional.of(id), correlationId, title, content);
-    }
-
-    /**
-     * Create a new instance
-     * @param id the ID
-     * @param correlationId the external ID
-     * @param title the title
-     * @param content the content
-     */
-    private Note(Optional<Long> id, long correlationId, String title, String content) {
-        if (id.isPresent())
-            this.id = id.get();
+        this.id = id;
         this.correlationId = correlationId;
         this.title = Objects.requireNonNull(title, "title cannot be null");
         this.content = Objects.requireNonNull(content, "content cannot be null");

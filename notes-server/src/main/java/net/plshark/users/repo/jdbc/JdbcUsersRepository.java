@@ -56,10 +56,10 @@ public class JdbcUsersRepository implements UsersRepository {
                 con -> con.prepareStatement(INSERT, new int[] { 1 }),
                 stmt-> {
                     stmt.setString(1, user.getUsername());
-                    stmt.setString(2, user.getPassword());
+                    stmt.setString(2, user.getPassword().get());
                 }),
             holder);
-        return new User(holder.getKey().longValue(), user.getUsername(), user.getPassword());
+        return new User(holder.getKey().longValue(), user.getUsername(), user.getPassword().get());
     }
 
     @Override

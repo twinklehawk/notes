@@ -93,7 +93,7 @@ public class UserDetailsServiceImpl implements UserAuthenticationService {
         public static UserInfo forUser(User user, List<Role> userRoles) {
             Set<GrantedAuthority> authorities = new HashSet<>(userRoles.size());
             userRoles.forEach(role -> authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName())));
-            return new UserInfo(user.getId().get(), user.getUsername(), user.getPassword(), authorities);
+            return new UserInfo(user.getId().get(), user.getUsername(), user.getPassword().get(), authorities);
         }
 
         @Override

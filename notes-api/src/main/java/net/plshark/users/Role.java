@@ -16,21 +16,16 @@ public class Role {
      * @param name the role name
      */
     public Role(String name) {
-        this(Optional.<Long>empty(), name);
+        this(null, name);
     }
 
     /**
      * Create a new instance
-     * @param id the role ID
+     * @param id the role ID, can be null
      * @param name the role name
      */
-    public Role(long id, String name) {
-        this(Optional.of(id), name);
-    }
-
-    private Role(Optional<Long> id, String name) {
-        if (id.isPresent())
-            this.id = id.get();
+    public Role(Long id, String name) {
+        this.id = id;
         this.name = Objects.requireNonNull(name, "name cannot be null");
     }
 

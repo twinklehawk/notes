@@ -26,7 +26,7 @@ class JdbcUsersRepositoryITSpec extends Specification {
         then:
         inserted.id.isPresent()
         inserted.username == "name"
-        inserted.password == "pass"
+        inserted.password.get() == "pass"
 
         cleanup:
         repo.delete(inserted.id.get())
@@ -85,7 +85,7 @@ class JdbcUsersRepositoryITSpec extends Specification {
         User user = repo.getForId(inserted.id.get())
 
         then:
-        user.password == "new-pass"
+        user.password.get() == "new-pass"
 
         cleanup:
         repo.delete(inserted.id.get())
@@ -104,7 +104,7 @@ class JdbcUsersRepositoryITSpec extends Specification {
         User user = repo.getForId(inserted.id.get())
 
         then:
-        user.password == "pass"
+        user.password.get() == "pass"
 
         cleanup:
         repo.delete(inserted.id.get())

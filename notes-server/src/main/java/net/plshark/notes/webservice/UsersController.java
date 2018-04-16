@@ -46,8 +46,7 @@ public class UsersController {
 
         User savedUser = userMgmtService.saveUser(user);
         // don't send back the password
-        savedUser.setPassword(null);
-        return savedUser;
+        return new User(savedUser.getId().get(), savedUser.getUsername(), null);
     }
 
     /**

@@ -26,12 +26,6 @@ class NoteSpec extends Specification {
 
         then:
         thrown(NullPointerException)
-
-        when:
-        new Note(null, 0, "", "")
-
-        then:
-        thrown(NullPointerException)
     }
 
     def "setters do not allow null args"() {
