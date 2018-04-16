@@ -8,7 +8,7 @@ import java.util.Optional;
  */
 public class User {
 
-    private Long id;
+    private final Long id;
     private String username;
     private String password;
 

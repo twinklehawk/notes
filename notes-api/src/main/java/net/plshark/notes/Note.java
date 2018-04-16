@@ -8,7 +8,7 @@ import java.util.Optional;
  */
 public class Note {
 
-    private Long id;
+    private final Long id;
     private long correlationId;
     private String title;
     private String content;

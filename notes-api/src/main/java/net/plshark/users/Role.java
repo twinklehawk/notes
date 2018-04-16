@@ -8,7 +8,7 @@ import java.util.Optional;
  */
 public class Role {
 
-    private Long id;
+    private final Long id;
     private String name;
 
     /**
