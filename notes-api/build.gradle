@@ -41,7 +41,7 @@ bintray {
         vcsUrl = 'https://github.com/twinklehawk/notes.git'
         githubRepo = 'twinklehawk/notes'
         version {
-            name = '0.1'
+            name = '1.0.0'
         }
     }
 }
