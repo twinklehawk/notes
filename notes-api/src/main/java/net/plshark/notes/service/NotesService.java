@@ -1,6 +1,6 @@
 package net.plshark.notes.service;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 import net.plshark.ObjectNotFoundException;
 import net.plshark.notes.Note;

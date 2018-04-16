@@ -54,18 +54,12 @@ class UserManagementServiceImplSpec extends Specification {
         thrown(IllegalArgumentException)
     }
 
-    def "cannot insert user with null username or password"() {
-        when:
-        service.saveUser(new User(null, "pass"))
-
-        then:
-        thrown (NullPointerException)
-
+    def "cannot insert user with null password"() {
         when:
         service.saveUser(new User("name", null))
 
         then:
-        thrown (NullPointerException)
+        thrown(NoSuchElementException)
     }
 
     def "new users have password encoded"() {
@@ -190,22 +184,22 @@ class UserManagementServiceImplSpec extends Specification {
     }
 
     def "retrieving a role by name passes the name through"() {
-        roleRepo.getForName("name") >> new Role(1, "name")
+        roleRepo.getForName("name") >> Optional.of(new Role(1, "name"))
 
         when:
-        Role role = service.getRoleByName("name")
+        Role role = service.getRoleByName("name").get()
 
         then:
         role == new Role(1, "name")
     }
 
-    def "an ObjectNotFoundException is thrown when no role matches the name"() {
-        roleRepo.getForName("name") >> { throw new EmptyResultDataAccessException(1) }
+    def "an empty optional is returned when no role matches the name"() {
+        roleRepo.getForName("name") >> Optional.empty()
 
         when:
-        service.getRoleByName("name")
+        Optional<Role> role = service.getRoleByName("name")
 
         then:
-        thrown(ObjectNotFoundException)
+        !role.isPresent()
     }
 }

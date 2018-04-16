@@ -1,7 +1,5 @@
 package net.plshark.notes.service
 
-import com.google.common.base.Optional
-
 import net.plshark.ObjectNotFoundException
 import net.plshark.notes.Note
 import net.plshark.notes.repo.NotesRepository

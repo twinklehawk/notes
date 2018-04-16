@@ -1,8 +1,8 @@
 package net.plshark.users.repo;
 
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
+import java.util.Optional;
 
+import org.springframework.dao.DataAccessException;
 import net.plshark.users.Role;
 
 /**
@@ -14,19 +14,17 @@ public interface RolesRepository {
      * Get a role by ID
      * @param id the ID
      * @return the matching role
-     * @throws EmptyResultDataAccessException if there is no matching role
      * @throws DataAccessException if the query fails
      */
-    Role getForId(long id);
+    Optional<Role> getForId(long id);
 
     /**
      * Get a role by name
      * @param name the role name
      * @return the matching role
-     * @throws EmptyResultDataAccessException if there is no matching role
      * @throws DataAccessException if the query fails
      */
-    Role getForName(String name);
+    Optional<Role> getForName(String name);
 
     /**
      * Insert a new role

@@ -1,6 +1,7 @@
 package net.plshark.users.service;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -47,10 +48,8 @@ public class UserManagementServiceImpl implements UserManagementService {
     public User saveUser(User user) {
         if (user.getId().isPresent())
             throw new IllegalArgumentException("Updating a user is not supported");
-        Objects.requireNonNull(user.getUsername(), "username cannot be null");
-        Objects.requireNonNull(user.getPassword(), "password cannot be null");
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword().get()));
 
         return userRepo.insert(user);
     }
@@ -122,11 +121,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public Role getRoleByName(String name) throws ObjectNotFoundException {
-        try {
-            return roleRepo.getForName(name);
-        } catch (EmptyResultDataAccessException e) {
-            throw new ObjectNotFoundException("Failed to find role " + name, e);
-        }
+    public Optional<Role> getRoleByName(String name) {
+        return roleRepo.getForName(name);
     }
 }

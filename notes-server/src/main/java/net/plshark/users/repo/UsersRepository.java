@@ -1,5 +1,7 @@
 package net.plshark.users.repo;
 
+import java.util.Optional;
+
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
@@ -14,19 +16,17 @@ public interface UsersRepository {
      * Get a user by user ID
      * @param id the user ID
      * @return the matching user
-     * @throws EmptyResultDataAccessException if there is no matching user
      * @throws DataAccessException if the query fails
      */
-    User getForId(long id);
+    Optional<User> getForId(long id);
 
     /**
      * Get a user by the username
      * @param username the username
      * @return the matching user
-     * @throws EmptyResultDataAccessException if there is no matching user
      * @throws DataAccessException if the query fails
      */
-    User getForUsername(String username);
+    Optional<User> getForUsername(String username);
 
     /**
      * Insert a new user

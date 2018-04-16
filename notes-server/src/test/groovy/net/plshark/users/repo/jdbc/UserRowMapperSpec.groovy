@@ -22,6 +22,6 @@ class UserRowMapperSpec extends Specification {
         then:
         user.id.get() == 5
         user.username == "admin"
-        user.password == "54321"
+        user.password.get() == "54321"
     }
 }

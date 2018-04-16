@@ -43,8 +43,8 @@ class WebSecurityConfigITSpec extends Specification {
     def setup() {
         mvc = MockMvcBuilders.webAppContextSetup(context).apply(SecurityMockMvcConfigurers.springSecurity()).build()
 
-        Role userRole = userMgmt.getRoleByName("notes-user")
-        Role adminRole = userMgmt.getRoleByName("notes-admin")
+        Role userRole = userMgmt.getRoleByName("notes-user").get()
+        Role adminRole = userMgmt.getRoleByName("notes-admin").get()
 
         notesUser = userMgmt.saveUser(new User("test-user", "pass"))
         userMgmt.grantRoleToUser(notesUser, userRole)

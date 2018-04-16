@@ -1,6 +1,7 @@
 package net.plshark.notes.webservice;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -12,8 +13,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.google.common.base.Optional;
 
 import net.plshark.BadRequestException;
 import net.plshark.ObjectNotFoundException;

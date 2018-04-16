@@ -35,7 +35,7 @@ class UserDetailsServiceImplSpec extends Specification {
     }
 
     def "a user and its roles are mapped to the correct UserDetails"() {
-        usersRepo.getForUsername("user") >> new User(25, "user", "pass")
+        usersRepo.getForUsername("user") >> Optional.of(new User(25, "user", "pass"))
         userRolesRepo.getRolesForUser(25) >> Arrays.asList(new Role(3, "normal-user"), new Role(5, "admin"))
 
         when:
@@ -52,17 +52,17 @@ class UserDetailsServiceImplSpec extends Specification {
     }
 
     def "UsernameNotFoundException thrown when no user is found for username"() {
-        usersRepo.getForUsername("user") >> { throw new EmptyResultDataAccessException(1) }
+        usersRepo.getForUsername("user") >> Optional.empty()
 
         when:
-        service.loadUserByUsername("user")
+        UserDetails user = service.loadUserByUsername("user")
 
         then:
         thrown(UsernameNotFoundException)
     }
 
     def "empty roles returns no granted authorities"() {
-        usersRepo.getForUsername("user") >> new User(25, "user", "pass")
+        usersRepo.getForUsername("user") >> Optional.of(new User(25, "user", "pass"))
         userRolesRepo.getRolesForUser(25) >> Collections.emptyList()
 
         when:
@@ -73,10 +73,11 @@ class UserDetailsServiceImplSpec extends Specification {
     }
 
     def "user ID returned from authentication when authentication is instance of UserInfo"() {
-        usersRepo.getForUsername("user") >> new User(25, "user", "pass")
+        usersRepo.getForUsername("user") >> Optional.of(new User(25, "user", "pass"))
         userRolesRepo.getRolesForUser(25) >> Arrays.asList(new Role(3, "normal-user"), new Role(5, "admin"))
         UserDetails details = service.loadUserByUsername("user")
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(details, details.getPassword(), details.getAuthorities())
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(details,
+            details.getPassword(), details.getAuthorities())
 
         when:
         long userId = service.getUserIdForAuthentication(token)
@@ -86,8 +87,9 @@ class UserDetailsServiceImplSpec extends Specification {
     }
 
     def "user ID is looked up when using authentication from external source"() {
-        usersRepo.getForUsername("user") >> new User(25, "user", "pass")
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken("user", "pass", Collections.emptyList())
+        usersRepo.getForUsername("user") >> Optional.of(new User(25, "user", "pass"))
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken("user", "pass",
+            Collections.emptyList())
 
         when:
         long userId = service.getUserIdForAuthentication(token)

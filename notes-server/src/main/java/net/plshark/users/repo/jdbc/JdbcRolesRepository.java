@@ -2,6 +2,7 @@ package net.plshark.users.repo.jdbc;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -56,15 +57,15 @@ public class JdbcRolesRepository implements RolesRepository {
     }
 
     @Override
-    public Role getForId(long id) {
+    public Optional<Role> getForId(long id) {
         List<Role> results = jdbc.query(SELECT_BY_ID, stmt -> stmt.setLong(1, id), roleRowMapper);
-        return DataAccessUtils.requiredSingleResult(results);
+        return Optional.ofNullable(DataAccessUtils.singleResult(results));
     }
 
     @Override
-    public Role getForName(String name) {
+    public Optional<Role> getForName(String name) {
         Objects.requireNonNull(name, "name cannot be null");
         List<Role> results = jdbc.query(SELECT_BY_NAME, stmt -> stmt.setString(1, name), roleRowMapper);
-        return DataAccessUtils.requiredSingleResult(results);
+        return Optional.ofNullable(DataAccessUtils.singleResult(results));
     }
 }

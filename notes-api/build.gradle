@@ -7,12 +7,11 @@ plugins {
     id 'maven-publish'
 }
 
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 
 dependencies {
     compile 'org.slf4j:slf4j-api:1.7.21'
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.8.10'
-    compile 'com.google.guava:guava:24.0-android'
     compileOnly 'com.google.auto.value:auto-value:1.5'
   	apt 'com.google.auto.value:auto-value:1.5'
     testCompile 'org.codehaus.groovy:groovy-all:2.4.10'

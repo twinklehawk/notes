@@ -1,15 +1,14 @@
 package net.plshark.notes;
 
 import java.util.Objects;
-
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 /**
  * Data for a note
  */
 public class Note {
 
-    private Long id;
+    private final Long id;
     private long correlationId;
     private String title;
     private String content;
@@ -20,30 +19,18 @@ public class Note {
      * @param content the content
      */
     public Note(String title, String content) {
-        this(Optional.<Long>absent(), 0, title, content);
+        this(null, 0, title, content);
     }
 
     /**
      * Create a new instance
-     * @param id the ID
+     * @param id the ID, can be null
      * @param correlationId the external ID
      * @param title the title
      * @param content the content
      */
-    public Note(long id, long correlationId, String title, String content) {
-        this(Optional.of(id), correlationId, title, content);
-    }
-
-    /**
-     * Create a new instance
-     * @param id the ID
-     * @param correlationId the external ID
-     * @param title the title
-     * @param content the content
-     */
-    private Note(Optional<Long> id, long correlationId, String title, String content) {
-        if (id.isPresent())
-            this.id = id.get();
+    public Note(Long id, long correlationId, String title, String content) {
+        this.id = id;
         this.correlationId = correlationId;
         this.title = Objects.requireNonNull(title, "title cannot be null");
         this.content = Objects.requireNonNull(content, "content cannot be null");
@@ -53,7 +40,7 @@ public class Note {
      * @return the ID, can be unset if the note has not been saved yet
      */
     public Optional<Long> getId() {
-        return Optional.fromNullable(id);
+        return Optional.ofNullable(id);
     }
 
     /**
