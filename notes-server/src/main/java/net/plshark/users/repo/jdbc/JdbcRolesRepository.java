@@ -8,6 +8,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.jdbc.JdbcUpdateAffectedIncorrectNumberOfRowsException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 
@@ -48,7 +49,10 @@ public class JdbcRolesRepository implements RolesRepository {
                 con -> con.prepareStatement(INSERT, new int[] { 1 }),
                 stmt -> stmt.setString(1, role.getName())),
             holder);
-        return new Role(holder.getKey().longValue(), role.getName());
+        Long id = Optional.ofNullable(holder.getKey())
+                .map(num -> num.longValue())
+                .orElseThrow(() -> new JdbcUpdateAffectedIncorrectNumberOfRowsException(INSERT, 1, 0));
+        return new Role(id, role.getName());
     }
 
     @Override

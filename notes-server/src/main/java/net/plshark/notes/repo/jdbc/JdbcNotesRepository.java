@@ -61,7 +61,10 @@ public class JdbcNotesRepository implements NotesRepository {
                     stmt.setString(3, note.getContent());
                 }),
             holder);
-        return new Note(holder.getKey().longValue(), note.getCorrelationId(), note.getTitle(), note.getContent());
+        Long id = Optional.ofNullable(holder.getKey())
+                .map(num -> num.longValue())
+                .orElseThrow(() -> new JdbcUpdateAffectedIncorrectNumberOfRowsException(INSERT, 1, 0));
+        return new Note(id, note.getCorrelationId(), note.getTitle(), note.getContent());
     }
 
     @Override
