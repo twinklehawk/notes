@@ -3,16 +3,30 @@ package net.plshark;
 import java.time.OffsetDateTime;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.auto.value.AutoValue;
-
-import net.plshark.AutoValue_ErrorResponse;
 
 /**
  * Response containing information about an exception
  */
-@AutoValue
-public abstract class ErrorResponse {
+public class ErrorResponse {
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSSxxx")
+    private final OffsetDateTime timestamp;
+    private final int status;
+    private final String statusDetail;
+    private final String message;
+    private final String path;
+
+    private ErrorResponse(@JsonProperty("timestamp") OffsetDateTime timestamp, @JsonProperty("status") int status,
+            @JsonProperty("error") String statusDetail, @JsonProperty("message") String message,
+            @JsonProperty("path") String path) {
+        this.timestamp = timestamp;
+        this.status = status;
+        this.statusDetail = statusDetail;
+        this.message = message;
+        this.path = path;
+    }
 
     /**
      * Create an instance with a date and time of now
@@ -36,34 +50,44 @@ public abstract class ErrorResponse {
      * @return the ErrorResponse instance
      */
     @JsonCreator
-    public static ErrorResponse create(@JsonProperty("date") OffsetDateTime timestamp, @JsonProperty("status") int status,
-            @JsonProperty("error") String statusDetail, @JsonProperty("message") String message,
-            @JsonProperty("path") String path) {
-        return new AutoValue_ErrorResponse(timestamp, status, statusDetail, message, path);
+    public static ErrorResponse create(@JsonProperty("timestamp") OffsetDateTime timestamp,
+            @JsonProperty("status") int status, @JsonProperty("error") String statusDetail,
+            @JsonProperty("message") String message, @JsonProperty("path") String path) {
+        return new ErrorResponse(timestamp, status, statusDetail, message, path);
     }
 
     /**
      * @return the date and time when the exception happened
      */
-    public abstract OffsetDateTime getTimestamp();
+    public OffsetDateTime getTimestamp() {
+        return timestamp;
+    }
 
     /**
      * @return the response status code
      */
-    public abstract int getStatus();
+    public int getStatus() {
+        return status;
+    }
 
     /**
      * @return the response status description
      */
-    public abstract String getStatusDetail();
+    public String getStatusDetail() {
+        return statusDetail;
+    }
 
     /**
      * @return the error detail message
      */
-    public abstract String getMessage();
+    public String getMessage() {
+        return message;
+    }
 
     /**
      * @return the path of the request that caused the error
      */
-    public abstract String getPath();
+    public String getPath() {
+        return path;
+    }
 }
