@@ -1,7 +1,7 @@
 package net.plshark.users;
 
 import java.util.Objects;
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 /**
  * Data for a user
@@ -40,7 +40,7 @@ public class User {
      * @return the ID, not set if the user has not been saved yet
      */
     public Optional<Long> getId() {
-        return Optional.fromNullable(id);
+        return Optional.ofNullable(id);
     }
 
     /**

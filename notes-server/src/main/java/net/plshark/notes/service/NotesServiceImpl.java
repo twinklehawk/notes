@@ -1,13 +1,12 @@
 package net.plshark.notes.service;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.base.Optional;
 
 import net.plshark.ObjectNotFoundException;
 import net.plshark.notes.Note;
@@ -36,7 +35,7 @@ public class NotesServiceImpl implements NotesService {
     @Override
     public Optional<Note> getForUser(long id, long userId) {
         boolean canRead = permissionService.userHasReadPermission(id, userId);
-        return canRead ? notesRepo.get(id).map(note -> Optional.of(note)).orElse(Optional.absent()) : Optional.absent();
+        return canRead ? notesRepo.get(id).map(note -> Optional.of(note)).orElse(Optional.empty()) : Optional.empty();
     }
 
     @Override

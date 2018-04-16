@@ -1,7 +1,7 @@
 package net.plshark.users;
 
 import java.util.Objects;
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 /**
  * Data for a role
@@ -16,7 +16,7 @@ public class Role {
      * @param name the role name
      */
     public Role(String name) {
-        this(Optional.<Long>absent(), name);
+        this(Optional.<Long>empty(), name);
     }
 
     /**
@@ -38,7 +38,7 @@ public class Role {
      * @return the ID, can be empty if not saved yet
      */
     public Optional<Long> getId() {
-        return Optional.fromNullable(id);
+        return Optional.ofNullable(id);
     }
 
     /**

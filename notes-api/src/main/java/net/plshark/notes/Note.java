@@ -1,8 +1,7 @@
 package net.plshark.notes;
 
 import java.util.Objects;
-
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 /**
  * Data for a note
@@ -20,7 +19,7 @@ public class Note {
      * @param content the content
      */
     public Note(String title, String content) {
-        this(Optional.<Long>absent(), 0, title, content);
+        this(Optional.<Long>empty(), 0, title, content);
     }
 
     /**
@@ -30,7 +29,7 @@ public class Note {
      * @param title the title
      * @param content the content
      */
-    public Note(long id, long correlationId, String title, String content) {
+    public Note(Long id, long correlationId, String title, String content) {
         this(Optional.of(id), correlationId, title, content);
     }
 
@@ -53,7 +52,7 @@ public class Note {
      * @return the ID, can be unset if the note has not been saved yet
      */
     public Optional<Long> getId() {
-        return Optional.fromNullable(id);
+        return Optional.ofNullable(id);
     }
 
     /**
