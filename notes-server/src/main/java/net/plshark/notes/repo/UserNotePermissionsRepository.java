@@ -1,10 +1,9 @@
 package net.plshark.notes.repo;
 
-import java.util.Optional;
-
 import org.springframework.dao.DataAccessException;
 
 import net.plshark.notes.UserNotePermission;
+import reactor.core.publisher.Mono;
 
 /**
  * Repository for saving and retrieving a users' permissions for notes
@@ -18,7 +17,7 @@ public interface UserNotePermissionsRepository {
      * @return the permissions, may be empty if the user has no permissions for the note
      * @throws DataAccessException if the query fails
      */
-    Optional<UserNotePermission> getByUserAndNote(long userId, long noteId);
+    Mono<UserNotePermission> getByUserAndNote(long userId, long noteId);
 
     /**
      * Save a new permission
@@ -26,7 +25,7 @@ public interface UserNotePermissionsRepository {
      * @return the saved permission
      * @throws DataAccessException if the insert fails
      */
-    UserNotePermission insert(UserNotePermission permission);
+    Mono<UserNotePermission> insert(UserNotePermission permission);
 
     /**
      * Update an existing permission
@@ -34,18 +33,20 @@ public interface UserNotePermissionsRepository {
      * @return the updated permission
      * @throws DataAccessException if the update fails
      */
-    UserNotePermission update(UserNotePermission permission);
+    Mono<UserNotePermission> update(UserNotePermission permission);
 
     /**
      * Delete a user's permission for a note
      * @param userId the user ID
      * @param noteId the note ID
+     * @return an empty result
      */
-    void deleteByUserAndNote(long userId, long noteId);
+    Mono<Void> deleteByUserAndNote(long userId, long noteId);
 
     /**
      * Delete all permissions for a note
      * @param noteId the note ID
+     * @return an empty result
      */
-    void deleteByNote(long noteId);
+    Mono<Void> deleteByNote(long noteId);
 }

@@ -16,7 +16,7 @@ import spock.lang.Specification
 class JdbcNotesRepositoryITSpec extends Specification {
 
     @Inject
-    JdbcNotesRepository repo
+    SyncJdbcNotesRepository repo
 
     def cleanup() {
         repo.deleteAll()

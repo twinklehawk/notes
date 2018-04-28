@@ -12,7 +12,7 @@ class JdbcNotesRepositorySpec extends Specification {
 
     def "constructor does not accept null args"() {
         when:
-        new JdbcNotesRepository(null)
+        new SyncJdbcNotesRepository(null)
 
         then:
         thrown(NullPointerException)

@@ -21,7 +21,7 @@ import net.plshark.notes.repo.SyncNotesRepository;
  */
 @Named
 @Singleton
-public class JdbcNotesRepository implements SyncNotesRepository {
+public class SyncJdbcNotesRepository implements SyncNotesRepository {
 
     private static final String SELECT = "SELECT * FROM notes WHERE id = ?";
     private static final String DELETE = "DELETE FROM notes WHERE id = ?";
@@ -36,7 +36,7 @@ public class JdbcNotesRepository implements SyncNotesRepository {
      * Create a new instance
      * @param jdbc the JdbcOperations instance to use to interact with the database
      */
-    public JdbcNotesRepository(JdbcOperations jdbc) {
+    public SyncJdbcNotesRepository(JdbcOperations jdbc) {
         this.jdbc = Objects.requireNonNull(jdbc, "jdbc cannot be null");
         this.noteRowMapper = new NoteRowMapper();
     }
