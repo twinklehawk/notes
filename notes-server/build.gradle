@@ -26,7 +26,4 @@ dependencies {
     testRuntime 'org.objenesis:objenesis:2.5.1'
     runtime 'com.h2database:h2'
     runtime 'org.flywaydb:flyway-core'
-    
-    // TODO remove
-    runtime('org.springframework.boot:spring-boot-properties-migrator')
 }
