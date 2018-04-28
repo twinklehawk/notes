@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.jdbc.JdbcUpdateAffectedIncorrectNumberOfRowsException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 
@@ -60,7 +61,10 @@ public class JdbcUsersRepository implements UsersRepository {
                     stmt.setString(2, user.getPassword().get());
                 }),
             holder);
-        return new User(holder.getKey().longValue(), user.getUsername(), user.getPassword().get());
+        Long id = Optional.ofNullable(holder.getKey())
+                .map(num -> num.longValue())
+                .orElseThrow(() -> new JdbcUpdateAffectedIncorrectNumberOfRowsException(INSERT, 1, 0));
+        return new User(id, user.getUsername(), user.getPassword().get());
     }
 
     @Override
