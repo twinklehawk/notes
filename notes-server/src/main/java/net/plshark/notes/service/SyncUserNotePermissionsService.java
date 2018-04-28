@@ -1,11 +1,9 @@
 package net.plshark.notes.service;
 
-import reactor.core.publisher.Mono;
-
 /**
  * Service for working with a user's permissions for notes
  */
-public interface UserNotePermissionsService {
+public interface SyncUserNotePermissionsService {
 
     /**
      * Check if a user has read permission for a note
@@ -13,7 +11,7 @@ public interface UserNotePermissionsService {
      * @param userId the user ID
      * @return if the user has read permission
      */
-    Mono<Boolean> userHasReadPermission(long noteId, long userId);
+    boolean userHasReadPermission(long noteId, long userId);
 
     /**
      * Check if a user has write permission for a note
@@ -21,7 +19,7 @@ public interface UserNotePermissionsService {
      * @param userId the user ID
      * @return if the user has write permission
      */
-    Mono<Boolean> userHasWritePermission(long noteId, long userId);
+    boolean userHasWritePermission(long noteId, long userId);
 
     /**
      * Check if a user owns a note
@@ -29,18 +27,18 @@ public interface UserNotePermissionsService {
      * @param userId the user ID
      * @return if the user owns the note
      */
-    Mono<Boolean> userIsOwner(long noteId, long userId);
+    boolean userIsOwner(long noteId, long userId);
 
     /**
      * Grant a user read and write permission for a new note
      * @param noteId the ID of the new note
      * @param userId the user ID of the owner
      */
-    Mono<Void> grantOwnerPermissions(long noteId, long userId);
+    void grantOwnerPermissions(long noteId, long userId);
 
     /**
      * Delete all permissions for a note
      * @param noteId the note ID
      */
-    Mono<Void> deletePermissionsForNote(long noteId);
+    void deletePermissionsForNote(long noteId);
 }

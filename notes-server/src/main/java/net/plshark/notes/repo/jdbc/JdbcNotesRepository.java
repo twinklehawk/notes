@@ -14,14 +14,14 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 
 import net.plshark.jdbc.SafePreparedStatementCreator;
 import net.plshark.notes.Note;
-import net.plshark.notes.repo.NotesRepository;
+import net.plshark.notes.repo.SyncNotesRepository;
 
 /**
  * Repository that saves notes in and retrieves notes from a DB using JDBC
  */
 @Named
 @Singleton
-public class JdbcNotesRepository implements NotesRepository {
+public class JdbcNotesRepository implements SyncNotesRepository {
 
     private static final String SELECT = "SELECT * FROM notes WHERE id = ?";
     private static final String DELETE = "DELETE FROM notes WHERE id = ?";

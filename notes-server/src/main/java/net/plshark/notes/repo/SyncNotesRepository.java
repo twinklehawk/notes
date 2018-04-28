@@ -10,7 +10,7 @@ import net.plshark.notes.Note;
 /**
  * Repository for saving, retrieving, and deleting notes
  */
-public interface NotesRepository {
+public interface SyncNotesRepository {
 
     /**
      * Get a note by ID

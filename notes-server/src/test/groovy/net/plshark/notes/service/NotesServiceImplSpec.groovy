@@ -2,12 +2,12 @@ package net.plshark.notes.service
 
 import net.plshark.ObjectNotFoundException
 import net.plshark.notes.Note
-import net.plshark.notes.repo.NotesRepository
+import net.plshark.notes.repo.SyncNotesRepository
 import spock.lang.Specification
 
 class NotesServiceImplSpec extends Specification {
 
-    NotesRepository notesRepo = Mock()
+    SyncNotesRepository notesRepo = Mock()
     UserNotePermissionsService permissionService = Mock()
     NotesServiceImpl service = new NotesServiceImpl(notesRepo, permissionService)
 
