@@ -3,15 +3,13 @@ package net.plshark.notes.webservice;
 import javax.inject.Inject;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 
 import net.plshark.auth.throttle.LoginAttemptService;
 import net.plshark.auth.throttle.LoginAttemptThrottlingFilter;
@@ -21,32 +19,25 @@ import net.plshark.auth.throttle.impl.BasicAuthenticationUsernameExtractor;
 /**
  * Notes web security configuration
  */
-@Configuration
+@EnableWebFluxSecurity
 @Import(LoginThrottlingConfig.class)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig {
 
-    @Inject
-    private UserDetailsService userDetailsService;
     @Inject
     private LoginAttemptService loginAttemptService;
 
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
         http
-            .authorizeRequests()
-                .antMatchers("/users/**", "/roles/**")
+            .authorizeExchange()
+                .pathMatchers("/users/**", "/roles/**")
                     .hasRole("notes-admin")
-                .anyRequest()
+                .anyExchange()
                     .hasRole("notes-user")
             // use basic authentication
             .and().httpBasic()
-            .and().addFilterBefore(loginAttemptThrottlingFilter(), BasicAuthenticationFilter.class);
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+            .and().addFilterAt(loginAttemptThrottlingFilter(), SecurityWebFiltersOrder.HTTP_BASIC);
+        return http.build();
     }
 
     /**

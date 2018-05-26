@@ -1,13 +1,16 @@
 package net.plshark.users.repo;
 
+import java.util.Optional;
+
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
+
 import net.plshark.users.User;
-import reactor.core.publisher.Mono;
 
 /**
  * Repository for saving, deleting, and retrieving users
  */
-public interface UsersRepository {
+public interface SyncUsersRepository {
 
     /**
      * Get a user by user ID
@@ -15,7 +18,7 @@ public interface UsersRepository {
      * @return the matching user
      * @throws DataAccessException if the query fails
      */
-    Mono<User> getForId(long id);
+    Optional<User> getForId(long id);
 
     /**
      * Get a user by the username
@@ -23,7 +26,7 @@ public interface UsersRepository {
      * @return the matching user
      * @throws DataAccessException if the query fails
      */
-    Mono<User> getForUsername(String username);
+    Optional<User> getForUsername(String username);
 
     /**
      * Insert a new user
@@ -31,23 +34,22 @@ public interface UsersRepository {
      * @return the inserted user, will have the ID set
      * @throws DataAccessException if the insert fails
      */
-    Mono<User> insert(User user);
+    User insert(User user);
 
     /**
      * Update an existing user's password
      * @param id the ID of the user to update
      * @param currentPassword the current password
      * @param newPassword the new password
-     * @return an empty result
+     * @throws EmptyResultDataAccessException if no user exists with the ID or currentPassword
      * @throws DataAccessException if the update fails
      */
-    Mono<Void> updatePassword(long id, String currentPassword, String newPassword);
+    void updatePassword(long id, String currentPassword, String newPassword);
 
     /**
      * Delete a user by ID
      * @param userId the user ID
-     * @return an empty result
      * @throws DataAccessException if the delete fails
      */
-    Mono<Void> delete(long userId);
+    void delete(long userId);
 }

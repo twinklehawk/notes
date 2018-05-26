@@ -3,6 +3,7 @@ package net.plshark.notes.repo.jdbc;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import net.plshark.jdbc.ReactiveUtils;
 import net.plshark.notes.UserNotePermission;
 import net.plshark.notes.repo.SyncUserNotePermissionsRepository;
 import net.plshark.notes.repo.UserNotePermissionsRepository;

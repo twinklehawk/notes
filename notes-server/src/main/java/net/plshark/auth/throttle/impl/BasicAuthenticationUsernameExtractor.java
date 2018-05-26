@@ -4,10 +4,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 
 import net.plshark.auth.throttle.UsernameExtractor;
 
@@ -19,8 +18,9 @@ public class BasicAuthenticationUsernameExtractor implements UsernameExtractor {
     private final Logger log = LoggerFactory.getLogger(BasicAuthenticationUsernameExtractor.class);
 
     @Override
-    public Optional<String> extractUsername(HttpServletRequest request) {
-        return Optional.ofNullable(request.getHeader("Authorization")).flatMap(header -> extractUsername(header));
+    public Optional<String> extractUsername(ServerHttpRequest request) {
+        return Optional.ofNullable(request.getHeaders().getFirst("Authorization"))
+            .flatMap(header -> extractUsername(header));
     }
 
     /**

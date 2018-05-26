@@ -4,6 +4,7 @@ import java.util.Objects;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import net.plshark.jdbc.ReactiveUtils;
 import net.plshark.notes.Note;
 import net.plshark.notes.repo.NotesRepository;
 import net.plshark.notes.repo.SyncNotesRepository;
