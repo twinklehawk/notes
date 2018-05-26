@@ -35,12 +35,14 @@ public interface UserNotePermissionsService {
      * Grant a user read and write permission for a new note
      * @param noteId the ID of the new note
      * @param userId the user ID of the owner
+     * @return an empty result
      */
     Mono<Void> grantOwnerPermissions(long noteId, long userId);
 
     /**
      * Delete all permissions for a note
      * @param noteId the note ID
+     * @return an empty result
      */
     Mono<Void> deletePermissionsForNote(long noteId);
 }
