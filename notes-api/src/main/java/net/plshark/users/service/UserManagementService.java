@@ -1,10 +1,9 @@
 package net.plshark.users.service;
 
-import java.util.Optional;
-
 import net.plshark.ObjectNotFoundException;
 import net.plshark.users.Role;
 import net.plshark.users.User;
+import reactor.core.publisher.Mono;
 
 /**
  * Service for modifying users and roles
@@ -16,13 +15,13 @@ public interface UserManagementService {
      * @param user the user
      * @return the saved user
      */
-    User saveUser(User user);
+    Mono<User> saveUser(User user);
 
     /**
      * Delete a user by ID
      * @param userId the user ID
      */
-    void deleteUser(long userId);
+    Mono<Void> deleteUser(long userId);
 
     /**
      * Update a user's password
@@ -31,27 +30,27 @@ public interface UserManagementService {
      * @param newPassword the new password
      * @throws ObjectNotFoundException if the user was not found
      */
-    void updateUserPassword(long userId, String currentPassword, String newPassword) throws ObjectNotFoundException;
+    Mono<Void> updateUserPassword(long userId, String currentPassword, String newPassword);
 
     /**
      * Retrieve a role by name
      * @param name the role name
      * @return the matching role
      */
-    Optional<Role> getRoleByName(String name);
+    Mono<Role> getRoleByName(String name);
 
     /**
      * Save a new role
      * @param role the role
      * @return the saved role
      */
-    Role saveRole(Role role);
+    Mono<Role> saveRole(Role role);
 
     /**
      * Delete a role
      * @param roleId the role ID
      */
-    void deleteRole(long roleId);
+    Mono<Void> deleteRole(long roleId);
 
     /**
      * Grant a role to a user
@@ -59,7 +58,7 @@ public interface UserManagementService {
      * @param roleId the ID of the role to grant
      * @throws ObjectNotFoundException if the user or role does not exist
      */
-    void grantRoleToUser(long userId, long roleId) throws ObjectNotFoundException;
+    Mono<Void> grantRoleToUser(long userId, long roleId);
 
     /**
      * Grant a role to a user
@@ -67,7 +66,7 @@ public interface UserManagementService {
      * @param role the role to grant
      * @throws ObjectNotFoundException if the user or role does not exist
      */
-    void grantRoleToUser(User user, Role role) throws ObjectNotFoundException;
+    Mono<Void> grantRoleToUser(User user, Role role);
 
     /**
      * Remove a role from a user
@@ -75,5 +74,5 @@ public interface UserManagementService {
      * @param roleId the ID of the role to remove
      * @throws ObjectNotFoundException if the user does not exist
      */
-    void removeRoleFromUser(long userId, long roleId) throws ObjectNotFoundException;
+    Mono<Void> removeRoleFromUser(long userId, long roleId);
 }

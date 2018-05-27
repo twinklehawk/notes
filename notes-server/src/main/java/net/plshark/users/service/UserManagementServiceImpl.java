@@ -1,8 +1,6 @@
 package net.plshark.users.service;
 
 import java.util.Objects;
-import java.util.Optional;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -16,6 +14,7 @@ import net.plshark.users.repo.RolesRepository;
 import net.plshark.users.repo.UserRolesRepository;
 import net.plshark.users.repo.UsersRepository;
 import net.plshark.users.service.UserManagementService;
+import reactor.core.publisher.Mono;
 
 /**
  * UserManagementService implementation
@@ -45,7 +44,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public User saveUser(User user) {
+    public Mono<User> saveUser(User user) {
         if (user.getId().isPresent())
             throw new IllegalArgumentException("Updating a user is not supported");
 
@@ -55,13 +54,13 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public void deleteUser(long userId) {
-        userRolesRepo.deleteUserRolesForUser(userId);
-        userRepo.delete(userId);
+    public Mono<Void> deleteUser(long userId) {
+        return userRolesRepo.deleteUserRolesForUser(userId)
+            .then(userRepo.delete(userId));
     }
 
     @Override
-    public Role saveRole(Role role) {
+    public Mono<Role> saveRole(Role role) {
         if (role.getId().isPresent())
             throw new IllegalArgumentException("Updating a role is not supported");
 
@@ -69,59 +68,51 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public void deleteRole(long roleId) {
-        userRolesRepo.deleteUserRolesForRole(roleId);
-        roleRepo.delete(roleId);
+    public Mono<Void> deleteRole(long roleId) {
+        return userRolesRepo.deleteUserRolesForRole(roleId)
+            .then(roleRepo.delete(roleId));
     }
 
     @Override
-    public void grantRoleToUser(long userId, long roleId) throws ObjectNotFoundException {
-        try {
-            userRepo.getForId(userId);
-            roleRepo.getForId(roleId);
-        } catch (EmptyResultDataAccessException e) {
-            throw new ObjectNotFoundException("User or role not found", e);
-        }
-        // if something else is deleting users/roles at the same time as this runs, the row can be inserted
-        // with no matching user or role, but it doesn't really matter
-        userRolesRepo.insertUserRole(userId, roleId);
+    public Mono<Void> grantRoleToUser(long userId, long roleId) {
+        // TODO this kinda sucks
+        return userRepo.getForId(userId)
+            .then(roleRepo.getForId(roleId))
+            .switchIfEmpty(Mono.error(new ObjectNotFoundException("User or role not found")))
+            // if something else is deleting users/roles at the same time as this runs, the row can be inserted
+            // with no matching user or role, but it doesn't really matter
+            .then(userRolesRepo.insertUserRole(userId, roleId));
     }
 
     @Override
-    public void grantRoleToUser(User user, Role role) throws ObjectNotFoundException {
-        grantRoleToUser(user.getId().get(), role.getId().get());
+    public Mono<Void> grantRoleToUser(User user, Role role) {
+        return grantRoleToUser(user.getId().get(), role.getId().get());
     }
 
     @Override
-    public void removeRoleFromUser(long userId, long roleId) throws ObjectNotFoundException {
-        try {
-            userRepo.getForId(userId);
-        } catch (EmptyResultDataAccessException e) {
-            throw new ObjectNotFoundException("User not found", e);
-        }
-        // if something else is deleting users at the same time as this runs, the row can be inserted
-        // with no matching user, but it doesn't really matter
-        userRolesRepo.deleteUserRole(userId, roleId);
+    public Mono<Void> removeRoleFromUser(long userId, long roleId) {
+        // TODO this kinda sucks too
+        return userRepo.getForId(userId)
+            .switchIfEmpty(Mono.error(new ObjectNotFoundException("User not found")))
+            // if something else is deleting users at the same time as this runs, the row can be inserted
+            // with no matching user, but it doesn't really matter
+            .then(userRolesRepo.deleteUserRole(userId, roleId));
     }
 
     @Override
-    public void updateUserPassword(long userId, String currentPassword, String newPassword)
-            throws ObjectNotFoundException {
+    public Mono<Void> updateUserPassword(long userId, String currentPassword, String newPassword) {
         Objects.requireNonNull(currentPassword, "currentPassword cannot be null");
         Objects.requireNonNull(newPassword, "newPassword cannot be null");
 
         String newPasswordEncoded = passwordEncoder.encode(newPassword);
         String currentPasswordEncoded = passwordEncoder.encode(currentPassword);
 
-        try {
-            userRepo.updatePassword(userId, currentPasswordEncoded, newPasswordEncoded);
-        } catch (EmptyResultDataAccessException e) {
-            throw new ObjectNotFoundException("User not found", e);
-        }
+        return userRepo.updatePassword(userId, currentPasswordEncoded, newPasswordEncoded)
+            .onErrorResume(EmptyResultDataAccessException.class, e -> Mono.error(new ObjectNotFoundException("User not found", e)));
     }
 
     @Override
-    public Optional<Role> getRoleByName(String name) {
+    public Mono<Role> getRoleByName(String name) {
         return roleRepo.getForName(name);
     }
 }

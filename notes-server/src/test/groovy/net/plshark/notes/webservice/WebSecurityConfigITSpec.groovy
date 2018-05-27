@@ -1,5 +1,8 @@
 package net.plshark.notes.webservice
 
+// TODO
+
+/*
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*
@@ -115,3 +118,4 @@ class WebSecurityConfigITSpec extends Specification {
             .andExpect(status().isOk())
     }
 }
+*/

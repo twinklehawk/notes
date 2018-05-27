@@ -1,5 +1,6 @@
 package net.plshark.auth.throttle;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -7,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
@@ -41,21 +41,25 @@ public class LoginAttemptThrottlingFilter implements WebFilter {
         boolean blocked = false;
 
         String clientIp = getClientIp(httpRequest);
+        String username = getUsername(httpRequest).orElse("");
         if (service.isIpBlocked(clientIp)) {
             blocked = true;
             log.debug("blocked request from {}", clientIp);
-        } else {
-            Optional<String> username = getUsername(httpRequest);
-            if (username.isPresent() && service.isUsernameBlocked(username.get())) {
-                blocked = true;
-                log.debug("blocked request for username {}", username.get());
-            }
+        } else if (service.isUsernameBlocked(username)) {
+            blocked = true;
+            log.debug("blocked request for username {}", username);
         }
 
         if (blocked)
-            return Mono.error(new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS));
+            return Mono.fromRunnable(() -> exchange.getResponse().setStatusCode(HttpStatus.TOO_MANY_REQUESTS));
         else
-            return chain.filter(exchange);
+            return chain.filter(exchange)
+                .doOnError(AccessDeniedException.class, error -> service.onLoginFailed(username, clientIp))
+                .then(Mono.fromRunnable(() -> {
+                    HttpStatus status = exchange.getResponse().getStatusCode();
+                    if (HttpStatus.UNAUTHORIZED.equals(status) || HttpStatus.FORBIDDEN.equals(status))
+                        service.onLoginFailed(username, clientIp);
+                }));
     }
 
     /**
@@ -66,7 +70,9 @@ public class LoginAttemptThrottlingFilter implements WebFilter {
     private String getClientIp(ServerHttpRequest request) {
         return Optional.ofNullable(request.getHeaders().getFirst("X-Forwarded-For"))
             .map(header -> header.split(",")[0])
-            .orElse(request.getRemoteAddress().getHostString());
+            .orElse(Optional.ofNullable(request.getRemoteAddress())
+                .map(inetAddr -> inetAddr.getHostString())
+                .orElse(""));
     }
 
     /**

@@ -1,8 +1,7 @@
 package net.plshark.notes.webservice
 
-import javax.servlet.http.HttpServletRequest
-
 import org.springframework.http.HttpStatus
+import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.web.HttpRequestMethodNotSupportedException
 
 import net.plshark.BadRequestException
@@ -11,11 +10,11 @@ import spock.lang.Specification
 
 class ExceptionHandlerControllerAdviceSpec extends Specification {
 
-    HttpServletRequest request = Mock()
+    ServerHttpRequest request = Mock()
     ExceptionHandlerControllerAdvice advice = new ExceptionHandlerControllerAdvice()
 
     def setup() {
-        request.getRequestURI() >> "http://test/url"
+        request.getURI() >> URI.create("http://test/url")
     }
 
     def "bad request builds correct response body"() {

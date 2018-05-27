@@ -1,8 +1,6 @@
 package net.plshark.notes.webservice;
 
 import java.util.Objects;
-import java.util.Optional;
-
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +17,7 @@ import net.plshark.ObjectNotFoundException;
 import net.plshark.notes.Note;
 import net.plshark.notes.service.NotesService;
 import net.plshark.users.service.UserAuthenticationService;
+import reactor.core.publisher.Mono;
 
 /**
  * Controller to provide web service methods for notes
@@ -48,11 +47,10 @@ public class NotesController {
      * @throws ObjectNotFoundException if the note was not found
      */
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Note get(@PathVariable("id") long id, Authentication auth) throws ObjectNotFoundException {
-        Optional<Note> note = notesService.getForUser(id, userAuthService.getUserIdForAuthentication(auth));
-        if (!note.isPresent())
-            throw new ObjectNotFoundException("No note found for id " + id);
-        return note.get();
+    public Mono<Note> get(@PathVariable("id") long id, Authentication auth) {
+        return userAuthService.getUserIdForAuthentication(auth)
+            .flatMap(currentUserId -> notesService.getForUser(id, currentUserId))
+            .switchIfEmpty(Mono.error(new ObjectNotFoundException("No note found for id " + id)));
     }
 
     /**
@@ -63,8 +61,9 @@ public class NotesController {
      * @throws ObjectNotFoundException if the note has an ID but cannot be found
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Note insert(@RequestBody Note note, Authentication auth) throws ObjectNotFoundException {
-        return notesService.save(note, userAuthService.getUserIdForAuthentication(auth));
+    public Mono<Note> insert(@RequestBody Note note, Authentication auth) {
+        return userAuthService.getUserIdForAuthentication(auth)
+            .flatMap(currentUserId -> notesService.save(note, currentUserId));
     }
 
     /**
@@ -79,24 +78,25 @@ public class NotesController {
      * @throws ObjectNotFoundException if the note ID is present but the note is not found
      */
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Note update(@PathVariable("id") long id, @RequestBody Note note, Authentication auth)
-            throws BadRequestException, ObjectNotFoundException {
-        if (!note.getId().isPresent())
-            note = new Note(id, note.getCorrelationId(), note.getTitle(), note.getContent());
-        else if (note.getId().get() != id)
-            throw new BadRequestException("Note ID must match ID in path");
-
-        return notesService.save(note, userAuthService.getUserIdForAuthentication(auth));
+    public Mono<Note> update(@PathVariable("id") long id, @RequestBody Note note, Authentication auth) {
+        Note n = note.getId().isPresent() ? note : new Note(id, note.getCorrelationId(), note.getTitle(), note.getContent());
+        if (n.getId().get() != id)
+            return Mono.error(new BadRequestException("Note ID must match ID in path"));
+        else
+            return userAuthService.getUserIdForAuthentication(auth)
+                .flatMap(currentUserId -> notesService.save(n, currentUserId));
     }
 
     /**
      * Delete a note by ID
      * @param id the note ID
      * @param auth the currently authenticated user
+     * @return an empty result
      * @throws ObjectNotFoundException if the note is not found
      */
     @DeleteMapping(path = "/{id}")
-    public void delete(@PathVariable("id") long id, Authentication auth) throws ObjectNotFoundException {
-        notesService.deleteForUser(id, userAuthService.getUserIdForAuthentication(auth));
+    public Mono<Void> delete(@PathVariable("id") long id, Authentication auth) {
+        return userAuthService.getUserIdForAuthentication(auth)
+            .flatMap(currentUserId -> notesService.deleteForUser(id, currentUserId));
     }
 }

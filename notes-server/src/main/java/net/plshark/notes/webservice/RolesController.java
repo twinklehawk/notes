@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import net.plshark.BadRequestException;
 import net.plshark.users.Role;
 import net.plshark.users.service.UserManagementService;
+import reactor.core.publisher.Mono;
 
 /**
  * Controller to provide web service methods for roles
@@ -38,9 +39,9 @@ public class RolesController {
      * @throws BadRequestException if the role already has an ID set
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Role insert(@RequestBody Role role) throws BadRequestException {
+    public Mono<Role> insert(@RequestBody Role role) {
         if (role.getId().isPresent())
-            throw new BadRequestException("Cannot insert role with ID already set");
+            return Mono.error(new BadRequestException("Cannot insert role with ID already set"));
         return userMgmtService.saveRole(role);
     }
 
@@ -49,7 +50,7 @@ public class RolesController {
      * @param id the role ID
      */
     @DeleteMapping(path = "/{id}")
-    public void delete(@PathVariable("id") long id) {
-        userMgmtService.deleteRole(id);
+    public Mono<Void> delete(@PathVariable("id") long id) {
+        return userMgmtService.deleteRole(id);
     }
 }

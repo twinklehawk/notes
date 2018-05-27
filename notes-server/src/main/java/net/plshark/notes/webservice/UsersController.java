@@ -15,6 +15,7 @@ import net.plshark.ObjectNotFoundException;
 import net.plshark.users.PasswordChangeRequest;
 import net.plshark.users.User;
 import net.plshark.users.service.UserManagementService;
+import reactor.core.publisher.Mono;
 
 /**
  * Controller providing web service methods for users
@@ -40,13 +41,13 @@ public class UsersController {
      * @throws BadRequestException if attempting to insert a user with an ID already set
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public User insert(@RequestBody User user) throws BadRequestException {
+    public Mono<User> insert(@RequestBody User user) throws BadRequestException {
         if (user.getId().isPresent())
             throw new BadRequestException("Cannot insert user with ID already set");
 
-        User savedUser = userMgmtService.saveUser(user);
-        // don't send back the password
-        return new User(savedUser.getId().get(), savedUser.getUsername(), null);
+        return userMgmtService.saveUser(user)
+             // don't send back the password
+            .map(savedUser -> new User(savedUser.getId().get(), savedUser.getUsername(), null));
     }
 
     /**
@@ -54,8 +55,8 @@ public class UsersController {
      * @param id the user ID
      */
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") long id) {
-        userMgmtService.deleteUser(id);
+    public Mono<Void> delete(@PathVariable("id") long id) {
+        return userMgmtService.deleteUser(id);
     }
 
     /**
@@ -65,9 +66,8 @@ public class UsersController {
      * @throws ObjectNotFoundException if the user was not found or the current password was incorrect
      */
     @PostMapping(path = "/{id}/password")
-    public void changePassword(@PathVariable("id") long userId, @RequestBody PasswordChangeRequest request)
-            throws ObjectNotFoundException {
-        userMgmtService.updateUserPassword(userId, request.getCurrentPassword(), request.getNewPassword());
+    public Mono<Void> changePassword(@PathVariable("id") long userId, @RequestBody PasswordChangeRequest request) {
+        return userMgmtService.updateUserPassword(userId, request.getCurrentPassword(), request.getNewPassword());
     }
 
     /**
@@ -77,9 +77,8 @@ public class UsersController {
      * @throws ObjectNotFoundException if the user or role does not exist
      */
     @PostMapping(path = "/{userId}/roles/{roleId}")
-    public void grantRole(@PathVariable("userId") long userId, @PathVariable("roleId") long roleId)
-            throws ObjectNotFoundException {
-        userMgmtService.grantRoleToUser(userId, roleId);
+    public Mono<Void> grantRole(@PathVariable("userId") long userId, @PathVariable("roleId") long roleId) {
+        return userMgmtService.grantRoleToUser(userId, roleId);
     }
 
     /**
@@ -89,8 +88,7 @@ public class UsersController {
      * @throws ObjectNotFoundException if the user does not exist
      */
     @DeleteMapping(path = "/{userId}/roles/{roleId}")
-    public void removeRole(@PathVariable("userId") long userId, @PathVariable("roleId") long roleId)
-            throws ObjectNotFoundException {
-        userMgmtService.removeRoleFromUser(userId, roleId);
+    public Mono<Void> removeRole(@PathVariable("userId") long userId, @PathVariable("roleId") long roleId) {
+        return userMgmtService.removeRoleFromUser(userId, roleId);
     }
 }

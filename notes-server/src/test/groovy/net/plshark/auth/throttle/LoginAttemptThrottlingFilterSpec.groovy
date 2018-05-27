@@ -1,8 +1,10 @@
 package net.plshark.auth.throttle
 
-import javax.servlet.FilterChain
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import org.springframework.http.HttpStatus
+import org.springframework.http.server.reactive.ServerHttpRequest
+import org.springframework.http.server.reactive.ServerHttpResponse
+import org.springframework.web.server.ServerWebExchange
+import org.springframework.web.server.WebFilterChain
 
 import spock.lang.Specification
 
@@ -11,9 +13,15 @@ class LoginAttemptThrottlingFilterSpec extends Specification {
     LoginAttemptService service = Mock()
     UsernameExtractor extractor = Mock()
     LoginAttemptThrottlingFilter filter = new LoginAttemptThrottlingFilter(service, extractor)
-    HttpServletRequest request = Mock()
-    HttpServletResponse response = Mock()
-    FilterChain chain = Mock()
+    ServerHttpRequest request = Mock()
+    ServerHttpResponse response = Mock()
+    ServerWebExchange exchange = Mock()
+    WebFilterChain chain = Mock()
+
+    def setup() {
+        exchange.getRequest() >> request
+        exchange.getResponse() >> response
+    }
 
     def "constructor does not accept nulls"() {
         when:
@@ -30,71 +38,71 @@ class LoginAttemptThrottlingFilterSpec extends Specification {
     }
 
     def "should pull the correct IP and username when the forwarded header is not set"() {
-        request.getHeader("X-Forwarded-For") >> null
-        request.getRemoteAddr() >> "192.168.1.2"
+        request.getHeaders().getFirst("X-Forwarded-For") >> null
+        request.getRemoteAddress() >> InetSocketAddress.createUnresolved("192.168.1.2", 80)
         extractor.extractUsername(request) >> Optional.of("test-user")
         service.isIpBlocked("192.168.1.2") >> false
         service.isUsernameBlocked("test-user") >> false
 
         when:
-        filter.doFilter(request, response, chain)
+        filter.filter(exchange, chain)
 
         then:
-        1 * chain.doFilter(request, response)
+        1 * chain.filter(exchange)
     }
 
     def "should pull the correct IP and username when the forwarded header is set"() {
-        request.getHeader("X-Forwarded-For") >> "192.168.1.2"
-        request.getRemoteAddr() >> null
+        request.getHeaders().getFirst("X-Forwarded-For") >> "192.168.1.2"
+        request.getRemoteAddress() >> null
         extractor.extractUsername(request) >> Optional.of("test-user")
         service.isIpBlocked("192.168.1.2") >> false
         service.isUsernameBlocked("test-user") >> false
 
         when:
-        filter.doFilter(request, response, chain)
+        filter.filter(exchange, chain)
 
         then:
-        1 * chain.doFilter(request, response)
+        1 * chain.filter(exchange)
     }
 
     def "should block the request if the username is blocked"() {
-        request.getRemoteAddr() >> "192.168.1.2"
+        request.getRemoteAddress() >> InetSocketAddress.createUnresolved("192.168.1.2", 80)
         extractor.extractUsername(request) >> Optional.of("test-user")
         service.isIpBlocked("192.168.1.2") >> false
         service.isUsernameBlocked("test-user") >> true
 
         when:
-        filter.doFilter(request, response, chain)
+        filter.filter(exchange, chain)
 
         then:
-        0 * chain.doFilter(request, response)
-        1 * response.sendError(429)
+        0 * chain.filter(exchange)
+        1 * response.setStatusCode(HttpStatus.TOO_MANY_REQUESTS)
     }
 
     def "should block the request if the IP is blocked"() {
-        request.getRemoteAddr() >> "192.168.1.2"
+        request.getRemoteAddress() >> InetSocketAddress.createUnresolved("192.168.1.2", 80)
         extractor.extractUsername(request) >> Optional.of("test-user")
         service.isIpBlocked("192.168.1.2") >> true
         service.isUsernameBlocked("test-user") >> false
 
         when:
-        filter.doFilter(request, response, chain)
+        filter.filter(exchange, chain)
 
         then:
-        0 * chain.doFilter(request, response)
-        1 * response.sendError(429)
+        0 * chain.filter(exchange)
+        1 * response.setStatusCode(HttpStatus.TOO_MANY_REQUESTS)
     }
 
     def "should not check the username if the request does not include a username"() {
-        request.getRemoteAddr() >> "192.168.1.2"
+        request.getRemoteAddress() >> InetSocketAddress.createUnresolved("192.168.1.2", 80)
         extractor.extractUsername(request) >> Optional.empty()
         service.isIpBlocked("192.168.1.2") >> false
 
         when:
-        filter.doFilter(request, response, chain)
+        filter.filter(exchange, chain)
 
         then:
         0 * service.isUsernameBlocked(_)
-        1 * chain.doFilter(request, response)
+        1 * chain.filter(exchange)
     }
 }
