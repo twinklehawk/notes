@@ -14,14 +14,13 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 
 import net.plshark.jdbc.SafePreparedStatementCreator;
 import net.plshark.users.Role;
-import net.plshark.users.repo.SyncRolesRepository;
 
 /**
  * Role repository that uses JDBC
  */
 @Named
 @Singleton
-public class JdbcSyncRolesRepository implements SyncRolesRepository {
+public class JdbcSyncRolesRepository {
 
     private static final String INSERT = "INSERT INTO roles (name) VALUES (?)";
     private static final String DELETE = "DELETE FROM roles WHERE id = ?";
@@ -39,7 +38,6 @@ public class JdbcSyncRolesRepository implements SyncRolesRepository {
         this.jdbc = Objects.requireNonNull(jdbc, "jdbc cannot be null");
     }
 
-    @Override
     public Role insert(Role role) {
         if (role.getId().isPresent())
             throw new IllegalArgumentException("Cannot insert role with ID already set");
@@ -55,18 +53,15 @@ public class JdbcSyncRolesRepository implements SyncRolesRepository {
         return new Role(id, role.getName());
     }
 
-    @Override
     public void delete(long roleId) {
         jdbc.update(DELETE, stmt -> stmt.setLong(1, roleId));
     }
 
-    @Override
     public Optional<Role> getForId(long id) {
         List<Role> results = jdbc.query(SELECT_BY_ID, stmt -> stmt.setLong(1, id), roleRowMapper);
         return Optional.ofNullable(DataAccessUtils.singleResult(results));
     }
 
-    @Override
     public Optional<Role> getForName(String name) {
         Objects.requireNonNull(name, "name cannot be null");
         List<Role> results = jdbc.query(SELECT_BY_NAME, stmt -> stmt.setString(1, name), roleRowMapper);

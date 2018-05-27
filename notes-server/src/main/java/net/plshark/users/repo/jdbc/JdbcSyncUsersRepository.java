@@ -15,14 +15,13 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 
 import net.plshark.jdbc.SafePreparedStatementCreator;
 import net.plshark.users.User;
-import net.plshark.users.repo.SyncUsersRepository;
 
 /**
  * User repository that uses JDBC
  */
 @Named
 @Singleton
-public class JdbcSyncUsersRepository implements SyncUsersRepository {
+public class JdbcSyncUsersRepository {
 
     private static final String SELECT_BY_USERNAME = "SELECT * FROM users WHERE username = ?";
     private static final String SELECT_BY_ID = "SELECT * FROM users WHERE id = ?";
@@ -41,14 +40,12 @@ public class JdbcSyncUsersRepository implements SyncUsersRepository {
         this.jdbc = Objects.requireNonNull(jdbc, "jdbc cannot be null");
     }
 
-    @Override
     public Optional<User> getForUsername(String username) {
         Objects.requireNonNull(username, "username cannot be null");
         List<User> results = jdbc.query(SELECT_BY_USERNAME, stmt -> stmt.setString(1, username), userRowMapper);
         return Optional.ofNullable(DataAccessUtils.singleResult(results));
     }
 
-    @Override
     public User insert(User user) {
         if (user.getId().isPresent())
             throw new IllegalArgumentException("Cannot insert user with ID already set");
@@ -67,18 +64,15 @@ public class JdbcSyncUsersRepository implements SyncUsersRepository {
         return new User(id, user.getUsername(), user.getPassword().get());
     }
 
-    @Override
     public void delete(long userId) {
         jdbc.update(DELETE, stmt -> stmt.setLong(1, userId));
     }
 
-    @Override
     public Optional<User> getForId(long id) {
         List<User> results = jdbc.query(SELECT_BY_ID, stmt -> stmt.setLong(1, id), userRowMapper);
         return Optional.ofNullable(DataAccessUtils.singleResult(results));
     }
 
-    @Override
     public void updatePassword(long id, String currentPassword, String newPassword) {
         int updates = jdbc.update(UPDATE_PASSWORD, stmt -> {
             stmt.setString(1, newPassword);

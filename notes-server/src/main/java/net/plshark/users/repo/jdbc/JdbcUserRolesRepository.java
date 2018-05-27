@@ -7,7 +7,6 @@ import javax.inject.Singleton;
 
 import net.plshark.jdbc.ReactiveUtils;
 import net.plshark.users.Role;
-import net.plshark.users.repo.SyncUserRolesRepository;
 import net.plshark.users.repo.UserRolesRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -19,13 +18,13 @@ import reactor.core.publisher.Mono;
 @Singleton
 public class JdbcUserRolesRepository implements UserRolesRepository {
 
-    private final SyncUserRolesRepository syncRepo;
+    private final JdbcSyncUserRolesRepository syncRepo;
 
     /**
      * Create a new instance
      * @param syncRepo the synchronous repository to wrap
      */
-    public JdbcUserRolesRepository(SyncUserRolesRepository syncRepo) {
+    public JdbcUserRolesRepository(JdbcSyncUserRolesRepository syncRepo) {
         this.syncRepo = Objects.requireNonNull(syncRepo, "syncRepo cannot be null");
     }
 
