@@ -13,7 +13,7 @@ import spock.lang.Specification
 
 @SpringBootTest(classes = Application.class)
 @ActiveProfiles("test")
-class JdbcRolesRepositoryITSpec extends Specification {
+class SyncJdbcRolesRepositoryIntSpec extends Specification {
 
     @Inject
     JdbcRolesRepository repo

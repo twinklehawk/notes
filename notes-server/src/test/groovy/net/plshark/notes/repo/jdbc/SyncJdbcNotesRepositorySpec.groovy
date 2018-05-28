@@ -8,7 +8,7 @@ import net.plshark.notes.Note
 import net.plshark.notes.webservice.Application
 import spock.lang.Specification
 
-class JdbcNotesRepositorySpec extends Specification {
+class SyncJdbcNotesRepositorySpec extends Specification {
 
     def "constructor does not accept null args"() {
         when:

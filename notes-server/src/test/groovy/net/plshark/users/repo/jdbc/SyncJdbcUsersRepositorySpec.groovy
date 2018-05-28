@@ -1,13 +1,13 @@
 package net.plshark.users.repo.jdbc
 
-import net.plshark.users.repo.jdbc.JdbcUserRolesRepository
+import net.plshark.users.repo.jdbc.JdbcUsersRepository
 import spock.lang.Specification
 
-class JdbcUserRolesRepositorySpec extends Specification {
+class SyncJdbcUsersRepositorySpec extends Specification {
 
     def "constructor does not accept null args"() {
         when:
-        new JdbcUserRolesRepository(null)
+        new JdbcUsersRepository(null)
 
         then:
         thrown(NullPointerException)
