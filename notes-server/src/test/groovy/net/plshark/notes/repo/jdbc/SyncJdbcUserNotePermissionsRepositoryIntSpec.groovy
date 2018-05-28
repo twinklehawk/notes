@@ -15,7 +15,7 @@ import spock.lang.Specification
 class SyncJdbcUserNotePermissionsRepositoryIntSpec extends Specification {
 
     @Inject
-    JdbcUserNotePermissionsRepository repo
+    SyncJdbcUserNotePermissionsRepository repo
 
     def "can insert and retrieve a permission"() {
         when:

@@ -18,11 +18,11 @@ import spock.lang.Specification
 class SyncJdbcUserRolesRepositoryIntSpec extends Specification {
 
     @Inject
-    JdbcUserRolesRepository repo
+    JdbcSyncUserRolesRepository repo
     Role testRole1
     Role testRole2
     @Inject
-    RolesRepository rolesRepo
+    JdbcSyncRolesRepository rolesRepo
 
     def setup() {
         testRole1 = rolesRepo.insert(new Role("testRole1"))

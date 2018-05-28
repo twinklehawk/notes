@@ -17,7 +17,7 @@ import spock.lang.Specification
 class SyncJdbcUsersRepositoryIntSpec extends Specification {
 
     @Inject
-    JdbcUsersRepository repo
+    JdbcSyncUsersRepository repo
 
     def "inserting a user returns the inserted user with the ID set"() {
         when:

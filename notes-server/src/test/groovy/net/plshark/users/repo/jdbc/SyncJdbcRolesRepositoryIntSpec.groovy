@@ -16,7 +16,7 @@ import spock.lang.Specification
 class SyncJdbcRolesRepositoryIntSpec extends Specification {
 
     @Inject
-    JdbcRolesRepository repo
+    JdbcSyncRolesRepository repo
 
     def "inserting a role returns the inserted role with the ID set"() {
         when:
