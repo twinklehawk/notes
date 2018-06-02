@@ -170,9 +170,6 @@ class UserManagementServiceImplSpec extends Specification {
         probe.assertWasNotCancelled()
     }
 
-    // TODO repo layer returns empty mono instead of DataAccessException
-    // TODO check other spots too
-
     def "granting a role to a user that does not exist should throw an ObjectNotFoundException"() {
         userRepo.getForId(100) >> Mono.empty()
         roleRepo.getForId(200) >> Mono.just(new Role("role"))

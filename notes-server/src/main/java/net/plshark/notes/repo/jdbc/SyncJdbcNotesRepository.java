@@ -85,7 +85,6 @@ public class SyncJdbcNotesRepository implements SyncNotesRepository {
 
     @Override
     public void delete(long id) {
-        // TODO consider throwing exception since service layer does
         jdbc.update(DELETE, stmt -> stmt.setLong(1, id));
     }
 
