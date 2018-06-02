@@ -22,7 +22,7 @@ import spock.lang.Specification
 
 @SpringBootTest(classes = Application.class)
 @ActiveProfiles("test")
-class ApplicationITSpec extends Specification {
+class ApplicationIntSpec extends Specification {
 
     @Inject
     Application application
