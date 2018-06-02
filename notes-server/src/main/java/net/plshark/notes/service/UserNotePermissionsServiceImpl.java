@@ -68,7 +68,8 @@ public class UserNotePermissionsServiceImpl implements UserNotePermissionsServic
                 p.setWritable(permission.isWritable());
                 return permissionRepo.update(p);
             })
-            .switchIfEmpty(permissionRepo.insert(new UserNotePermission(userId, id, permission.isReadable(), permission.isWritable())))
+            .switchIfEmpty(Mono.defer(() ->
+                permissionRepo.insert(new UserNotePermission(userId, id, permission.isReadable(), permission.isWritable()))))
             .then();
     }
 
