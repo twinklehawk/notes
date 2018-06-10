@@ -60,6 +60,11 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
+    public Mono<Void> deleteUser(User user) {
+        return deleteUser(user.getId().get());
+    }
+
+    @Override
     public Mono<Role> saveRole(Role role) {
         if (role.getId().isPresent())
             throw new IllegalArgumentException("Updating a role is not supported");

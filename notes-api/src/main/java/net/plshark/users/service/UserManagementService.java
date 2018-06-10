@@ -24,6 +24,12 @@ public interface UserManagementService {
     Mono<Void> deleteUser(long userId);
 
     /**
+     * Delete a user
+     * @param user the user
+     */
+    Mono<Void> deleteUser(User user);
+
+    /**
      * Update a user's password
      * @param userId the ID of the user
      * @param currentPassword the current password, used for verification

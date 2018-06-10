@@ -1,121 +1,125 @@
 package net.plshark.notes.webservice
 
-// TODO
-
-/*
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import java.nio.charset.StandardCharsets
+import java.util.Base64
 
 import javax.inject.Inject
 
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.mock.web.MockHttpServletRequest
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers
+import org.springframework.context.ApplicationContext
+import org.springframework.http.MediaType
+import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.web.WebAppConfiguration
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.RequestPostProcessor
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import org.springframework.web.context.WebApplicationContext
+import org.springframework.test.web.reactive.server.WebTestClient
 
 import com.fasterxml.jackson.databind.ObjectMapper
 
-import net.plshark.auth.throttle.impl.LoginAttemptServiceImpl
 import net.plshark.notes.Note
 import net.plshark.users.Role
 import net.plshark.users.User
 import net.plshark.users.service.UserManagementService
+import reactor.core.publisher.Mono
 import spock.lang.Specification
 
-@SpringBootTest(classes = Application.class)
+@SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @ActiveProfiles("test")
-@WebAppConfiguration
-class WebSecurityConfigITSpec extends Specification {
+class WebSecurityConfigIntSpec extends Specification {
 
     @Inject
-    WebApplicationContext context
+    ApplicationContext context
     @Inject
     UserManagementService userMgmt
     @Inject
     ObjectMapper mapper
-    MockMvc mvc
     User notesUser
+    User adminUser
+    WebTestClient client
 
     def setup() {
-        mvc = MockMvcBuilders.webAppContextSetup(context).apply(SecurityMockMvcConfigurers.springSecurity()).build()
+        client = WebTestClient.bindToApplicationContext(context)
+            .build()
 
-        Role userRole = userMgmt.getRoleByName("notes-user").get()
-        Role adminRole = userMgmt.getRoleByName("notes-admin").get()
+        Role userRole = userMgmt.getRoleByName("notes-user").toFuture().get()
+        Role adminRole = userMgmt.getRoleByName("notes-admin").toFuture().get()
 
-        notesUser = userMgmt.saveUser(new User("test-user", "pass"))
-        userMgmt.grantRoleToUser(notesUser, userRole)
+        notesUser = userMgmt.saveUser(new User("test-user", "pass")).toFuture().get()
+        userMgmt.grantRoleToUser(notesUser, userRole).toFuture().get()
+
+        adminUser = userMgmt.saveUser(new User("admin-user", "pass")).toFuture().get()
+        userMgmt.grantRoleToUser(adminUser, adminRole).toFuture().get()
     }
 
     def cleanup() {
         if (notesUser != null)
-            userMgmt.deleteUser(notesUser.id.get())
+            userMgmt.deleteUser(notesUser).toFuture().get()
+        if (adminUser != null)
+            userMgmt.deleteUser(adminUser).toFuture().get()
     }
 
-    def "csrf tokens are required on post requests"() {
+    def "no csrf token should result in a forbidden response"() {
         expect:
-        mvc.perform(post("/notes")).andExpect(status().isForbidden())
-        mvc.perform(post("/notes").with(csrf().useInvalidToken())).andExpect(status().isForbidden())
-        mvc.perform(
-            post("/notes")
-                .content(mapper.writeValueAsString(new Note(1, 0, "title", "content")))
-                .with(csrf()))
-        .andExpect(status().isUnauthorized())
+        client.post().uri("/notes")
+            .exchange().expectStatus().isForbidden()
     }
 
-    def "http basic authentication is enabled"() {
+    def "a valid csrf token but no authentication header should be rejected with an unauthorized response"() {
         expect:
-        mvc.perform(get("/notes/1").with(csrf())).andExpect(status().isUnauthorized())
-        mvc.perform(get("/notes/1").with(csrf()).with(httpBasic("bad-user", "bad-pass")))
-            .andExpect(status().isUnauthorized())
-        mvc.perform(get("/notes/1").with(csrf()).with(httpBasic("test-user", "bad-pass")))
-            .andExpect(status().isUnauthorized())
-        mvc.perform(get("/notes/1").with(csrf()).with(httpBasic("test-user", "pass")))
-            .andExpect(status().isNotFound())
+        client.mutateWith(SecurityMockServerConfigurers.csrf())
+            .get().uri("/notes/1")
+            .exchange().expectStatus().isUnauthorized()
     }
 
-    def "too many failed login attempts are blocked"() {
-        RequestPostProcessor remoteAddr = new RequestPostProcessor() {
-            MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
-                request.setRemoteAddr("192.168.1.2")
-                return request
-            }
-        }
-
+    def "invalid credentials should be rejected with an unauthorized response"() {
         expect:
-        // because the throttling filter is before the basic auth, the throttling filter does not start blocking requests until maxAttempts + 2
-        for (int i = 0; i < LoginAttemptServiceImpl.DEFAULT_MAX_ATTEMPTS + 1; ++i)
-            mvc.perform(get("/notes/1").with(remoteAddr).with(csrf()).with(httpBasic("lockout-user", "bad-pass")))
-                .andExpect(status().isUnauthorized())
-        mvc.perform(get("/notes/1").with(remoteAddr).with(csrf()).with(httpBasic("lockout-user", "bad-pass")))
-            .andExpect(status().isTooManyRequests())
+        client.mutateWith(SecurityMockServerConfigurers.csrf())
+            .get().uri("/notes/1")
+                .header("Authorization", httpBasic("bad-user","bad-pass"))
+            .exchange().expectStatus().isUnauthorized()
+    }
+
+    def "an invalid password should be rejected with an unauthorized response"() {
+        expect:
+        client.mutateWith(SecurityMockServerConfigurers.csrf())
+            .get().uri("/notes/1")
+                .header("Authorization", httpBasic("test-user","bad-pass"))
+            .exchange().expectStatus().isUnauthorized()
+    }
+
+    def "valid credentials should be accepted"() {
+        expect:
+        client.mutateWith(SecurityMockServerConfigurers.csrf())
+            .get().uri("/notes/1")
+                .header("Authorization", httpBasic("test-user","pass"))
+            // the note does not exist, so not found is expected
+            .exchange().expectStatus().isNotFound()
     }
 
     def "normal methods require notes-user role"() {
         expect:
-        mvc.perform(get("/notes/1").with(csrf()).with(user("test-user").password("pass").roles("notes-admin")))
-            .andExpect(status().isForbidden())
-        mvc.perform(get("/notes/1").with(csrf()).with(user("test-user").password("pass").roles("notes-user")))
-            .andExpect(status().isNotFound())
+        client.mutateWith(SecurityMockServerConfigurers.csrf())
+            .get().uri("/notes/1")
+                .header("Authorization", httpBasic("admin-user","pass"))
+            .exchange().expectStatus().isForbidden()
+        client.mutateWith(SecurityMockServerConfigurers.csrf())
+            .get().uri("/notes/1")
+                .header("Authorization", httpBasic("test-user","pass"))
+            .exchange().expectStatus().isNotFound()
     }
 
     def "admin methods require notes-admin role"() {
         expect:
-        mvc.perform(delete("/users/100").with(csrf()).with(user("test-user").password("pass").roles("notes-user")))
-            .andExpect(status().isForbidden())
-        mvc.perform(delete("/users/100").with(csrf()).with(user("test-user").password("pass").roles("notes-admin")))
-            .andExpect(status().isOk())
+        client.mutateWith(SecurityMockServerConfigurers.csrf())
+            .delete().uri("/users/100")
+                .header("Authorization", httpBasic("test-user","pass"))
+            .exchange().expectStatus().isForbidden()
+        client.mutateWith(SecurityMockServerConfigurers.csrf())
+            .delete().uri("/users/100")
+                .header("Authorization", httpBasic("admin-user","pass"))
+            .exchange().expectStatus().isOk()
+    }
 
-        mvc.perform(delete("/roles/100").with(csrf()).with(user("test-user").password("pass").roles("notes-user")))
-            .andExpect(status().isForbidden())
-        mvc.perform(delete("/roles/100").with(csrf()).with(user("test-user").password("pass").roles("notes-admin")))
-            .andExpect(status().isOk())
+    def httpBasic(String user, String pass) {
+        def str = user + ":" + pass
+        return "Basic " + Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8))
     }
 }
-*/
