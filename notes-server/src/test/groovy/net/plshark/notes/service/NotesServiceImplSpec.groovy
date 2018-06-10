@@ -3,6 +3,9 @@ package net.plshark.notes.service
 import net.plshark.ObjectNotFoundException
 import net.plshark.notes.Note
 import net.plshark.notes.repo.NotesRepository
+import reactor.core.publisher.Mono
+import reactor.test.StepVerifier
+import reactor.test.publisher.PublisherProbe
 import spock.lang.Specification
 
 class NotesServiceImplSpec extends Specification {
@@ -26,87 +29,87 @@ class NotesServiceImplSpec extends Specification {
     }
 
     def "notes with no ID should be inserted and owner set to current user"() {
-        notesRepo.insert(_) >> new Note(1, 3, "", "")
+        PublisherProbe probe = PublisherProbe.empty()
+        permissionService.grantOwnerPermissions(1, 2) >> probe.mono()
+        notesRepo.insert(_) >> Mono.just(new Note(1, 3, "", ""))
 
-        when:
-        Note note = service.save(new Note("", ""), 2)
-
-        then:
-        note == new Note(1, 3, "", "")
-        1 * permissionService.grantOwnerPermissions(1, 2)
+        expect:
+        StepVerifier.create(service.save(new Note("", ""), 2))
+            .expectNext(new Note(1, 3, "", ""))
+            .verifyComplete()
+        probe.assertWasSubscribed()
+        probe.assertWasRequested()
+        probe.assertWasNotCancelled()
     }
 
     def "notes with ID should be updated"() {
-        permissionService.userHasWritePermission(4, 1) >> true
-        notesRepo.update(new Note(4, 2, "", "")) >> new Note(4, 2, "", "")
+        permissionService.userHasWritePermission(4, 1) >> Mono.just(true)
+        notesRepo.update(new Note(4, 2, "", "")) >> Mono.just(new Note(4, 2, "", ""))
 
-        when:
-        Note note = service.save(new Note(4, 2, "", ""), 1)
-
-        then:
-        note == new Note(4, 2, "", "")
+        expect:
+        StepVerifier.create(service.save(new Note(4, 2, "", ""), 1))
+            .expectNext(new Note(4, 2, "", ""))
+            .verifyComplete()
     }
 
     def "updating a note without write permission should throw ObjectNotFoundException"() {
-        permissionService.userHasWritePermission(4, 1) >> false
+        permissionService.userHasWritePermission(4, 1) >> Mono.just(false)
 
-        when:
-        service.save(new Note(4, 2, "", ""), 1)
-
-        then:
-        thrown(ObjectNotFoundException)
+        expect:
+        StepVerifier.create(service.save(new Note(4, 2, "", ""), 1))
+            .verifyError(ObjectNotFoundException.class)
     }
 
     def "retrieving a note by ID for a user should pass the IDs through"() {
-        permissionService.userHasReadPermission(100, 200) >> true
-        notesRepo.get(100) >> java.util.Optional.of(new Note(100, 3, "title", "content"))
+        permissionService.userHasReadPermission(100, 200) >> Mono.just(true)
+        notesRepo.get(100) >> Mono.just(new Note(100, 3, "title", "content"))
 
-        when:
-        Optional<Note> note = service.getForUser(100, 200)
-
-        then:
-        note.get() == new Note(100, 3, "title", "content")
+        expect:
+        StepVerifier.create(service.getForUser(100, 200))
+            .expectNext(new Note(100, 3, "title", "content"))
+            .verifyComplete()
     }
 
-    def "attempting to retrieve a note that does not exist should return an empty optional"() {
-        permissionService.userHasReadPermission(100, 200) >> true
-        notesRepo.get(100) >> { java.util.Optional.empty() }
+    def "attempting to retrieve a note that does not exist should return an empty Mono"() {
+        permissionService.userHasReadPermission(100, 200) >> Mono.just(true)
+        notesRepo.get(100) >> Mono.empty()
 
-        when:
-        Optional<Note> note = service.getForUser(100, 200)
-
-        then:
-        !note.isPresent()
+        expect:
+        StepVerifier.create(service.getForUser(100, 200))
+            .verifyComplete()
     }
 
-    def "attempting to retrieve a note when the user does not have read permision should return an empty optional"() {
-        permissionService.userHasReadPermission(100, 200) >> false
+    def "attempting to retrieve a note when the user does not have read permision should return an empty Mono"() {
+        permissionService.userHasReadPermission(100, 200) >> Mono.just(false)
 
-        when:
-        Optional<Note> note = service.getForUser(100, 200)
-
-        then:
-        !note.isPresent()
+        expect:
+        StepVerifier.create(service.getForUser(100, 200))
+            .verifyComplete()
     }
 
     def "deleting a note should pass the ID through"() {
-        permissionService.userIsOwner(100, 200) >> true
+        permissionService.userIsOwner(100, 200) >> Mono.just(true)
+        PublisherProbe deleteNoteProbe = PublisherProbe.empty()
+        notesRepo.delete(100) >> deleteNoteProbe.mono()
+        PublisherProbe deletePermsProbe = PublisherProbe.empty()
+        permissionService.deletePermissionsForNote(100) >> deletePermsProbe.mono()
 
-        when:
-        service.deleteForUser(100, 200)
-
-        then:
-        1 * notesRepo.delete(100)
-        1 * permissionService.deletePermissionsForNote(100)
+        expect:
+        StepVerifier.create(service.deleteForUser(100, 200))
+            .verifyComplete()
+        deleteNoteProbe.assertWasSubscribed()
+        deleteNoteProbe.assertWasRequested()
+        deleteNoteProbe.assertWasNotCancelled()
+        deletePermsProbe.assertWasSubscribed()
+        deletePermsProbe.assertWasRequested()
+        deletePermsProbe.assertWasNotCancelled()
     }
 
     def "attempting to delete a note not owned by the user should throw an ObjectNotFoundException"() {
-        permissionService.userIsOwner(100, 200) >> false
+        permissionService.userIsOwner(100, 200) >> Mono.just(false)
 
-        when:
-        service.deleteForUser(100, 200)
-
-        then:
-        thrown(ObjectNotFoundException)
+        expect:
+        StepVerifier.create(service.deleteForUser(100, 200))
+            .verifyError(ObjectNotFoundException.class)
     }
 }

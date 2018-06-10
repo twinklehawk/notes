@@ -1,11 +1,8 @@
 package net.plshark.users.repo;
 
-import java.util.Optional;
-
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
-
 import net.plshark.users.User;
+import reactor.core.publisher.Mono;
 
 /**
  * Repository for saving, deleting, and retrieving users
@@ -18,7 +15,7 @@ public interface UsersRepository {
      * @return the matching user
      * @throws DataAccessException if the query fails
      */
-    Optional<User> getForId(long id);
+    Mono<User> getForId(long id);
 
     /**
      * Get a user by the username
@@ -26,7 +23,7 @@ public interface UsersRepository {
      * @return the matching user
      * @throws DataAccessException if the query fails
      */
-    Optional<User> getForUsername(String username);
+    Mono<User> getForUsername(String username);
 
     /**
      * Insert a new user
@@ -34,22 +31,23 @@ public interface UsersRepository {
      * @return the inserted user, will have the ID set
      * @throws DataAccessException if the insert fails
      */
-    User insert(User user);
+    Mono<User> insert(User user);
 
     /**
      * Update an existing user's password
      * @param id the ID of the user to update
      * @param currentPassword the current password
      * @param newPassword the new password
-     * @throws EmptyResultDataAccessException if no user exists with the ID or currentPassword
+     * @return an empty result
      * @throws DataAccessException if the update fails
      */
-    void updatePassword(long id, String currentPassword, String newPassword);
+    Mono<Void> updatePassword(long id, String currentPassword, String newPassword);
 
     /**
      * Delete a user by ID
      * @param userId the user ID
+     * @return an empty result
      * @throws DataAccessException if the delete fails
      */
-    void delete(long userId);
+    Mono<Void> delete(long userId);
 }

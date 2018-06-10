@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -19,6 +18,7 @@ import net.plshark.users.Role;
 import net.plshark.users.User;
 import net.plshark.users.repo.UserRolesRepository;
 import net.plshark.users.repo.UsersRepository;
+import reactor.core.publisher.Mono;
 
 /**
  * Implementation of the UserDetailsService
@@ -41,22 +41,23 @@ public class UserDetailsServiceImpl implements UserAuthenticationService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepo.getForUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("No matching user for " + username));
-        List<Role> userRoles = userRolesRepo.getRolesForUser(user.getId().get());
-
-        return UserInfo.forUser(user, userRoles);
+    public Mono<UserDetails> findByUsername(String username) {
+        return userRepo.getForUsername(username)
+            .switchIfEmpty(Mono.error(new UsernameNotFoundException("No matching user for " + username)))
+            .flatMap(user -> userRolesRepo.getRolesForUser(user.getId().get())
+                .collectList()
+                .map(roles -> UserInfo.forUser(user, roles)));
     }
 
     @Override
-    public long getUserIdForAuthentication(Authentication auth) {
-        long userId;
+    public Mono<Long> getUserIdForAuthentication(Authentication auth) {
+        Mono<Long> userId;
 
         if (auth.getPrincipal() instanceof UserInfo)
-            userId = ((UserInfo) auth.getPrincipal()).getUserId();
+            userId = Mono.just(((UserInfo) auth.getPrincipal()).getUserId());
         else
-            userId = userRepo.getForUsername(auth.getName()).get().getId().get();
+            userId = userRepo.getForUsername(auth.getName())
+                .map(user -> user.getId().get());
 
         return userId;
     }

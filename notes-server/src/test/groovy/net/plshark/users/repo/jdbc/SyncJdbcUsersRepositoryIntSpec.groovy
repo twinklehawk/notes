@@ -14,10 +14,10 @@ import spock.lang.Specification
 
 @SpringBootTest(classes = Application.class)
 @ActiveProfiles("test")
-class JdbcUsersRepositoryITSpec extends Specification {
+class SyncJdbcUsersRepositoryIntSpec extends Specification {
 
     @Inject
-    JdbcUsersRepository repo
+    JdbcSyncUsersRepository repo
 
     def "inserting a user returns the inserted user with the ID set"() {
         when:

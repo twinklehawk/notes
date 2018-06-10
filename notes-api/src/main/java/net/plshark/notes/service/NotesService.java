@@ -1,9 +1,7 @@
 package net.plshark.notes.service;
 
-import java.util.Optional;
-
-import net.plshark.ObjectNotFoundException;
 import net.plshark.notes.Note;
+import reactor.core.publisher.Mono;
 
 /**
  * Service for notes
@@ -16,7 +14,7 @@ public interface NotesService {
      * @param userId the ID of the current user. The user should own or have read privileges on the note
      * @return the matching note, or an empty optional if the note was not found for the user
      */
-    Optional<Note> getForUser(long id, long userId);
+    Mono<Note> getForUser(long id, long userId);
 
     /**
      * Save a note
@@ -24,15 +22,14 @@ public interface NotesService {
      *            note for this ID will be updated
      * @param userId the ID of the user saving the note
      * @return the saved note
-     * @throws ObjectNotFoundException if the note has an ID but cannot be found
      */
-    Note save(Note note, long userId) throws ObjectNotFoundException;
+    Mono<Note> save(Note note, long userId);
 
     /**
      * Delete a note by ID
      * @param id the ID of the note to delete
      * @param userId the ID of the current user
-     * @throws ObjectNotFoundException if the note could not be found
+     * @return an empty result
      */
-    void deleteForUser(long id, long userId) throws ObjectNotFoundException;
+    Mono<Void> deleteForUser(long id, long userId);
 }

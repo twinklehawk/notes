@@ -9,7 +9,9 @@ import net.plshark.users.User
 import net.plshark.users.repo.RolesRepository
 import net.plshark.users.repo.UserRolesRepository
 import net.plshark.users.repo.UsersRepository
-import net.plshark.users.service.UserManagementServiceImpl
+import reactor.core.publisher.Mono
+import reactor.test.StepVerifier
+import reactor.test.publisher.PublisherProbe
 import spock.lang.Specification
 
 class UserManagementServiceImplSpec extends Specification {
@@ -99,107 +101,128 @@ class UserManagementServiceImplSpec extends Specification {
     def "new password is encoded when updating password"() {
         encoder.encode("current") >> "current-encoded"
         encoder.encode("new-pass") >> "new-pass-encoded"
+        PublisherProbe probe = PublisherProbe.empty()
+        userRepo.updatePassword(100, "current-encoded", "new-pass-encoded") >> probe.mono()
 
-        when:
-        service.updateUserPassword(100, "current", "new-pass")
-
-        then:
-        1 * userRepo.updatePassword(100, "current-encoded", "new-pass-encoded")
+        expect:
+        StepVerifier.create(service.updateUserPassword(100, "current", "new-pass"))
+            .verifyComplete()
+        probe.assertWasSubscribed()
+        probe.assertWasRequested()
+        probe.assertWasNotCancelled()
     }
 
     def "no matching user when updating password throws exception"() {
         encoder.encode("current") >> "current-encoded"
         encoder.encode("new") >> "new-encoded"
-        userRepo.updatePassword(100, "current-encoded", "new-encoded") >> { throw new EmptyResultDataAccessException(1) }
+        userRepo.updatePassword(100, "current-encoded", "new-encoded") >> Mono.error(new EmptyResultDataAccessException(1))
 
-        when:
-        service.updateUserPassword(100, "current", "new")
-
-        then:
-        thrown(ObjectNotFoundException)
+        expect:
+        StepVerifier.create(service.updateUserPassword(100, "current", "new"))
+            .verifyError(ObjectNotFoundException.class)
     }
 
     def "all roles for a user are removed when the user is deleted"() {
-        when:
-        service.deleteUser(100)
+        PublisherProbe rolesProbe = PublisherProbe.empty()
+        userRolesRepo.deleteUserRolesForUser(100) >> rolesProbe.mono()
+        PublisherProbe userProbe = PublisherProbe.empty()
+        userRepo.delete(100) >> userProbe.mono()
 
-        then:
-        1 * userRolesRepo.deleteUserRolesForUser(100)
-        1 * userRepo.delete(100)
+        expect:
+        StepVerifier.create(service.deleteUser(100))
+            .verifyComplete()
+        rolesProbe.assertWasSubscribed()
+        rolesProbe.assertWasRequested()
+        rolesProbe.assertWasNotCancelled()
+        userProbe.assertWasSubscribed()
+        userProbe.assertWasRequested()
+        userProbe.assertWasNotCancelled()
     }
 
     def "role is removed from all users when the role is deleted"() {
-        when:
-        service.deleteRole(200)
+        PublisherProbe userRolesProbe = PublisherProbe.empty()
+        userRolesRepo.deleteUserRolesForRole(200) >> userRolesProbe.mono()
+        PublisherProbe userProbe = PublisherProbe.empty()
+        roleRepo.delete(200) >> userProbe.mono()
 
-        then:
-        1 * userRolesRepo.deleteUserRolesForRole(200)
-        1 * roleRepo.delete(200)
+        expect:
+        StepVerifier.create(service.deleteRole(200))
+            .verifyComplete()
+        userRolesProbe.assertWasSubscribed()
+        userRolesProbe.assertWasRequested()
+        userRolesProbe.assertWasNotCancelled()
+        userProbe.assertWasSubscribed()
+        userProbe.assertWasRequested()
+        userProbe.assertWasNotCancelled()
     }
 
     def "granting a role to a user should add the role to the user's role"() {
-        when:
-        service.grantRoleToUser(12, 34)
+        userRepo.getForId(12) >> Mono.just(new User("name", "pass"))
+        roleRepo.getForId(34) >> Mono.just(new Role("role"))
+        PublisherProbe probe = PublisherProbe.empty()
+        userRolesRepo.insertUserRole(12, 34) >> probe.mono()
 
-        then:
-        1 * userRolesRepo.insertUserRole(12, 34)
+        expect:
+        StepVerifier.create(service.grantRoleToUser(12, 34))
+            .verifyComplete()
+        probe.assertWasSubscribed()
+        probe.assertWasRequested()
+        probe.assertWasNotCancelled()
     }
 
     def "granting a role to a user that does not exist should throw an ObjectNotFoundException"() {
-        userRepo.getForId(100) >> { throw new EmptyResultDataAccessException(1) }
+        userRepo.getForId(100) >> Mono.empty()
+        roleRepo.getForId(200) >> Mono.just(new Role("role"))
 
-        when:
-        service.grantRoleToUser(100, 200)
-
-        then:
-        thrown(ObjectNotFoundException)
+        expect:
+        StepVerifier.create(service.grantRoleToUser(100, 200))
+            .verifyError(ObjectNotFoundException.class)
     }
 
     def "granting a role that does not exist should throw an ObjectNotFoundException"() {
-        roleRepo.getForId(200) >> { throw new EmptyResultDataAccessException(1) }
+        userRepo.getForId(100) >> Mono.just(new User("name", "pass"))
+        roleRepo.getForId(200) >> Mono.empty()
 
-        when:
-        service.grantRoleToUser(100, 200)
-
-        then:
-        thrown(ObjectNotFoundException)
+        expect:
+        StepVerifier.create(service.grantRoleToUser(100, 200))
+            .verifyError(ObjectNotFoundException.class)
     }
 
     def "removing a role from a user should remove the role from the user's roles"() {
-        when:
-        service.removeRoleFromUser(100, 200)
+        userRepo.getForId(100) >> Mono.just(new User("name", "pass"))
+        PublisherProbe probe = PublisherProbe.empty()
+        userRolesRepo.deleteUserRole(100, 200) >> probe.mono()
 
-        then:
-        1 * userRolesRepo.deleteUserRole(100, 200)
+        expect:
+        StepVerifier.create(service.removeRoleFromUser(100, 200))
+            .verifyComplete()
+        probe.assertWasSubscribed()
+        probe.assertWasRequested()
+        probe.assertWasNotCancelled()
     }
 
     def "removing a role from a user that does not exist should throw an ObjectNotFoundException"() {
-        userRepo.getForId(100) >> { throw new EmptyResultDataAccessException(1) }
+        userRepo.getForId(100) >> Mono.empty()
 
-        when:
-        service.removeRoleFromUser(100, 200)
-
-        then:
-        thrown(ObjectNotFoundException)
+        expect:
+        StepVerifier.create(service.removeRoleFromUser(100, 200))
+            .verifyError(ObjectNotFoundException.class)
     }
 
     def "retrieving a role by name passes the name through"() {
-        roleRepo.getForName("name") >> Optional.of(new Role(1, "name"))
+        roleRepo.getForName("name") >> Mono.just(new Role(1, "name"))
 
-        when:
-        Role role = service.getRoleByName("name").get()
-
-        then:
-        role == new Role(1, "name")
+        expect:
+        StepVerifier.create(service.getRoleByName("name"))
+            .expectNext(new Role(1, "name"))
+            .verifyComplete()
     }
 
     def "an empty optional is returned when no role matches the name"() {
-        roleRepo.getForName("name") >> Optional.empty()
+        roleRepo.getForName("name") >> Mono.empty()
 
-        when:
-        Optional<Role> role = service.getRoleByName("name")
-
-        then:
-        !role.isPresent()
+        expect:
+        StepVerifier.create(service.getRoleByName("name"))
+            .verifyComplete()
     }
 }

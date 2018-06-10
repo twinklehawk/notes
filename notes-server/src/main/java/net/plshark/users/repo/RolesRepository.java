@@ -1,9 +1,8 @@
 package net.plshark.users.repo;
 
-import java.util.Optional;
-
 import org.springframework.dao.DataAccessException;
 import net.plshark.users.Role;
+import reactor.core.publisher.Mono;
 
 /**
  * Repository for saving, deleting, and retrieving roles
@@ -16,7 +15,7 @@ public interface RolesRepository {
      * @return the matching role
      * @throws DataAccessException if the query fails
      */
-    Optional<Role> getForId(long id);
+    Mono<Role> getForId(long id);
 
     /**
      * Get a role by name
@@ -24,7 +23,7 @@ public interface RolesRepository {
      * @return the matching role
      * @throws DataAccessException if the query fails
      */
-    Optional<Role> getForName(String name);
+    Mono<Role> getForName(String name);
 
     /**
      * Insert a new role
@@ -32,12 +31,13 @@ public interface RolesRepository {
      * @return the inserted role, will have the ID set
      * @throws DataAccessException if the insert fails
      */
-    Role insert(Role role);
+    Mono<Role> insert(Role role);
 
     /**
      * Delete a role by ID
      * @param roleId the role ID
+     * @return an empty result
      * @throws DataAccessException if the delete fails
      */
-    void delete(long roleId);
+    Mono<Void> delete(long roleId);
 }

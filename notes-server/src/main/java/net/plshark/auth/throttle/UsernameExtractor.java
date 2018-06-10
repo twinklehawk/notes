@@ -2,7 +2,7 @@ package net.plshark.auth.throttle;
 
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 
 /**
  * Extracts usernames from requests
@@ -14,5 +14,5 @@ public interface UsernameExtractor {
      * @param request the request
      * @return the username or empty if not found
      */
-    Optional<String> extractUsername(HttpServletRequest request);
+    Optional<String> extractUsername(ServerHttpRequest request);
 }

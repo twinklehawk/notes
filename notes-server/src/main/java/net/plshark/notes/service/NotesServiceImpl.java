@@ -1,8 +1,6 @@
 package net.plshark.notes.service;
 
 import java.util.Objects;
-import java.util.Optional;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -11,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import net.plshark.ObjectNotFoundException;
 import net.plshark.notes.Note;
 import net.plshark.notes.repo.NotesRepository;
+import reactor.core.publisher.Mono;
 
 /**
  * Implementation for NotesService
@@ -33,31 +32,37 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public Optional<Note> getForUser(long id, long userId) {
-        boolean canRead = permissionService.userHasReadPermission(id, userId);
-        return canRead ? notesRepo.get(id).map(note -> Optional.of(note)).orElse(Optional.empty()) : Optional.empty();
+    public Mono<Note> getForUser(long id, long userId) {
+        return permissionService.userHasReadPermission(id, userId)
+            .flatMap(canRead -> canRead ? notesRepo.get(id) : Mono.empty());
     }
 
     @Override
-    public Note save(Note note, long userId) throws ObjectNotFoundException {
-        Note savedNote;
+    @Transactional
+    public Mono<Note> save(Note note, long userId) {
+        Mono<Note> savedNote;
+
         if (note.getId().isPresent()) {
-            if (!permissionService.userHasWritePermission(note.getId().get(), userId))
-                throw new ObjectNotFoundException("No note found for ID " + note.getId().get());
-            savedNote = notesRepo.update(note);
+            savedNote = permissionService.userHasWritePermission(note.getId().get(), userId)
+                .flatMap(canWrite -> canWrite ? notesRepo.update(note) :
+                    Mono.error(new ObjectNotFoundException("No note found for ID " + note.getId().get())));
         } else {
-            savedNote = notesRepo.insert(note);
-            permissionService.grantOwnerPermissions(savedNote.getId().get(), userId);
+            savedNote = notesRepo.insert(note).flatMap(insertedNote -> permissionService
+                    .grantOwnerPermissions(insertedNote.getId().get(), userId).thenReturn(insertedNote));
         }
+
         return savedNote;
     }
 
     @Override
     @Transactional
-    public void deleteForUser(long id, long userId) throws ObjectNotFoundException {
-        if (!permissionService.userIsOwner(id, userId))
-            throw new ObjectNotFoundException("No note found for ID " + id);
-        notesRepo.delete(id);
-        permissionService.deletePermissionsForNote(id);
+    public Mono<Void> deleteForUser(long id, long userId) {
+        return permissionService.userIsOwner(id, userId)
+            .flatMap(isOwner -> {
+                if (!isOwner)
+                    return Mono.error(new ObjectNotFoundException("No note found for ID " + id));
+                else
+                    return notesRepo.delete(id).and(permissionService.deletePermissionsForNote(id));
+            });
     }
 }

@@ -1,25 +1,30 @@
 package net.plshark.auth.throttle.impl
 
 import java.nio.charset.StandardCharsets
-
-import javax.servlet.http.HttpServletRequest
+import org.springframework.http.HttpHeaders
+import org.springframework.http.server.reactive.ServerHttpRequest
 
 import spock.lang.Specification
 
 class BasicAuthenticationUsernameExtractorSpec extends Specification {
 
-    HttpServletRequest request = Mock()
+    ServerHttpRequest request = Mock()
+    HttpHeaders headers = Mock()
     BasicAuthenticationUsernameExtractor extractor = new BasicAuthenticationUsernameExtractor()
 
+    def setup() {
+        request.getHeaders() >> headers
+    }
+
     def "valid basic auth returns the username"() {
-        request.getHeader("Authorization") >> "Basic dGVzdC11c2VyOnBhc3N3b3Jk"
+        headers.getFirst("Authorization") >> "Basic dGVzdC11c2VyOnBhc3N3b3Jk"
 
         expect:
         extractor.extractUsername(request).get() == "test-user"
     }
 
     def "no Authorization header returns an empty optional"() {
-        request.getHeader("Authorization") >> null
+        headers.getFirst("Authorization") >> null
 
         expect:
         !extractor.extractUsername(request).isPresent()
@@ -27,7 +32,7 @@ class BasicAuthenticationUsernameExtractorSpec extends Specification {
     }
 
     def "Authorization header not starting with Basic returns an empty optional"() {
-        request.getHeader("Authorization") >> "dGVzdC11c2VyOnBhc3N3b3Jk"
+        headers.getFirst("Authorization") >> "dGVzdC11c2VyOnBhc3N3b3Jk"
 
         expect:
         !extractor.extractUsername(request).isPresent()
@@ -35,7 +40,7 @@ class BasicAuthenticationUsernameExtractorSpec extends Specification {
     }
 
     def "invalid base64 encoding in auth header value returns an empty optional"() {
-        request.getHeader("Authorization") >> "Basic 1234"
+        headers.getFirst("Authorization") >> "Basic 1234"
 
         expect:
         !extractor.extractUsername(request).isPresent()
@@ -44,7 +49,7 @@ class BasicAuthenticationUsernameExtractorSpec extends Specification {
 
     def "no colon in auth header value returns an empty optional"() {
         String result = new String(Base64.getEncoder().encode("test-user".getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8)
-        request.getHeader("Authorization") >> result
+        headers.getFirst("Authorization") >> result
 
         expect:
         !extractor.extractUsername(request).isPresent()

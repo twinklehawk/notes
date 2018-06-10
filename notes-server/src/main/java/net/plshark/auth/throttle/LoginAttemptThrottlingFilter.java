@@ -1,27 +1,24 @@
 package net.plshark.auth.throttle;
 
-import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.util.Objects;
 import java.util.Optional;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
+
+import reactor.core.publisher.Mono;
 
 /**
  * Filter that blocks requests from an IP address or for a user if too many requests have been made
  * in a time frame
  */
-public class LoginAttemptThrottlingFilter implements Filter {
+public class LoginAttemptThrottlingFilter implements WebFilter {
 
     private static final Logger log = LoggerFactory.getLogger(LoginAttemptThrottlingFilter.class);
 
@@ -39,39 +36,30 @@ public class LoginAttemptThrottlingFilter implements Filter {
     }
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-
-    }
-
-    @Override
-    public void destroy() {
-
-    }
-
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
+    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+        ServerHttpRequest httpRequest = exchange.getRequest();
         boolean blocked = false;
 
         String clientIp = getClientIp(httpRequest);
-        if (service.isIpBlocked(getClientIp(httpRequest))) {
+        String username = getUsername(httpRequest).orElse("");
+        if (service.isIpBlocked(clientIp)) {
             blocked = true;
             log.debug("blocked request from {}", clientIp);
-        } else {
-            Optional<String> username = getUsername(httpRequest);
-            if (username.isPresent() && service.isUsernameBlocked(username.get())) {
-                blocked = true;
-                log.debug("blocked request for username {}", username.get());
-            }
+        } else if (service.isUsernameBlocked(username)) {
+            blocked = true;
+            log.debug("blocked request for username {}", username);
         }
 
-        if (blocked) {
-            HttpServletResponse httpResponse = (HttpServletResponse) response;
-            httpResponse.sendError(HttpStatus.TOO_MANY_REQUESTS.value());
-        } else {
-            chain.doFilter(request, response);
-        }
+        if (blocked)
+            return Mono.fromRunnable(() -> exchange.getResponse().setStatusCode(HttpStatus.TOO_MANY_REQUESTS));
+        else
+            return chain.filter(exchange)
+                .doOnError(AccessDeniedException.class, error -> service.onLoginFailed(username, clientIp))
+                .then(Mono.fromRunnable(() -> {
+                    HttpStatus status = exchange.getResponse().getStatusCode();
+                    if (HttpStatus.UNAUTHORIZED.equals(status) || HttpStatus.FORBIDDEN.equals(status))
+                        service.onLoginFailed(username, clientIp);
+                }));
     }
 
     /**
@@ -79,9 +67,12 @@ public class LoginAttemptThrottlingFilter implements Filter {
      * @param request the request
      * @return the IP address
      */
-    private String getClientIp(HttpServletRequest request) {
-        return Optional.ofNullable(request.getHeader("X-Forwarded-For")).map(header -> header.split(",")[0])
-                .orElse(request.getRemoteAddr());
+    private String getClientIp(ServerHttpRequest request) {
+        return Optional.ofNullable(request.getHeaders().getFirst("X-Forwarded-For"))
+            .map(header -> header.split(",")[0])
+            .orElse(Optional.ofNullable(request.getRemoteAddress())
+                .map(inetAddr -> inetAddr.getHostString())
+                .orElse(""));
     }
 
     /**
@@ -89,7 +80,7 @@ public class LoginAttemptThrottlingFilter implements Filter {
      * @param request the request
      * @return the username or empty if not found
      */
-    private Optional<String> getUsername(HttpServletRequest request) {
+    private Optional<String> getUsername(ServerHttpRequest request) {
         return usernameExtractor.extractUsername(request);
     }
 }

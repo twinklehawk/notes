@@ -12,10 +12,10 @@ import spock.lang.Specification
 
 @SpringBootTest(classes = Application.class)
 @ActiveProfiles("test")
-class JdbcUserNotePermissionsRepositoryITSpec extends Specification {
+class SyncJdbcUserNotePermissionsRepositoryIntSpec extends Specification {
 
     @Inject
-    JdbcUserNotePermissionsRepository repo
+    SyncJdbcUserNotePermissionsRepository repo
 
     def "can insert and retrieve a permission"() {
         when:

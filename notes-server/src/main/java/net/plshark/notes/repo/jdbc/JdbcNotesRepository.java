@@ -1,20 +1,14 @@
 package net.plshark.notes.repo.jdbc;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.jdbc.JdbcUpdateAffectedIncorrectNumberOfRowsException;
-import org.springframework.jdbc.core.JdbcOperations;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-
-import net.plshark.jdbc.SafePreparedStatementCreator;
+import net.plshark.jdbc.ReactiveUtils;
 import net.plshark.notes.Note;
 import net.plshark.notes.repo.NotesRepository;
+import net.plshark.notes.repo.SyncNotesRepository;
+import reactor.core.publisher.Mono;
 
 /**
  * Repository that saves notes in and retrieves notes from a DB using JDBC
@@ -23,76 +17,36 @@ import net.plshark.notes.repo.NotesRepository;
 @Singleton
 public class JdbcNotesRepository implements NotesRepository {
 
-    private static final String SELECT = "SELECT * FROM notes WHERE id = ?";
-    private static final String DELETE = "DELETE FROM notes WHERE id = ?";
-    private static final String DELETE_ALL = "DELETE FROM notes";
-    private static final String UPDATE = "UPDATE notes SET correlation_id = ?, title = ?, content = ? WHERE id = ?";
-    private static final String INSERT = "INSERT INTO notes (correlation_id, title, content) VALUES (?, ?, ?)";
-
-    private final JdbcOperations jdbc;
-    private final NoteRowMapper noteRowMapper;
+    private final SyncNotesRepository syncRepo;
 
     /**
      * Create a new instance
-     * @param jdbc the JdbcOperations instance to use to interact with the database
+     * @param syncRepo the synchronous repository to wrap
      */
-    public JdbcNotesRepository(JdbcOperations jdbc) {
-        this.jdbc = Objects.requireNonNull(jdbc, "jdbc cannot be null");
-        this.noteRowMapper = new NoteRowMapper();
+    public JdbcNotesRepository(SyncNotesRepository syncRepo) {
+        this.syncRepo = Objects.requireNonNull(syncRepo);
     }
 
     @Override
-    public Optional<Note> get(long id) {
-        List<Note> results = jdbc.query(SELECT, stmt -> stmt.setLong(1, id), noteRowMapper);
-        return Optional.ofNullable(DataAccessUtils.singleResult(results));
+    public Mono<Note> get(long id) {
+        return ReactiveUtils.wrapWithMono(() -> syncRepo.get(id).orElse(null));
     }
 
     @Override
-    public Note insert(Note note) {
-        if (note.getId().isPresent())
-            throw new IllegalArgumentException("Cannot insert note with ID already set");
-
-        GeneratedKeyHolder holder = new GeneratedKeyHolder();
-        jdbc.update(new SafePreparedStatementCreator(
-                con -> con.prepareStatement(INSERT, new int[] { 1 }),
-                stmt -> {
-                    stmt.setLong(1, note.getCorrelationId());
-                    stmt.setString(2, note.getTitle());
-                    stmt.setString(3, note.getContent());
-                }),
-            holder);
-        Long id = Optional.ofNullable(holder.getKey())
-                .map(num -> num.longValue())
-                .orElseThrow(() -> new JdbcUpdateAffectedIncorrectNumberOfRowsException(INSERT, 1, 0));
-        return new Note(id, note.getCorrelationId(), note.getTitle(), note.getContent());
+    public Mono<Note> insert(Note note) {
+        return ReactiveUtils.wrapWithMono(() -> syncRepo.insert(note));
     }
 
     @Override
-    public Note update(Note note) {
-        if (!note.getId().isPresent())
-            throw new IllegalArgumentException("Cannot update note without ID");
+    public Mono<Note> update(Note note) {
+        return ReactiveUtils.wrapWithMono(() -> syncRepo.update(note));
+    }
 
-        int updated = jdbc.update(UPDATE, stmt -> {
-            stmt.setLong(1, note.getCorrelationId());
-            stmt.setString(2, note.getTitle());
-            stmt.setString(3, note.getContent());
-            stmt.setLong(4, note.getId().get());
+    @Override
+    public Mono<Void> delete(long id) {
+        return ReactiveUtils.wrapWithMono(() -> {
+            syncRepo.delete(id);
+            return null;
         });
-        if (updated != 1)
-            throw new JdbcUpdateAffectedIncorrectNumberOfRowsException(UPDATE, 1, updated);
-        return note;
-    }
-
-    @Override
-    public void delete(long id) {
-        // TODO consider throwing exception since service layer does
-        jdbc.update(DELETE, stmt -> stmt.setLong(1, id));
-    }
-
-    /**
-     * Delete all notes
-     */
-    public void deleteAll() {
-        jdbc.update(DELETE_ALL);
     }
 }

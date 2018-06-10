@@ -5,6 +5,9 @@ import org.springframework.security.core.Authentication
 import net.plshark.notes.NotePermission
 import net.plshark.notes.service.NotePermissionsService
 import net.plshark.users.service.UserAuthenticationService
+import reactor.core.publisher.Mono
+import reactor.test.StepVerifier
+import reactor.test.publisher.PublisherProbe
 import spock.lang.Specification
 
 class NotePermissionsControllerSpec extends Specification {
@@ -28,22 +31,28 @@ class NotePermissionsControllerSpec extends Specification {
     }
 
     def "setting permissions looks up the user ID"() {
-        userAuthService.getUserIdForAuthentication(_) >> 12
+        userAuthService.getUserIdForAuthentication(_) >> Mono.just(12L)
+        PublisherProbe probe = PublisherProbe.empty()
+        notePermissionService.setPermissionForUser(1, 2, 12, NotePermission.create(true, true)) >> probe.mono()
 
-        when:
-        controller.setPermissionForUser(1, 2, NotePermission.create(true, true), Mock(Authentication))
-
-        then:
-        1 * notePermissionService.setPermissionForUser(1, 2, 12, NotePermission.create(true, true))
+        expect:
+        StepVerifier.create(controller.setPermissionForUser(1, 2, NotePermission.create(true, true), Mock(Authentication)))
+            .verifyComplete()
+        probe.assertWasSubscribed()
+        probe.assertWasRequested()
+        probe.assertWasNotCancelled()
     }
 
     def "removing permissions looks up the user ID"() {
-        userAuthService.getUserIdForAuthentication(_) >> 12
+        userAuthService.getUserIdForAuthentication(_) >> Mono.just(12L)
+        PublisherProbe probe = PublisherProbe.empty()
+        notePermissionService.removePermissionForUser(1, 2, 12) >> probe.mono()
 
-        when:
-        controller.removePermissionForUser(1, 2, Mock(Authentication))
-
-        then:
-        1 * notePermissionService.removePermissionForUser(1, 2, 12)
+        expect:
+        StepVerifier.create(controller.removePermissionForUser(1, 2, Mock(Authentication)))
+            .verifyComplete()
+        probe.assertWasSubscribed()
+        probe.assertWasRequested()
+        probe.assertWasNotCancelled()
     }
 }

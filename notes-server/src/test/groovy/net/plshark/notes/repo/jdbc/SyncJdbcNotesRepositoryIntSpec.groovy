@@ -13,10 +13,10 @@ import spock.lang.Specification
 
 @SpringBootTest(classes = Application.class)
 @ActiveProfiles("test")
-class JdbcNotesRepositoryITSpec extends Specification {
+class SyncJdbcNotesRepositoryIntSpec extends Specification {
 
     @Inject
-    JdbcNotesRepository repo
+    SyncJdbcNotesRepository repo
 
     def cleanup() {
         repo.deleteAll()

@@ -1,15 +1,16 @@
 package net.plshark.notes.repo;
 
+import java.util.Optional;
+
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import net.plshark.notes.Note;
-import reactor.core.publisher.Mono;
 
 /**
  * Repository for saving, retrieving, and deleting notes
  */
-public interface NotesRepository {
+public interface SyncNotesRepository {
 
     /**
      * Get a note by ID
@@ -18,7 +19,7 @@ public interface NotesRepository {
      * @throws EmptyResultDataAccessException if there is no matching note
      * @throws DataAccessException if the query fails
      */
-    Mono<Note> get(long id);
+    Optional<Note> get(long id);
 
     /**
      * Insert a new note
@@ -26,7 +27,7 @@ public interface NotesRepository {
      * @return the inserted note
      * @throws DataAccessException if the insert fails
      */
-    Mono<Note> insert(Note note);
+    Note insert(Note note);
 
     /**
      * Update an existing note
@@ -34,13 +35,12 @@ public interface NotesRepository {
      * @return the updated note
      * @throws DataAccessException if the update fails
      */
-    Mono<Note> update(Note note);
+    Note update(Note note);
 
     /**
      * Delete a note by ID
      * @param id the ID of the note to delete
-     * @return an empty Mono
      * @throws DataAccessException if the delete fails
      */
-    Mono<Void> delete(long id);
+    void delete(long id);
 }

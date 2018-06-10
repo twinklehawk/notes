@@ -3,6 +3,9 @@ package net.plshark.notes.webservice
 import net.plshark.BadRequestException
 import net.plshark.users.Role
 import net.plshark.users.service.UserManagementService
+import reactor.core.publisher.Mono
+import reactor.test.StepVerifier
+import reactor.test.publisher.PublisherProbe
 import spock.lang.Specification
 
 class RolesControllerSpec extends Specification {
@@ -19,26 +22,29 @@ class RolesControllerSpec extends Specification {
     }
 
     def "cannot insert a role with ID already set"() {
-        when:
-        controller.insert(new Role(1, "name"))
-
-        then:
-        thrown(BadRequestException)
+        expect:
+        StepVerifier.create(controller.insert(new Role(1, "name")))
+            .verifyError(BadRequestException)
     }
 
-    def "insert passes not through to service"() {
-        when:
-        controller.insert(new Role("admin"))
+    def "insert passes role through to service"() {
+        service.saveRole({ Role role -> !role.id.present && role.name == "admin" }) >> Mono.just(new Role(100, "admin"))
 
-        then:
-        1 * service.saveRole({ Role role -> !role.id.present && role.name == "admin" })
+        expect:
+        StepVerifier.create(controller.insert(new Role("admin")))
+            .expectNext(new Role(100, "admin"))
+            .verifyComplete()
     }
 
     def "delete passes ID through to service"() {
-        when:
-        controller.delete(100)
+        PublisherProbe probe = PublisherProbe.empty()
+        service.deleteRole(100) >> probe.mono()
 
-        then:
-        1 * service.deleteRole(100)
+        expect:
+        StepVerifier.create(controller.delete(100))
+            .verifyComplete()
+        probe.assertWasSubscribed()
+        probe.assertWasRequested()
+        probe.assertWasNotCancelled()
     }
 }

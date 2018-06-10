@@ -1,17 +1,18 @@
 package net.plshark.users.service;
 
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
+import reactor.core.publisher.Mono;
 
 /**
  * Interface for authenticating a user and retrieving details on the authenticated user
  */
-public interface UserAuthenticationService extends UserDetailsService {
+public interface UserAuthenticationService extends ReactiveUserDetailsService {
 
     /**
      * Get the user ID of the authenticated user
      * @param auth the authenticated user
      * @return the user ID
      */
-    long getUserIdForAuthentication(Authentication auth);
+    Mono<Long> getUserIdForAuthentication(Authentication auth);
 }
