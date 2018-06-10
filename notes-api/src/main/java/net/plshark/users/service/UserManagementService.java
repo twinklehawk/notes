@@ -1,6 +1,5 @@
 package net.plshark.users.service;
 
-import net.plshark.ObjectNotFoundException;
 import net.plshark.users.Role;
 import net.plshark.users.User;
 import reactor.core.publisher.Mono;
@@ -20,12 +19,14 @@ public interface UserManagementService {
     /**
      * Delete a user by ID
      * @param userId the user ID
+     * @return an empty result
      */
     Mono<Void> deleteUser(long userId);
 
     /**
      * Delete a user
      * @param user the user
+     * @return an empty result
      */
     Mono<Void> deleteUser(User user);
 
@@ -34,7 +35,7 @@ public interface UserManagementService {
      * @param userId the ID of the user
      * @param currentPassword the current password, used for verification
      * @param newPassword the new password
-     * @throws ObjectNotFoundException if the user was not found
+     * @return an empty result or ObjectNotFoundException if the user was not found
      */
     Mono<Void> updateUserPassword(long userId, String currentPassword, String newPassword);
 
@@ -55,6 +56,7 @@ public interface UserManagementService {
     /**
      * Delete a role
      * @param roleId the role ID
+     * @return an empty result
      */
     Mono<Void> deleteRole(long roleId);
 
@@ -62,7 +64,7 @@ public interface UserManagementService {
      * Grant a role to a user
      * @param userId the ID of the user to grant the role to
      * @param roleId the ID of the role to grant
-     * @throws ObjectNotFoundException if the user or role does not exist
+     * @return an empty result or ObjectNotFoundException if the user or role does not exist
      */
     Mono<Void> grantRoleToUser(long userId, long roleId);
 
@@ -70,7 +72,7 @@ public interface UserManagementService {
      * Grant a role to a user
      * @param user the user to grant the role to
      * @param role the role to grant
-     * @throws ObjectNotFoundException if the user or role does not exist
+     * @return an empty result or ObjectNotFoundException if the user or role does not exist
      */
     Mono<Void> grantRoleToUser(User user, Role role);
 
@@ -78,7 +80,7 @@ public interface UserManagementService {
      * Remove a role from a user
      * @param userId the ID of the user to remove the role from
      * @param roleId the ID of the role to remove
-     * @throws ObjectNotFoundException if the user does not exist
+     * @return an empty result or ObjectNotFoundException if the user does not exist
      */
     Mono<Void> removeRoleFromUser(long userId, long roleId);
 }

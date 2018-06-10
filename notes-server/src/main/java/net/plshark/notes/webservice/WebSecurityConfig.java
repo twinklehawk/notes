@@ -26,6 +26,11 @@ public class WebSecurityConfig {
     @Inject
     private LoginAttemptService loginAttemptService;
 
+    /**
+     * Set up the security filter chain
+     * @param http the spring http security configurer
+     * @return the filter chain
+     */
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
         http

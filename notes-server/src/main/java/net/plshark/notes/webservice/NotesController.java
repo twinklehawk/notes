@@ -43,8 +43,7 @@ public class NotesController {
      * Get a note by ID
      * @param id the note ID
      * @param auth the currently authenticated user
-     * @return the matching note
-     * @throws ObjectNotFoundException if the note was not found
+     * @return the matching note or ObjectNotFoundException if the note was not found
      */
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Note> get(@PathVariable("id") long id, Authentication auth) {
@@ -57,8 +56,8 @@ public class NotesController {
      * Insert a new note or update an existing note
      * @param note the note to insert or update if the ID is set
      * @param auth the currently authenticated user
-     * @return the inserted or updated note
-     * @throws ObjectNotFoundException if the note has an ID but cannot be found
+     * @return the inserted or updated note or ObjectNotFoundException if the note has an ID but cannot
+     *         be found
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Note> insert(@RequestBody Note note, Authentication auth) {
@@ -69,13 +68,11 @@ public class NotesController {
     /**
      * Update a note
      * @param id the ID of the note to update
-     * @param note the note fields to update. ID is optional, but if present must
-     *            match {@code id}
+     * @param note the note fields to update. ID is optional, but if present must match {@code id}
      * @param auth the currently authenticated user
-     * @return the updated note
-     * @throws BadRequestException if the note ID is present and does not match
-     *             {@code id}
-     * @throws ObjectNotFoundException if the note ID is present but the note is not found
+     * @return the updated note, or BadRequestException if the note ID is present and does not match
+     *         {@code id}, or ObjectNotFoundException if the note ID is present but the note is not
+     *         found
      */
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Note> update(@PathVariable("id") long id, @RequestBody Note note, Authentication auth) {
@@ -91,8 +88,7 @@ public class NotesController {
      * Delete a note by ID
      * @param id the note ID
      * @param auth the currently authenticated user
-     * @return an empty result
-     * @throws ObjectNotFoundException if the note is not found
+     * @return an empty result or ObjectNotFoundException if the note is not found
      */
     @DeleteMapping(path = "/{id}")
     public Mono<Void> delete(@PathVariable("id") long id, Authentication auth) {

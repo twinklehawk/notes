@@ -35,8 +35,7 @@ public class RolesController {
     /**
      * Insert a new role
      * @param role the role to insert
-     * @return the inserted role
-     * @throws BadRequestException if the role already has an ID set
+     * @return the inserted role or BadRequestException if the role already has an ID set
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Role> insert(@RequestBody Role role) {
@@ -48,6 +47,7 @@ public class RolesController {
     /**
      * Delete a role by ID
      * @param id the role ID
+     * @return an empty result
      */
     @DeleteMapping(path = "/{id}")
     public Mono<Void> delete(@PathVariable("id") long id) {

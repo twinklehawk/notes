@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import net.plshark.ObjectNotFoundException;
 import net.plshark.notes.NotePermission;
 import net.plshark.notes.service.NotePermissionsService;
 import net.plshark.users.service.UserAuthenticationService;
@@ -45,8 +44,7 @@ public class NotePermissionsController {
      * @param userId the user ID of the user to set permissions for
      * @param permission the permissions to set
      * @param auth the currently authenticated user
-     * @return an empty result
-     * @throws ObjectNotFoundException if the note is not found for the user
+     * @return an empty result or ObjectNotFoundException if the note is not found for the user
      */
     @PostMapping(path = "/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Void> setPermissionForUser(@PathVariable("id") long id, @PathVariable("userId") long userId,
@@ -60,8 +58,7 @@ public class NotePermissionsController {
      * @param id the note ID
      * @param userId the user ID of the user to remove permissions from
      * @param auth the currently authenticated user
-     * @return an empty result
-     * @throws ObjectNotFoundException if the note is not found for the user
+     * @return an empty result or ObjectNotFoundException if the note is not found for the user
      */
     @DeleteMapping(path = "/{userId}")
     public Mono<Void> removePermissionForUser(@PathVariable("id") long id, @PathVariable("userId") long userId,
