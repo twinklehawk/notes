@@ -9,9 +9,9 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.CacheLoader;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 
 import net.plshark.auth.throttle.LoginAttemptService;
 
@@ -62,7 +62,7 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
     LoginAttemptServiceImpl(int maxAttempts, long timeFrame, TimeUnit timeFrameUnit) {
         this.maxAttempts = maxAttempts;
         this.timeFrameMinutes = TimeUnit.MINUTES.convert(timeFrame, timeFrameUnit);
-        cache = CacheBuilder.newBuilder().expireAfterWrite(timeFrame, timeFrameUnit)
+        cache = Caffeine.newBuilder().expireAfterWrite(timeFrame, timeFrameUnit)
                 .build(new CacheLoader<String, AtomicInteger>() {
                     @Override
                     public AtomicInteger load(String key) throws Exception {
@@ -84,12 +84,12 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
 
     @Override
     public boolean isUsernameBlocked(String username) {
-        return cache.getUnchecked(username).get() > maxAttempts;
+        return cache.get(username).get() > maxAttempts;
     }
 
     @Override
     public boolean isIpBlocked(String clientIp) {
-        return cache.getUnchecked(clientIp).get() > maxAttempts;
+        return cache.get(clientIp).get() > maxAttempts;
     }
 
     /**
@@ -97,7 +97,7 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
      * @param key the key
      */
     private void incrementAttempts(String key) {
-        int attempts = cache.getUnchecked(key).incrementAndGet();
+        int attempts = cache.get(key).incrementAndGet();
         if (attempts > maxAttempts)
             log.warn("login attempts for {} blocked for {} minutes", key, timeFrameMinutes);
     }
