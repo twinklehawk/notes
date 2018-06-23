@@ -21,7 +21,7 @@ import net.plshark.users.User;
  */
 @Named
 @Singleton
-public class JdbcSyncUsersRepository {
+public class SyncJdbcUsersRepository {
 
     private static final String SELECT_BY_USERNAME = "SELECT * FROM users WHERE username = ?";
     private static final String SELECT_BY_ID = "SELECT * FROM users WHERE id = ?";
@@ -36,7 +36,7 @@ public class JdbcSyncUsersRepository {
      * Create a new instance
      * @param jdbc the JDBC object to use to interact with the database
      */
-    public JdbcSyncUsersRepository(JdbcOperations jdbc) {
+    public SyncJdbcUsersRepository(JdbcOperations jdbc) {
         this.jdbc = Objects.requireNonNull(jdbc, "jdbc cannot be null");
     }
 

@@ -16,13 +16,13 @@ import reactor.core.publisher.Mono;
 @Singleton
 public class JdbcUsersRepository implements UsersRepository {
 
-    private final JdbcSyncUsersRepository syncRepo;
+    private final SyncJdbcUsersRepository syncRepo;
 
     /**
      * Create a new instance
      * @param syncRepo the synchronous repository to wrap
      */
-    public JdbcUsersRepository(JdbcSyncUsersRepository syncRepo) {
+    public JdbcUsersRepository(SyncJdbcUsersRepository syncRepo) {
         this.syncRepo = Objects.requireNonNull(syncRepo, "syncRepo cannot be null");
     }
 

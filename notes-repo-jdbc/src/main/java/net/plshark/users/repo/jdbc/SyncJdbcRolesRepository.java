@@ -21,7 +21,7 @@ import net.plshark.users.Role;
  */
 @Named
 @Singleton
-public class JdbcSyncRolesRepository {
+public class SyncJdbcRolesRepository {
 
     private static final String INSERT = "INSERT INTO roles (name) VALUES (?)";
     private static final String DELETE = "DELETE FROM roles WHERE id = ?";
@@ -35,7 +35,7 @@ public class JdbcSyncRolesRepository {
      * Create a new instance
      * @param jdbc the JDBC object to use to interact with the database
      */
-    public JdbcSyncRolesRepository(JdbcOperations jdbc) {
+    public SyncJdbcRolesRepository(JdbcOperations jdbc) {
         this.jdbc = Objects.requireNonNull(jdbc, "jdbc cannot be null");
     }
 

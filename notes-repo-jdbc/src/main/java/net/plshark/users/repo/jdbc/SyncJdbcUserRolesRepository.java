@@ -16,7 +16,7 @@ import net.plshark.users.Role;
  */
 @Named
 @Singleton
-public class JdbcSyncUserRolesRepository {
+public class SyncJdbcUserRolesRepository {
 
     private static final String SELECT_ROLES_FOR_USER = "SELECT r.id id, r.name name FROM roles r INNER JOIN user_roles ur ON r.id = ur.role_id WHERE ur.user_id = ?";
     private static final String INSERT_USER_ROLE = "INSERT INTO user_roles (user_id, role_id) values (?, ?)";
@@ -31,7 +31,7 @@ public class JdbcSyncUserRolesRepository {
      * Create a new instance
      * @param jdbc the JDBC object to use to interact with the database
      */
-    public JdbcSyncUserRolesRepository(JdbcOperations jdbc) {
+    public SyncJdbcUserRolesRepository(JdbcOperations jdbc) {
         this.jdbc = Objects.requireNonNull(jdbc, "jdbc cannot be null");
     }
 
