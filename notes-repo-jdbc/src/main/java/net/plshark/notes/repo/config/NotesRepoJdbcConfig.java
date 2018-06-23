@@ -1,4 +1,4 @@
-package net.plshark.notes.repo.jdbc;
+package net.plshark.notes.repo.config;
 
 import javax.sql.DataSource;
 
@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * Spring configuration for the notes JDBC repository
  */
 @Configuration
-@ComponentScan
+@ComponentScan("net.plshark.notes.repo.jdbc")
 @EnableTransactionManagement
 public class NotesRepoJdbcConfig {
 
