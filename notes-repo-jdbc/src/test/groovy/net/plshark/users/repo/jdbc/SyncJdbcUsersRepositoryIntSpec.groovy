@@ -4,14 +4,12 @@ import javax.inject.Inject
 
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.dao.EmptyResultDataAccessException
-import org.springframework.test.context.ActiveProfiles
 
 import net.plshark.jdbc.RepoTestConfig
 import net.plshark.users.User
 import spock.lang.Specification
 
 @SpringBootTest(classes = RepoTestConfig.class)
-@ActiveProfiles("test")
 class SyncJdbcUsersRepositoryIntSpec extends Specification {
 
     @Inject

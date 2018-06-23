@@ -4,14 +4,12 @@ import javax.inject.Inject
 
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.JdbcUpdateAffectedIncorrectNumberOfRowsException
-import org.springframework.test.context.ActiveProfiles
 
 import net.plshark.jdbc.RepoTestConfig
 import net.plshark.notes.Note
 import spock.lang.Specification
 
 @SpringBootTest(classes = RepoTestConfig.class)
-@ActiveProfiles("test")
 class SyncJdbcNotesRepositoryIntSpec extends Specification {
 
     @Inject

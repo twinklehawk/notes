@@ -22,7 +22,6 @@ import reactor.core.publisher.Mono
 import spock.lang.Specification
 
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@ActiveProfiles("test")
 class WebSecurityConfigIntSpec extends Specification {
 
     @Inject

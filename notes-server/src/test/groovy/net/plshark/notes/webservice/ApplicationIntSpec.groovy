@@ -21,7 +21,6 @@ import net.plshark.notes.Note
 import spock.lang.Specification
 
 @SpringBootTest(classes = Application.class)
-@ActiveProfiles("test")
 class ApplicationIntSpec extends Specification {
 
     @Inject

@@ -3,14 +3,12 @@ package net.plshark.users.repo.jdbc
 import javax.inject.Inject
 
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
 
 import net.plshark.jdbc.RepoTestConfig
 import net.plshark.users.Role
 import spock.lang.Specification
 
 @SpringBootTest(classes = RepoTestConfig.class)
-@ActiveProfiles("test")
 class SyncJdbcRolesRepositoryIntSpec extends Specification {
 
     @Inject
