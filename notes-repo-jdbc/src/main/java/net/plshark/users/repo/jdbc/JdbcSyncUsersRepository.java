@@ -40,12 +40,22 @@ public class JdbcSyncUsersRepository {
         this.jdbc = Objects.requireNonNull(jdbc, "jdbc cannot be null");
     }
 
+    /**
+     * Get a user by username
+     * @param username the username
+     * @return the matching user if found
+     */
     public Optional<User> getForUsername(String username) {
         Objects.requireNonNull(username, "username cannot be null");
         List<User> results = jdbc.query(SELECT_BY_USERNAME, stmt -> stmt.setString(1, username), userRowMapper);
         return Optional.ofNullable(DataAccessUtils.singleResult(results));
     }
 
+    /**
+     * Create a new user
+     * @param user the user
+     * @return the created user
+     */
     public User insert(User user) {
         if (user.getId().isPresent())
             throw new IllegalArgumentException("Cannot insert user with ID already set");
@@ -64,15 +74,30 @@ public class JdbcSyncUsersRepository {
         return new User(id, user.getUsername(), user.getPassword().get());
     }
 
+    /**
+     * Delete a user by ID
+     * @param userId the user ID
+     */
     public void delete(long userId) {
         jdbc.update(DELETE, stmt -> stmt.setLong(1, userId));
     }
 
+    /**
+     * Get a user by ID
+     * @param id the user ID
+     * @return the matching user if found
+     */
     public Optional<User> getForId(long id) {
         List<User> results = jdbc.query(SELECT_BY_ID, stmt -> stmt.setLong(1, id), userRowMapper);
         return Optional.ofNullable(DataAccessUtils.singleResult(results));
     }
 
+    /**
+     * Update the password for a user
+     * @param id the user ID
+     * @param currentPassword the user's current password
+     * @param newPassword the user's new password
+     */
     public void updatePassword(long id, String currentPassword, String newPassword) {
         int updates = jdbc.update(UPDATE_PASSWORD, stmt -> {
             stmt.setString(1, newPassword);

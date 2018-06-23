@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.JdbcUpdateAffectedIncorrectNumberOfRowsException;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -36,6 +37,13 @@ public class SyncJdbcUserNotePermissionsRepository {
         this.jdbc = jdbc;
     }
 
+    /**
+     * Get a user's permissions for a note
+     * @param userId the user ID
+     * @param noteId the note ID
+     * @return the permissions, may be empty if the user has no permissions for the note
+     * @throws DataAccessException if the query fails
+     */
     public Optional<UserNotePermission> getByUserAndNote(long userId, long noteId) {
         List<UserNotePermission> list = jdbc.query(GET_BY_USER_NOTE, stmt -> {
             stmt.setLong(1, userId);
@@ -44,6 +52,12 @@ public class SyncJdbcUserNotePermissionsRepository {
         return Optional.ofNullable(DataAccessUtils.singleResult(list));
     }
 
+    /**
+     * Save a new permission
+     * @param permission the permission
+     * @return the saved permission
+     * @throws DataAccessException if the insert fails
+     */
     public UserNotePermission insert(UserNotePermission permission) {
         jdbc.update(INSERT, stmt -> {
            stmt.setLong(1, permission.getUserId());
@@ -54,6 +68,11 @@ public class SyncJdbcUserNotePermissionsRepository {
         return permission;
     }
 
+    /**
+     * Delete a user's permission for a note
+     * @param userId the user ID
+     * @param noteId the note ID
+     */
     public void deleteByUserAndNote(long userId, long noteId) {
         jdbc.update(DELETE_BY_USER_NOTE, stmt -> {
             stmt.setLong(1, userId);
@@ -61,12 +80,22 @@ public class SyncJdbcUserNotePermissionsRepository {
          });
     }
 
+    /**
+     * Delete all permissions for a note
+     * @param noteId the note ID
+     */
     public void deleteByNote(long noteId) {
         jdbc.update(DELETE_BY_NOTE, stmt -> {
             stmt.setLong(1, noteId);
          });
     }
 
+    /**
+     * Update an existing permission
+     * @param permission the permission to update
+     * @return the updated permission
+     * @throws DataAccessException if the update fails
+     */
     public UserNotePermission update(UserNotePermission permission) {
         int updates = jdbc.update(UPDATE, stmt-> {
             stmt.setBoolean(1, permission.isReadable());

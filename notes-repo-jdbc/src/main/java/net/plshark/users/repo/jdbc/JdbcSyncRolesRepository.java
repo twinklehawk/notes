@@ -7,6 +7,7 @@ import java.util.Optional;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.JdbcUpdateAffectedIncorrectNumberOfRowsException;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -38,6 +39,12 @@ public class JdbcSyncRolesRepository {
         this.jdbc = Objects.requireNonNull(jdbc, "jdbc cannot be null");
     }
 
+    /**
+     * Insert a role
+     * @param role the role
+     * @return the inserted role
+     * @throws DataAccessException if the insert fails
+     */
     public Role insert(Role role) {
         if (role.getId().isPresent())
             throw new IllegalArgumentException("Cannot insert role with ID already set");
@@ -53,15 +60,32 @@ public class JdbcSyncRolesRepository {
         return new Role(id, role.getName());
     }
 
+    /**
+     * Delete a role by ID
+     * @param roleId the role ID
+     * @throws DataAccessException if the delete fails
+     */
     public void delete(long roleId) {
         jdbc.update(DELETE, stmt -> stmt.setLong(1, roleId));
     }
 
+    /**
+     * Get a role by ID
+     * @param id the role ID
+     * @return the matching role if found
+     * @throws DataAccessException if the query fails
+     */
     public Optional<Role> getForId(long id) {
         List<Role> results = jdbc.query(SELECT_BY_ID, stmt -> stmt.setLong(1, id), roleRowMapper);
         return Optional.ofNullable(DataAccessUtils.singleResult(results));
     }
 
+    /**
+     * Get a role by name
+     * @param name the role name
+     * @return the matching role if found
+     * @throws DataAccessException if the query fails
+     */
     public Optional<Role> getForName(String name) {
         Objects.requireNonNull(name, "name cannot be null");
         List<Role> results = jdbc.query(SELECT_BY_NAME, stmt -> stmt.setString(1, name), roleRowMapper);

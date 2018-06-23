@@ -6,6 +6,7 @@ import java.util.Objects;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 
 import net.plshark.users.Role;
@@ -34,10 +35,21 @@ public class JdbcSyncUserRolesRepository {
         this.jdbc = Objects.requireNonNull(jdbc, "jdbc cannot be null");
     }
 
+    /**
+     * Get all roles for a user
+     * @param userId the user ID
+     * @return the roles
+     * @throws DataAccessException if the query fails
+     */
     public List<Role> getRolesForUser(long userId) {
         return jdbc.query(SELECT_ROLES_FOR_USER, stmt -> stmt.setLong(1, userId), roleRowMapper);
     }
 
+    /**
+     * Add a role to a user
+     * @param userId the user ID
+     * @param roleId the role ID
+     */
     public void insertUserRole(long userId, long roleId) {
         jdbc.update(INSERT_USER_ROLE, stmt -> {
             stmt.setLong(1, userId);
@@ -45,6 +57,11 @@ public class JdbcSyncUserRolesRepository {
         });
     }
 
+    /**
+     * Remove a role from a user
+     * @param userId the user ID
+     * @param roleId the role ID
+     */
     public void deleteUserRole(long userId, long roleId) {
         jdbc.update(DELETE_USER_ROLE, stmt -> {
             stmt.setLong(1, userId);
@@ -52,12 +69,20 @@ public class JdbcSyncUserRolesRepository {
         });
     }
 
+    /**
+     * Remove all roles from a user
+     * @param userId the user ID
+     */
     public void deleteUserRolesForUser(long userId) {
         jdbc.update(DELETE_USER_ROLES_BY_USER, stmt -> {
             stmt.setLong(1, userId);
         });
     }
 
+    /**
+     * Remove a role from all users
+     * @param roleId the role ID
+     */
     public void deleteUserRolesForRole(long roleId) {
         jdbc.update(DELETE_USER_ROLES_BY_ROLE, stmt -> {
             stmt.setLong(1, roleId);

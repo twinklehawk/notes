@@ -7,6 +7,8 @@ import java.util.Optional;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.JdbcUpdateAffectedIncorrectNumberOfRowsException;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -40,11 +42,24 @@ public class SyncJdbcNotesRepository {
         this.noteRowMapper = new NoteRowMapper();
     }
 
+    /**
+     * Get a note by ID
+     * @param id the note ID
+     * @return the matching note
+     * @throws EmptyResultDataAccessException if there is no matching note
+     * @throws DataAccessException if the query fails
+     */
     public Optional<Note> get(long id) {
         List<Note> results = jdbc.query(SELECT, stmt -> stmt.setLong(1, id), noteRowMapper);
         return Optional.ofNullable(DataAccessUtils.singleResult(results));
     }
 
+    /**
+     * Insert a new note
+     * @param note the note to insert
+     * @return the inserted note
+     * @throws DataAccessException if the insert fails
+     */
     public Note insert(Note note) {
         if (note.getId().isPresent())
             throw new IllegalArgumentException("Cannot insert note with ID already set");
@@ -64,6 +79,12 @@ public class SyncJdbcNotesRepository {
         return new Note(id, note.getCorrelationId(), note.getTitle(), note.getContent());
     }
 
+    /**
+     * Update an existing note
+     * @param note the note to update
+     * @return the updated note
+     * @throws DataAccessException if the update fails
+     */
     public Note update(Note note) {
         if (!note.getId().isPresent())
             throw new IllegalArgumentException("Cannot update note without ID");
@@ -79,12 +100,18 @@ public class SyncJdbcNotesRepository {
         return note;
     }
 
+    /**
+     * Delete a note by ID
+     * @param id the ID of the note to delete
+     * @throws DataAccessException if the delete fails
+     */
     public void delete(long id) {
         jdbc.update(DELETE, stmt -> stmt.setLong(1, id));
     }
 
     /**
      * Delete all notes
+     * @throws DataAccessException if the delete fails
      */
     public void deleteAll() {
         jdbc.update(DELETE_ALL);
