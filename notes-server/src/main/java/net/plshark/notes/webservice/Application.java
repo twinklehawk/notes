@@ -13,6 +13,7 @@ import net.plshark.users.service.UsersServiceConfig;
  * Application entry point
  */
 @SpringBootApplication
+// TODO component scan to pick up repo implementation config
 @Import({
     NotesServiceConfig.class,
     NotesRepoJdbcConfig.class,
