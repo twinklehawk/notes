@@ -16,7 +16,6 @@ dependencies {
     compile 'javax.inject:javax.inject:1'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
     compile 'com.github.ben-manes.caffeine:caffeine:2.6.2'
-    testCompile 'junit:junit'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.springframework.security:spring-security-test'
     testCompile 'io.projectreactor:reactor-test'
