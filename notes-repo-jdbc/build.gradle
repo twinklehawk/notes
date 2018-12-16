@@ -1,17 +1,12 @@
 plugins {
 	id 'java'
     id 'groovy'
-    id 'io.spring.dependency-management' version '1.0.5.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.6.RELEASE'
     id 'com.github.spotbugs' version '1.6.5'
 }
 
 apply from: '../build-scripts/spotbugs.gradle'
-
-dependencyManagement {
-    imports {
-         mavenBom 'org.springframework.boot:spring-boot-dependencies:2.0.1.RELEASE'
-    }
-}
+apply from: '../build-scripts/deps.gradle'
 
 dependencies {
     compile 'org.slf4j:slf4j-api'
