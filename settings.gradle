@@ -2,5 +2,4 @@ rootProject.name = 'notes'
 
 include 'notes-api'
 include 'notes-server'
-include 'notes-repo-api'
 include 'notes-repo-jdbc'

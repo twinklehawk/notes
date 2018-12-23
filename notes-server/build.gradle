@@ -12,7 +12,7 @@ apply from: '../build-scripts/deps.gradle'
 dependencies {
     compile 'org.slf4j:slf4j-api'
     compile project(':notes-api')
-    compile project(':notes-repo-api')
+    compile project(':notes-repo-jdbc')
     compile 'org.springframework.boot:spring-boot-starter-webflux'
     compile 'org.springframework.boot:spring-boot-starter-jdbc'
     compile 'org.springframework.boot:spring-boot-starter-security'
@@ -30,5 +30,4 @@ dependencies {
     testRuntime 'org.objenesis:objenesis'
     runtime 'com.h2database:h2'
     runtime 'org.flywaydb:flyway-core'
-    runtime project(':notes-repo-jdbc')
 }

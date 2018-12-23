@@ -10,9 +10,10 @@ apply from: '../build-scripts/deps.gradle'
 
 dependencies {
     compile 'org.slf4j:slf4j-api'
-    compile project(':notes-repo-api')
+    compile project(':notes-api')
     compile 'org.springframework.boot:spring-boot-starter-jdbc'
     compile 'javax.inject:javax.inject:1'
+    compile 'io.projectreactor:reactor-core'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'io.projectreactor:reactor-test'
     testCompile 'org.codehaus.groovy:groovy-all'
