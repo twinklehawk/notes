@@ -11,7 +11,7 @@ class UserNotePermissionRowMapperSpec extends Specification {
 
     def "row mapped to permission"() {
         ResultSet rs = Mock()
-        rs.getLong("user_id") >> 5L
+        rs.getString("username") >> 'user'
         rs.getLong("note_id") >> 6L
         rs.getBoolean("readable") >> true
         rs.getBoolean("writable") >> false
@@ -21,7 +21,7 @@ class UserNotePermissionRowMapperSpec extends Specification {
         UserNotePermission perm = mapper.mapRow(rs, 1)
 
         then:
-        perm.userId == 5
+        perm.username == 'user'
         perm.noteId == 6
         perm.readable == true
         perm.writable == false

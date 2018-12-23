@@ -26,8 +26,8 @@ public class JdbcUserNotePermissionsRepository implements UserNotePermissionsRep
     }
 
     @Override
-    public Mono<UserNotePermission> getByUserAndNote(long userId, long noteId) {
-        return ReactiveUtils.wrapWithMono(() -> syncRepo.getByUserAndNote(userId, noteId).orElse(null));
+    public Mono<UserNotePermission> getByUserAndNote(String username, long noteId) {
+        return ReactiveUtils.wrapWithMono(() -> syncRepo.getByUserAndNote(username, noteId).orElse(null));
     }
 
     @Override
@@ -36,9 +36,9 @@ public class JdbcUserNotePermissionsRepository implements UserNotePermissionsRep
     }
 
     @Override
-    public Mono<Void> deleteByUserAndNote(long userId, long noteId) {
+    public Mono<Void> deleteByUserAndNote(String username, long noteId) {
         return ReactiveUtils.wrapWithMono(() -> {
-            syncRepo.deleteByUserAndNote(userId, noteId);
+            syncRepo.deleteByUserAndNote(username, noteId);
             return null;
         });
     }

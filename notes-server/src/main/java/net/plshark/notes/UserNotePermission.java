@@ -1,11 +1,13 @@
 package net.plshark.notes;
 
+import java.util.Objects;
+
 /**
  * Holds a user's permissions for a note
  */
 public class UserNotePermission {
 
-    private final long userId;
+    private final String username;
     private final long noteId;
     private boolean readable;
     private boolean writable;
@@ -13,34 +15,34 @@ public class UserNotePermission {
 
     /**
      * Create a new instance with no permissions
-     * @param userId the user ID
+     * @param username the username
      * @param noteId the note ID
      */
-    public UserNotePermission(long userId, long noteId) {
-        this(userId, noteId, false, false, false);
+    public UserNotePermission(String username, long noteId) {
+        this(username, noteId, false, false, false);
     }
 
     /**
      * Create a new instance that does not own the note
-     * @param userId the user ID
+     * @param username the username
      * @param noteId the note ID
      * @param readable if the user can read the note
      * @param writable if the user can modify the note
      */
-    public UserNotePermission(long userId, long noteId, boolean readable, boolean writable) {
-        this(userId, noteId, readable, writable, false);
+    public UserNotePermission(String username, long noteId, boolean readable, boolean writable) {
+        this(username, noteId, readable, writable, false);
     }
 
     /**
      * Create a new instance
-     * @param userId the user ID
+     * @param username the username
      * @param noteId the note ID
      * @param readable if the user can read the note
      * @param writable if the user can modify the note
      * @param owner if the user owns the note
      */
-    public UserNotePermission(long userId, long noteId, boolean readable, boolean writable, boolean owner) {
-        this.userId = userId;
+    public UserNotePermission(String username, long noteId, boolean readable, boolean writable, boolean owner) {
+        this.username = username;
         this.noteId = noteId;
         this.readable = readable;
         this.writable = writable;
@@ -48,10 +50,10 @@ public class UserNotePermission {
     }
 
     /**
-     * @return the user ID for the user having this permission
+     * @return the username of the user this permission applies to
      */
-    public long getUserId() {
-        return userId;
+    public String getUsername() {
+        return username;
     }
 
     /**
@@ -105,41 +107,29 @@ public class UserNotePermission {
 
     @Override
     public String toString() {
-        return "UserNotePermission [userId=" + userId + ", noteId=" + noteId + ", readable=" + readable + ", writable="
-                + writable + ", owner=" + owner + "]";
+        return "UserNotePermission{" +
+                "username='" + username + '\'' +
+                ", noteId=" + noteId +
+                ", readable=" + readable +
+                ", writable=" + writable +
+                ", owner=" + owner +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserNotePermission that = (UserNotePermission) o;
+        return noteId == that.noteId &&
+                readable == that.readable &&
+                writable == that.writable &&
+                owner == that.owner &&
+                Objects.equals(username, that.username);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (int) (noteId ^ (noteId >>> 32));
-        result = prime * result + (owner ? 1231 : 1237);
-        result = prime * result + (readable ? 1231 : 1237);
-        result = prime * result + (int) (userId ^ (userId >>> 32));
-        result = prime * result + (writable ? 1231 : 1237);
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        UserNotePermission other = (UserNotePermission) obj;
-        if (noteId != other.noteId)
-            return false;
-        if (owner != other.owner)
-            return false;
-        if (readable != other.readable)
-            return false;
-        if (userId != other.userId)
-            return false;
-        if (writable != other.writable)
-            return false;
-        return true;
+        return Objects.hash(username, noteId, readable, writable, owner);
     }
 }

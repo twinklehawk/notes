@@ -4,17 +4,17 @@ import net.plshark.notes.UserNotePermission;
 import reactor.core.publisher.Mono;
 
 /**
- * Repository for saving and retrieving a users' permissions for notes
+ * Repository for saving and retrieving a user's permissions for notes
  */
 public interface UserNotePermissionsRepository {
 
     /**
      * Get a user's permissions for a note
-     * @param userId the user ID
+     * @param username the username
      * @param noteId the note ID
      * @return the permissions, may be empty if the user has no permissions for the note
      */
-    Mono<UserNotePermission> getByUserAndNote(long userId, long noteId);
+    Mono<UserNotePermission> getByUserAndNote(String username, long noteId);
 
     /**
      * Save a new permission
@@ -32,11 +32,11 @@ public interface UserNotePermissionsRepository {
 
     /**
      * Delete a user's permission for a note
-     * @param userId the user ID
+     * @param username the username
      * @param noteId the note ID
      * @return an empty result
      */
-    Mono<Void> deleteByUserAndNote(long userId, long noteId);
+    Mono<Void> deleteByUserAndNote(String username, long noteId);
 
     /**
      * Delete all permissions for a note

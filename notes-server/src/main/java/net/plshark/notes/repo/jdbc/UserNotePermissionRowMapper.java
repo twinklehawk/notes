@@ -14,7 +14,7 @@ public class UserNotePermissionRowMapper implements RowMapper<UserNotePermission
 
     @Override
     public UserNotePermission mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return new UserNotePermission(rs.getLong("user_id"), rs.getLong("note_id"), rs.getBoolean("readable"),
+        return new UserNotePermission(rs.getString("username"), rs.getLong("note_id"), rs.getBoolean("readable"),
                 rs.getBoolean("writable"), rs.getBoolean("owner"));
     }
 }

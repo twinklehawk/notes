@@ -28,27 +28,27 @@ public class UserNotePermissionsServiceImpl implements UserNotePermissionsServic
     }
 
     @Override
-    public Mono<Boolean> userHasReadPermission(long noteId, long userId) {
-        return permissionRepo.getByUserAndNote(userId, noteId)
+    public Mono<Boolean> userHasReadPermission(long noteId, String username) {
+        return permissionRepo.getByUserAndNote(username, noteId)
                 .map(permission -> permission.isReadable())
                 .defaultIfEmpty(false);
     }
 
     @Override
-    public Mono<Void> grantOwnerPermissions(long noteId, long userId) {
-        return permissionRepo.insert(new UserNotePermission(userId, noteId, true, true, true)).then();
+    public Mono<Void> grantOwnerPermissions(long noteId, String username) {
+        return permissionRepo.insert(new UserNotePermission(username, noteId, true, true, true)).then();
     }
 
     @Override
-    public Mono<Boolean> userHasWritePermission(long noteId, long userId) {
-        return permissionRepo.getByUserAndNote(userId, noteId)
+    public Mono<Boolean> userHasWritePermission(long noteId, String username) {
+        return permissionRepo.getByUserAndNote(username, noteId)
                 .map(permission -> permission.isWritable())
                 .defaultIfEmpty(false);
     }
 
     @Override
-    public Mono<Boolean> userIsOwner(long noteId, long userId) {
-        return permissionRepo.getByUserAndNote(userId, noteId)
+    public Mono<Boolean> userIsOwner(long noteId, String username) {
+        return permissionRepo.getByUserAndNote(username, noteId)
                 .map(permission -> permission.isOwner())
                 .defaultIfEmpty(false);
     }
@@ -59,9 +59,9 @@ public class UserNotePermissionsServiceImpl implements UserNotePermissionsServic
     }
 
     @Override
-    public Mono<Void> setPermissionForUser(long id, long userId, long currentUserId, NotePermission permission) {
-        return userIsOwner(id, currentUserId)
-            .flatMap(isOwner -> isOwner ? permissionRepo.getByUserAndNote(userId, id) :
+    public Mono<Void> setPermissionForUser(long id, String username, String currentUsername, NotePermission permission) {
+        return userIsOwner(id, currentUsername)
+            .flatMap(isOwner -> isOwner ? permissionRepo.getByUserAndNote(username, id) :
                 Mono.error(new ObjectNotFoundException("No note found for ID " + id)))
             .flatMap(p -> {
                 p.setReadable(permission.isReadable());
@@ -69,14 +69,14 @@ public class UserNotePermissionsServiceImpl implements UserNotePermissionsServic
                 return permissionRepo.update(p);
             })
             .switchIfEmpty(Mono.defer(() ->
-                permissionRepo.insert(new UserNotePermission(userId, id, permission.isReadable(), permission.isWritable()))))
+                permissionRepo.insert(new UserNotePermission(username, id, permission.isReadable(), permission.isWritable()))))
             .then();
     }
 
     @Override
-    public Mono<Void> removePermissionForUser(long id, long userId, long currentUserId) {
-        return userIsOwner(id, currentUserId)
-            .flatMap(isOwner -> isOwner ? permissionRepo.deleteByUserAndNote(userId, id) :
+    public Mono<Void> removePermissionForUser(long id, String username, String currentUsername) {
+        return userIsOwner(id, currentUsername)
+            .flatMap(isOwner -> isOwner ? permissionRepo.deleteByUserAndNote(username, id) :
                 Mono.error(new ObjectNotFoundException("No note found for ID " + id)));
     }
 }

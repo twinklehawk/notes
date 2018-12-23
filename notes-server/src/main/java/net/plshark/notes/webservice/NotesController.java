@@ -1,6 +1,10 @@
 package net.plshark.notes.webservice;
 
 import java.util.Objects;
+import net.plshark.BadRequestException;
+import net.plshark.ObjectNotFoundException;
+import net.plshark.notes.Note;
+import net.plshark.notes.service.NotesService;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,12 +15,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import net.plshark.BadRequestException;
-import net.plshark.ObjectNotFoundException;
-import net.plshark.notes.Note;
-import net.plshark.notes.service.NotesService;
-import net.plshark.users.service.UserAuthenticationService;
 import reactor.core.publisher.Mono;
 
 /**
@@ -27,16 +25,13 @@ import reactor.core.publisher.Mono;
 public class NotesController {
 
     private final NotesService notesService;
-    private final UserAuthenticationService userAuthService;
 
     /**
      * Create a new instance
      * @param notesService the service to use for notes
-     * @param userAuthService the service to use to retrieve authenticated user information
      */
-    public NotesController(NotesService notesService, UserAuthenticationService userAuthService) {
+    public NotesController(NotesService notesService) {
         this.notesService = Objects.requireNonNull(notesService, "notesService cannot be null");
-        this.userAuthService = Objects.requireNonNull(userAuthService, "userAuthService cannot be null");
     }
 
     /**
@@ -47,8 +42,7 @@ public class NotesController {
      */
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Note> get(@PathVariable("id") long id, Authentication auth) {
-        return userAuthService.getUserIdForAuthentication(auth)
-            .flatMap(currentUserId -> notesService.getForUser(id, currentUserId))
+        return notesService.getForUser(id, auth.getName())
             .switchIfEmpty(Mono.error(new ObjectNotFoundException("No note found for id " + id)));
     }
 
@@ -61,8 +55,7 @@ public class NotesController {
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Note> insert(@RequestBody Note note, Authentication auth) {
-        return userAuthService.getUserIdForAuthentication(auth)
-            .flatMap(currentUserId -> notesService.save(note, currentUserId));
+        return notesService.save(note, auth.getName());
     }
 
     /**
@@ -80,8 +73,7 @@ public class NotesController {
         if (n.getId().get() != id)
             return Mono.error(new BadRequestException("Note ID must match ID in path"));
         else
-            return userAuthService.getUserIdForAuthentication(auth)
-                .flatMap(currentUserId -> notesService.save(n, currentUserId));
+            return notesService.save(n, auth.getName());
     }
 
     /**
@@ -92,7 +84,6 @@ public class NotesController {
      */
     @DeleteMapping(path = "/{id}")
     public Mono<Void> delete(@PathVariable("id") long id, Authentication auth) {
-        return userAuthService.getUserIdForAuthentication(auth)
-            .flatMap(currentUserId -> notesService.deleteForUser(id, currentUserId));
+        return notesService.deleteForUser(id, auth.getName());
     }
 }
