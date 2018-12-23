@@ -1,6 +1,9 @@
 allprojects {
     repositories {
         jcenter()
+        maven {
+            url 'https://dl.bintray.com/twinklehawk/plshark'
+        }
     }
     group = 'net.plshark.notes'
     version = '1.0.0'
