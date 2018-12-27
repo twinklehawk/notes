@@ -1,7 +1,7 @@
 package net.plshark.notes.webservice
 
 import net.plshark.BadRequestException
-import net.plshark.users.Role
+import net.plshark.users.model.Role
 import net.plshark.users.service.UserManagementService
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier

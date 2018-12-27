@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 
-import net.plshark.users.Role;
+import net.plshark.users.model.Role;
 
 /**
  * Maps result rows to User objects

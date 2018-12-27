@@ -1,4 +1,4 @@
-package net.plshark.users;
+package net.plshark.users.model;
 
 import java.util.Objects;
 

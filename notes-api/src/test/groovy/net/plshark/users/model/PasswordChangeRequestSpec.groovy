@@ -1,7 +1,6 @@
-package net.plshark.users
+package net.plshark.users.model
 
-import net.plshark.users.PasswordChangeRequest
-import spock.lang.*
+import spock.lang.Specification
 
 class PasswordChangeRequestSpec extends Specification {
 

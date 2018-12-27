@@ -5,7 +5,7 @@ import javax.inject.Inject
 import org.springframework.boot.test.context.SpringBootTest
 
 import net.plshark.jdbc.RepoTestConfig
-import net.plshark.users.Role
+import net.plshark.users.model.Role
 import spock.lang.Specification
 
 @SpringBootTest(classes = RepoTestConfig.class)

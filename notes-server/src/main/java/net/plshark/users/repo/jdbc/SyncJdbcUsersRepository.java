@@ -14,7 +14,7 @@ import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 
 import net.plshark.jdbc.SafePreparedStatementCreator;
-import net.plshark.users.User;
+import net.plshark.users.model.User;
 
 /**
  * User repository that uses JDBC

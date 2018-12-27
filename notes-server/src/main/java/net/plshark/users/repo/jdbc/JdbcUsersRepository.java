@@ -5,7 +5,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import net.plshark.jdbc.ReactiveUtils;
-import net.plshark.users.User;
+import net.plshark.users.model.User;
 import net.plshark.users.repo.UsersRepository;
 import reactor.core.publisher.Mono;
 

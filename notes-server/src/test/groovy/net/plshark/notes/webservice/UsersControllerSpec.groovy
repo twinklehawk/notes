@@ -1,8 +1,8 @@
 package net.plshark.notes.webservice
 
 import net.plshark.BadRequestException
-import net.plshark.users.PasswordChangeRequest
-import net.plshark.users.User
+import net.plshark.users.model.PasswordChangeRequest
+import net.plshark.users.model.User
 import net.plshark.users.service.UserManagementService
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier

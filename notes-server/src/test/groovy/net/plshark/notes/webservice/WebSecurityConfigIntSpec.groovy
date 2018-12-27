@@ -1,24 +1,17 @@
 package net.plshark.notes.webservice
 
 import java.nio.charset.StandardCharsets
-import java.util.Base64
-
 import javax.inject.Inject
 
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ApplicationContext
-import org.springframework.http.MediaType
 import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 
 import com.fasterxml.jackson.databind.ObjectMapper
-
-import net.plshark.notes.Note
-import net.plshark.users.Role
-import net.plshark.users.User
+import net.plshark.users.model.Role
+import net.plshark.users.model.User
 import net.plshark.users.service.UserManagementService
-import reactor.core.publisher.Mono
 import spock.lang.Specification
 
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.MOCK)

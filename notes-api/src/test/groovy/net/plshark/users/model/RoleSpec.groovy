@@ -1,6 +1,5 @@
-package net.plshark.users
+package net.plshark.users.model
 
-import net.plshark.users.Role
 import spock.lang.Specification
 
 class RoleSpec extends Specification {

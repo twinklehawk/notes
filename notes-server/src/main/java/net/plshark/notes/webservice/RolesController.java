@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.plshark.BadRequestException;
-import net.plshark.users.Role;
+import net.plshark.users.model.Role;
 import net.plshark.users.service.UserManagementService;
 import reactor.core.publisher.Mono;
 

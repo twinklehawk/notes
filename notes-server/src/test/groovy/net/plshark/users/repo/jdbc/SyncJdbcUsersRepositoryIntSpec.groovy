@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.dao.EmptyResultDataAccessException
 
 import net.plshark.jdbc.RepoTestConfig
-import net.plshark.users.User
+import net.plshark.users.model.User
 import spock.lang.Specification
 
 @SpringBootTest(classes = RepoTestConfig.class)

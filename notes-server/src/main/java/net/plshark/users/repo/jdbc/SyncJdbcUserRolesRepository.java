@@ -9,7 +9,7 @@ import javax.inject.Singleton;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 
-import net.plshark.users.Role;
+import net.plshark.users.model.Role;
 
 /**
  * User roles repository that uses JDBC

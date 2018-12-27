@@ -1,6 +1,5 @@
-package net.plshark.users
+package net.plshark.users.model
 
-import net.plshark.users.User
 import spock.lang.Specification
 
 class UserSpec extends Specification {

@@ -1,6 +1,6 @@
 package net.plshark.users.repo;
 
-import net.plshark.users.Role;
+import net.plshark.users.model.Role;
 import reactor.core.publisher.Mono;
 
 /**
