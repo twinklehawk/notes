@@ -1,20 +1,17 @@
 package net.plshark.notes.webservice;
 
+import net.plshark.notes.service.NotesServiceConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
-
-import net.plshark.notes.service.NotesServiceConfig;
-import net.plshark.users.service.UsersServiceConfig;
 
 /**
  * Application entry point
  */
 @SpringBootApplication
 @Import({
-    NotesServiceConfig.class,
-    UsersServiceConfig.class
+    NotesServiceConfig.class
 })
 @ComponentScan({
     "net.plshark.notes.webservice",
