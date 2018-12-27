@@ -19,7 +19,6 @@ import net.plshark.users.service.UsersServiceConfig;
 @ComponentScan({
     "net.plshark.notes.webservice",
     "net.plshark.notes.repo.config",
-    "net.plshark.users.repo.config"
 })
 public class Application {
 
