@@ -9,8 +9,6 @@ import org.springframework.security.test.web.reactive.server.SecurityMockServerC
 import org.springframework.test.web.reactive.server.WebTestClient
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import net.plshark.users.model.Role
-import net.plshark.users.model.User
 import spock.lang.Specification
 
 @Ignore("Need to update for use of users-service")
@@ -21,21 +19,21 @@ class WebSecurityConfigIntSpec extends Specification {
     ApplicationContext context
     @Inject
     ObjectMapper mapper
-    User notesUser
-    User adminUser
+    //User notesUser
+    //User adminUser
     WebTestClient client
 
     def setup() {
         client = WebTestClient.bindToApplicationContext(context)
             .build()
 
-        Role userRole = userMgmt.getRoleByName("notes-user").toFuture().get()
-        Role adminRole = userMgmt.getRoleByName("notes-admin").toFuture().get()
+        //Role userRole = userMgmt.getRoleByName("notes-user").toFuture().get()
+        //Role adminRole = userMgmt.getRoleByName("notes-admin").toFuture().get()
 
-        notesUser = userMgmt.saveUser(new User("test-user", "pass")).toFuture().get()
+        //notesUser = userMgmt.saveUser(new User("test-user", "pass")).toFuture().get()
         userMgmt.grantRoleToUser(notesUser, userRole).toFuture().get()
 
-        adminUser = userMgmt.saveUser(new User("admin-user", "pass")).toFuture().get()
+        //adminUser = userMgmt.saveUser(new User("admin-user", "pass")).toFuture().get()
         userMgmt.grantRoleToUser(adminUser, adminRole).toFuture().get()
     }
 
