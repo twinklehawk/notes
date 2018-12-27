@@ -12,6 +12,7 @@ apply from: '../build-scripts/deps.gradle'
 dependencies {
     compile 'org.slf4j:slf4j-api'
     compile project(':notes-api')
+    compile 'net.plshark.users:auth-utils:0.0.1'
     compile 'org.springframework.boot:spring-boot-starter-webflux'
     compile 'org.springframework.boot:spring-boot-starter-jdbc'
     compile 'org.springframework.boot:spring-boot-starter-security'
