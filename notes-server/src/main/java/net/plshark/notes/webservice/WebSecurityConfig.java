@@ -35,8 +35,6 @@ public class WebSecurityConfig {
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
         http
             .authorizeExchange()
-                .pathMatchers("/users/**", "/roles/**")
-                    .hasRole("notes-admin")
                 .anyExchange()
                     .hasRole("notes-user")
             // use basic authentication
