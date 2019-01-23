@@ -2,3 +2,6 @@ rootProject.name = 'notes'
 
 include 'notes-api'
 include 'notes-server'
+
+// remove in gradle 5
+enableFeaturePreview('STABLE_PUBLISHING')
