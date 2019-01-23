@@ -26,7 +26,7 @@ class NotesControllerSpec extends Specification {
     def "update with no ID in object uses ID from URL"() {
         auth.getName() >> 'user'
         PublisherProbe probe = PublisherProbe.of(Mono.just(new Note("", "")))
-        notesService.save({ Note n -> n.id == 100L }, 'user') >> probe.mono()
+        notesService.update({ Note n -> n.id == 100L }, 'user') >> probe.mono()
 
         expect:
         StepVerifier.create(controller.update(100, new Note("", ""), auth))
@@ -37,7 +37,7 @@ class NotesControllerSpec extends Specification {
     def "update passes the note through and retrieves the current user ID"() {
         auth.getName() >> 'user'
         PublisherProbe probe = PublisherProbe.of(Mono.just(new Note(100, 2, "", "")))
-        notesService.save(new Note(100, 2, "", ""), 'user') >> probe.mono()
+        notesService.update(new Note(100, 2, "", ""), 'user') >> probe.mono()
 
         expect:
         StepVerifier.create(controller.update(100, new Note(100, 2, "", ""), auth))

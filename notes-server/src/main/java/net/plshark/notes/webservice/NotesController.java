@@ -46,11 +46,10 @@ public class NotesController {
     }
 
     /**
-     * Insert a new note or update an existing note
-     * @param note the note to insert or update if the ID is set
+     * Insert a new note
+     * @param note the note to insert
      * @param auth the currently authenticated user
-     * @return the inserted or updated note or ObjectNotFoundException if the note has an ID but cannot
-     *         be found
+     * @return the inserted note
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Note> insert(@RequestBody Note note, Authentication auth) {
@@ -62,13 +61,11 @@ public class NotesController {
      * @param id the ID of the note to update
      * @param note the note fields to update. ID is optional
      * @param auth the currently authenticated user
-     * @return the updated note, or BadRequestException if the note ID is present and does not match
-     *         {@code id}, or ObjectNotFoundException if the note ID is present but the note is not
-     *         found
+     * @return the updated note or ObjectNotFoundException if the note is not found
      */
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Note> update(@PathVariable("id") long id, @RequestBody Note note, Authentication auth) {
-        return notesService.save(new Note(id, note.getCorrelationId(), note.getTitle(), note.getContent()), auth.getName());
+        return notesService.update(new Note(id, note.getCorrelationId(), note.getTitle(), note.getContent()), auth.getName());
     }
 
     /**

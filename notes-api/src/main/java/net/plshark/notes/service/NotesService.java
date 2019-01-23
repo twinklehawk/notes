@@ -17,13 +17,20 @@ public interface NotesService {
     Mono<Note> getForUser(long id, String username);
 
     /**
-     * Save a note
-     * @param note the note to save. If the note's ID is not empty, the existing
-     *            note for this ID will be updated
+     * Save a new note
+     * @param note the note to save
      * @param username the username of the user saving the note
      * @return the saved note
      */
     Mono<Note> save(Note note, String username);
+
+    /**
+     * Update a note
+     * @param note the note to update, must have the ID set
+     * @param username the username of the user updating the note
+     * @return the updated note
+     */
+    Mono<Note> update(Note note, String username);
 
     /**
      * Delete a note by ID

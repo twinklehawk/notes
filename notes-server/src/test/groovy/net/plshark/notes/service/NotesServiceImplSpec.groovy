@@ -47,7 +47,7 @@ class NotesServiceImplSpec extends Specification {
         notesRepo.update(new Note(4, 2, "", "")) >> Mono.just(new Note(4, 2, "", ""))
 
         expect:
-        StepVerifier.create(service.save(new Note(4, 2, "", ""), 'user'))
+        StepVerifier.create(service.update(new Note(4, 2, "", ""), 'user'))
             .expectNext(new Note(4, 2, "", ""))
             .verifyComplete()
     }
@@ -56,7 +56,7 @@ class NotesServiceImplSpec extends Specification {
         permissionService.userHasWritePermission(4, 'user') >> Mono.just(false)
 
         expect:
-        StepVerifier.create(service.save(new Note(4, 2, "", ""), 'user'))
+        StepVerifier.create(service.update(new Note(4, 2, "", ""), 'user'))
             .verifyError(ObjectNotFoundException.class)
     }
 

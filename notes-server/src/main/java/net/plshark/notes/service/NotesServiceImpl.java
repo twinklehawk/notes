@@ -40,31 +40,26 @@ public class NotesServiceImpl implements NotesService {
     @Override
     @Transactional
     public Mono<Note> save(Note note, String username) {
-        Mono<Note> savedNote;
+        return notesRepo.insert(note)
+                .flatMap(insertedNote ->
+                        permissionService.grantOwnerPermissions(insertedNote.getId(), username)
+                        .thenReturn(insertedNote));
+    }
 
-        if (note.getId() != null) {
-            savedNote = permissionService.userHasWritePermission(note.getId(), username)
-                .flatMap(canWrite -> canWrite ? notesRepo.update(note) :
-                    Mono.error(new ObjectNotFoundException("No note found for ID " + note.getId())));
-        } else {
-            savedNote = notesRepo.insert(note)
-                    .flatMap(insertedNote ->
-                            permissionService.grantOwnerPermissions(insertedNote.getId(), username)
-                            .thenReturn(insertedNote));
-        }
-
-        return savedNote;
+    @Override
+    public Mono<Note> update(Note note, String username) {
+        return permissionService.userHasWritePermission(note.getId(), username)
+                .flatMap(canWrite -> canWrite ?
+                        notesRepo.update(note) :
+                        Mono.error(new ObjectNotFoundException("No note found for ID " + note.getId())));
     }
 
     @Override
     @Transactional
     public Mono<Void> deleteForUser(long id, String username) {
         return permissionService.userIsOwner(id, username)
-            .flatMap(isOwner -> {
-                if (!isOwner)
-                    return Mono.error(new ObjectNotFoundException("No note found for ID " + id));
-                else
-                    return notesRepo.delete(id).and(permissionService.deletePermissionsForNote(id));
-            });
+            .flatMap(isOwner -> isOwner ?
+                    notesRepo.delete(id).and(permissionService.deletePermissionsForNote(id)) :
+                    Mono.error(new ObjectNotFoundException("No note found for ID " + id)));
     }
 }
