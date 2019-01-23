@@ -9,7 +9,9 @@ import spock.lang.Specification
                 'spring.flyway.placeholders.schema=notes',
                 'spring.flyway.placeholders.username=testuser',
                 'spring.flyway.placeholders.password=pass',
-                'spring.flyway.schemas=notes' ])
+                'spring.flyway.schemas=notes',
+                'auth.host=http://localhost'
+        ])
 class ApplicationIntSpec extends Specification {
 
     @Inject

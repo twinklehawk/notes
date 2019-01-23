@@ -48,7 +48,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public AuthService authService(WebClient webClient, @Value("auth.host") String authHost) {
+    public AuthService authService(WebClient webClient, @Value("${auth.host}") String authHost) {
         return new AuthServiceClient(webClient, authHost);
     }
 
