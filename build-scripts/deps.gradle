@@ -9,5 +9,6 @@ dependencyManagement {
         dependency 'org.objenesis:objenesis:3.0.1'
         dependency 'com.github.ben-manes.caffeine:caffeine:2.6.2'
         dependency 'javax.inject:javax.inject:1'
+        dependency 'com.opentable.components:otj-pg-embedded:0.12.6'
     }
 }
