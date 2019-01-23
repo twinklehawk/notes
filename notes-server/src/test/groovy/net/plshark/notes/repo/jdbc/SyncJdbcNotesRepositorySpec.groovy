@@ -23,7 +23,7 @@ class SyncJdbcNotesRepositorySpec extends Specification {
         Note insertedNote = repo.insert(new Note("title", "content"))
 
         when:
-        Note note = repo.get(insertedNote.id.get()).get()
+        Note note = repo.get(insertedNote.id).get()
 
         then:
         note == insertedNote
@@ -34,18 +34,10 @@ class SyncJdbcNotesRepositorySpec extends Specification {
         Note note = repo.insert(new Note("title", "content"))
 
         then:
-        note.id.isPresent()
+        note.id != null
         note.correlationId == 0
         note.title == "title"
         note.content == "content"
-    }
-
-    def "inserting a note with an ID set throws an exception"() {
-        when:
-        repo.insert(new Note(1, 0, "title", "content"))
-
-        then:
-        thrown(IllegalArgumentException)
     }
 
     def "a previously inserted note can be updated"() {
@@ -57,7 +49,7 @@ class SyncJdbcNotesRepositorySpec extends Specification {
 
         then:
         note == inserted
-        repo.get(note.id.get()).get().content == "new content"
+        repo.get(note.id).get().content == "new content"
     }
 
     def "updating a note with no ID throws an exception"() {
@@ -80,10 +72,10 @@ class SyncJdbcNotesRepositorySpec extends Specification {
         Note inserted = repo.insert(new Note("title", "content"))
 
         when:
-        repo.delete(inserted.id.get())
+        repo.delete(inserted.id)
 
         then:
-        !repo.get(inserted.id.get()).isPresent()
+        !repo.get(inserted.id).isPresent()
     }
 
     def "no exception is thrown when a delete does not affect any rows"() {

@@ -11,7 +11,7 @@ class NoteSpec extends Specification {
         note = new Note("title", "content")
 
         then:
-        !note.id.present
+        note.id == null
     }
 
     def "null constructor args are not allowed"() {

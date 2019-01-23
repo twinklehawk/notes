@@ -61,9 +61,6 @@ public class SyncJdbcNotesRepository {
      * @throws DataAccessException if the insert fails
      */
     public Note insert(Note note) {
-        if (note.getId().isPresent())
-            throw new IllegalArgumentException("Cannot insert note with ID already set");
-
         GeneratedKeyHolder holder = new GeneratedKeyHolder();
         jdbc.update(new SafePreparedStatementCreator(
                 con -> con.prepareStatement(INSERT, new String[] { "id" }),
@@ -86,14 +83,14 @@ public class SyncJdbcNotesRepository {
      * @throws DataAccessException if the update fails
      */
     public Note update(Note note) {
-        if (!note.getId().isPresent())
+        if (note.getId() == null)
             throw new IllegalArgumentException("Cannot update note without ID");
 
         int updated = jdbc.update(UPDATE, stmt -> {
             stmt.setLong(1, note.getCorrelationId());
             stmt.setString(2, note.getTitle());
             stmt.setString(3, note.getContent());
-            stmt.setLong(4, note.getId().get());
+            stmt.setLong(4, note.getId());
         });
         if (updated != 1)
             throw new JdbcUpdateAffectedIncorrectNumberOfRowsException(UPDATE, 1, updated);

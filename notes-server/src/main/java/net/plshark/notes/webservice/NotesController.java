@@ -1,7 +1,6 @@
 package net.plshark.notes.webservice;
 
 import java.util.Objects;
-import net.plshark.BadRequestException;
 import net.plshark.ObjectNotFoundException;
 import net.plshark.notes.Note;
 import net.plshark.notes.service.NotesService;
@@ -61,7 +60,7 @@ public class NotesController {
     /**
      * Update a note
      * @param id the ID of the note to update
-     * @param note the note fields to update. ID is optional, but if present must match {@code id}
+     * @param note the note fields to update. ID is optional
      * @param auth the currently authenticated user
      * @return the updated note, or BadRequestException if the note ID is present and does not match
      *         {@code id}, or ObjectNotFoundException if the note ID is present but the note is not
@@ -69,11 +68,7 @@ public class NotesController {
      */
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Note> update(@PathVariable("id") long id, @RequestBody Note note, Authentication auth) {
-        Note n = note.getId().isPresent() ? note : new Note(id, note.getCorrelationId(), note.getTitle(), note.getContent());
-        if (n.getId().get() != id)
-            return Mono.error(new BadRequestException("Note ID must match ID in path"));
-        else
-            return notesService.save(n, auth.getName());
+        return notesService.save(new Note(id, note.getCorrelationId(), note.getTitle(), note.getContent()), auth.getName());
     }
 
     /**

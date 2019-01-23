@@ -42,13 +42,15 @@ public class NotesServiceImpl implements NotesService {
     public Mono<Note> save(Note note, String username) {
         Mono<Note> savedNote;
 
-        if (note.getId().isPresent()) {
-            savedNote = permissionService.userHasWritePermission(note.getId().get(), username)
+        if (note.getId() != null) {
+            savedNote = permissionService.userHasWritePermission(note.getId(), username)
                 .flatMap(canWrite -> canWrite ? notesRepo.update(note) :
-                    Mono.error(new ObjectNotFoundException("No note found for ID " + note.getId().get())));
+                    Mono.error(new ObjectNotFoundException("No note found for ID " + note.getId())));
         } else {
-            savedNote = notesRepo.insert(note).flatMap(insertedNote -> permissionService
-                    .grantOwnerPermissions(insertedNote.getId().get(), username).thenReturn(insertedNote));
+            savedNote = notesRepo.insert(note)
+                    .flatMap(insertedNote ->
+                            permissionService.grantOwnerPermissions(insertedNote.getId(), username)
+                            .thenReturn(insertedNote));
         }
 
         return savedNote;

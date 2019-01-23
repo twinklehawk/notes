@@ -20,7 +20,7 @@ class NoteRowMapperSpec extends Specification {
         Note note = mapper.mapRow(rs, 1)
 
         then:
-        note.id.get() == 5
+        note.id == 5L
         note.correlationId == 7
         note.title == "title"
         note.content == "note"

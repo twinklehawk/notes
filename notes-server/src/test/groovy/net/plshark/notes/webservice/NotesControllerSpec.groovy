@@ -1,6 +1,5 @@
 package net.plshark.notes.webservice
 
-import net.plshark.BadRequestException
 import net.plshark.ObjectNotFoundException
 import net.plshark.notes.Note
 import net.plshark.notes.service.NotesService
@@ -24,16 +23,10 @@ class NotesControllerSpec extends Specification {
         thrown(NullPointerException)
     }
 
-    def "update with different IDs in URL and object treated as bad request"() {
-        expect:
-        StepVerifier.create(controller.update(100, new Note(200, 2, "", ""), auth))
-            .verifyError(BadRequestException.class)
-    }
-
     def "update with no ID in object uses ID from URL"() {
         auth.getName() >> 'user'
         PublisherProbe probe = PublisherProbe.of(Mono.just(new Note("", "")))
-        notesService.save({ Note n -> n.id.get() == 100L }, 'user') >> probe.mono()
+        notesService.save({ Note n -> n.id == 100L }, 'user') >> probe.mono()
 
         expect:
         StepVerifier.create(controller.update(100, new Note("", ""), auth))
