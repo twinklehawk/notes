@@ -19,6 +19,8 @@ dependencies {
     compile 'javax.inject:javax.inject'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
     compile 'com.github.ben-manes.caffeine:caffeine'
+    compile 'org.postgresql:postgresql'
+    compile 'org.flywaydb:flyway-core'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.springframework.security:spring-security-test'
     testCompile 'io.projectreactor:reactor-test'
@@ -26,8 +28,7 @@ dependencies {
     testCompile 'org.spockframework:spock-core'
     testCompile 'org.spockframework:spock-spring'
     testCompile 'org.hamcrest:hamcrest-core'
+    testCompile 'com.opentable.components:otj-pg-embedded'
     testRuntime 'net.bytebuddy:byte-buddy'
     testRuntime 'org.objenesis:objenesis'
-    runtime 'com.h2database:h2'
-    runtime 'org.flywaydb:flyway-core'
 }
