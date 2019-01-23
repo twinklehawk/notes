@@ -1,19 +1,23 @@
 package net.plshark.notes.repo.jdbc
 
-import javax.inject.Inject
-
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.jdbc.JdbcUpdateAffectedIncorrectNumberOfRowsException
-
-import net.plshark.jdbc.RepoTestConfig
+import com.opentable.db.postgres.junit.EmbeddedPostgresRules
+import com.opentable.db.postgres.junit.PreparedDbRule
 import net.plshark.notes.UserNotePermission
+import net.plshark.testutils.PlsharkFlywayPreparer
+import org.junit.Rule
+import org.springframework.jdbc.JdbcUpdateAffectedIncorrectNumberOfRowsException
+import org.springframework.jdbc.core.JdbcTemplate
 import spock.lang.Specification
 
-@SpringBootTest(classes = RepoTestConfig.class)
-class SyncJdbcUserNotePermissionsRepositoryIntSpec extends Specification {
+class SyncJdbcUserNotePermissionsRepositorySpec extends Specification {
 
-    @Inject
+    @Rule
+    PreparedDbRule dbRule = EmbeddedPostgresRules.preparedDatabase(PlsharkFlywayPreparer.defaultPreparer())
     SyncJdbcUserNotePermissionsRepository repo
+
+    def setup() {
+        repo = new SyncJdbcUserNotePermissionsRepository(new JdbcTemplate(dbRule.testDatabase))
+    }
 
     def "can insert and retrieve a permission"() {
         when:
@@ -26,9 +30,6 @@ class SyncJdbcUserNotePermissionsRepositoryIntSpec extends Specification {
         permission.readable
         permission.writable
         !permission.owner
-
-        cleanup:
-        repo.deleteByUserAndNote('user', 2)
     }
 
     def "no matching permission returns an empty optional"() {
@@ -77,9 +78,6 @@ class SyncJdbcUserNotePermissionsRepositoryIntSpec extends Specification {
 
         then:
         repo.getByUserAndNote('user', 1).present
-
-        cleanup:
-        repo.deleteByUserAndNote('user', 1)
     }
 
     def "can update an existing permission"() {

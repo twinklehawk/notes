@@ -21,7 +21,7 @@ import net.plshark.notes.UserNotePermission;
 public class SyncJdbcUserNotePermissionsRepository {
 
     private static final String GET_BY_USER_NOTE = "SELECT * FROM user_note_permissions WHERE username = ? AND note_id = ?";
-    private static final String INSERT = "INSERT INTO user_note_permissions (username, note_id, readable, writable) VALUES (?, ?, ?, ?)";
+    private static final String INSERT = "INSERT INTO user_note_permissions (username, note_id, readable, writable, owner) VALUES (?, ?, ?, ?, ?)";
     private static final String UPDATE = "UPDATE user_note_permissions SET readable = ?, writable = ? WHERE username = ? AND note_id = ?";
     private static final String DELETE_BY_USER_NOTE = "DELETE FROM user_note_permissions WHERE username = ? AND note_id = ?";
     private static final String DELETE_BY_NOTE = "DELETE FROM user_note_permissions WHERE note_id = ?";
@@ -64,6 +64,7 @@ public class SyncJdbcUserNotePermissionsRepository {
            stmt.setLong(2, permission.getNoteId());
            stmt.setBoolean(3, permission.isReadable());
            stmt.setBoolean(4, permission.isWritable());
+           stmt.setBoolean(5, permission.isOwner());
         });
         return permission;
     }

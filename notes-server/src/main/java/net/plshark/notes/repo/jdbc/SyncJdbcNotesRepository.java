@@ -66,7 +66,7 @@ public class SyncJdbcNotesRepository {
 
         GeneratedKeyHolder holder = new GeneratedKeyHolder();
         jdbc.update(new SafePreparedStatementCreator(
-                con -> con.prepareStatement(INSERT, new int[] { 1 }),
+                con -> con.prepareStatement(INSERT, new String[] { "id" }),
                 stmt -> {
                     stmt.setLong(1, note.getCorrelationId());
                     stmt.setString(2, note.getTitle());
@@ -74,7 +74,7 @@ public class SyncJdbcNotesRepository {
                 }),
             holder);
         Long id = Optional.ofNullable(holder.getKey())
-                .map(num -> num.longValue())
+                .map(Number::longValue)
                 .orElseThrow(() -> new JdbcUpdateAffectedIncorrectNumberOfRowsException(INSERT, 1, 0));
         return new Note(id, note.getCorrelationId(), note.getTitle(), note.getContent());
     }
