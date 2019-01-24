@@ -17,8 +17,6 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-jdbc'
     compile 'org.springframework.boot:spring-boot-starter-security'
     compile 'javax.inject:javax.inject'
-    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
-    compile 'com.github.ben-manes.caffeine:caffeine'
     compile 'org.postgresql:postgresql'
     compile 'org.flywaydb:flyway-core'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
