@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
  */
 @Named
 @Singleton
-public class UserNotePermissionsServiceImpl implements UserNotePermissionsService, NotePermissionsService {
+public class UserNotePermissionsServiceImpl implements UserNotePermissionsService {
 
     private final UserNotePermissionsRepository permissionRepo;
 

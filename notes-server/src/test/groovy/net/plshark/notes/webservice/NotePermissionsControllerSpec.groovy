@@ -1,7 +1,7 @@
 package net.plshark.notes.webservice
 
 import net.plshark.notes.NotePermission
-import net.plshark.notes.service.NotePermissionsService
+import net.plshark.notes.service.UserNotePermissionsService
 import org.springframework.security.core.Authentication
 import reactor.test.StepVerifier
 import reactor.test.publisher.PublisherProbe
@@ -9,7 +9,7 @@ import spock.lang.Specification
 
 class NotePermissionsControllerSpec extends Specification {
 
-    NotePermissionsService notePermissionService = Mock()
+    UserNotePermissionsService notePermissionService = Mock()
     NotePermissionsController controller = new NotePermissionsController(notePermissionService)
     Authentication auth = Mock(Authentication)
 

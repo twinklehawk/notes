@@ -2,7 +2,7 @@ package net.plshark.notes.webservice;
 
 import java.util.Objects;
 import net.plshark.notes.NotePermission;
-import net.plshark.notes.service.NotePermissionsService;
+import net.plshark.notes.service.UserNotePermissionsService;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,13 +20,13 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/notes/{id}/user-permissions")
 public class NotePermissionsController {
 
-    private final NotePermissionsService notePermissionsService;
+    private final UserNotePermissionsService notePermissionsService;
 
     /**
      * Create a new instance
      * @param notePermissionsService the service to use for note permissions
      */
-    public NotePermissionsController(NotePermissionsService notePermissionsService) {
+    public NotePermissionsController(UserNotePermissionsService notePermissionsService) {
         this.notePermissionsService = Objects.requireNonNull(notePermissionsService,
                 "notePermissionsService cannot be null");
     }

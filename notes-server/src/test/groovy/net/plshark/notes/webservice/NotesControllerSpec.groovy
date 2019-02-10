@@ -2,7 +2,7 @@ package net.plshark.notes.webservice
 
 import net.plshark.ObjectNotFoundException
 import net.plshark.notes.Note
-import net.plshark.notes.service.NotesService
+import net.plshark.notes.service.UserNotesService
 import org.springframework.security.core.Authentication
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
@@ -12,7 +12,7 @@ import spock.lang.Specification
 class NotesControllerSpec extends Specification {
 
     Authentication auth = Mock()
-    NotesService notesService = Mock()
+    UserNotesService notesService = Mock()
     NotesController controller = new NotesController(notesService)
 
     def "nulls not allowed in constructor args"() {

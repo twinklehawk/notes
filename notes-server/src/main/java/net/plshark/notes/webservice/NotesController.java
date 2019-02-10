@@ -3,7 +3,7 @@ package net.plshark.notes.webservice;
 import java.util.Objects;
 import net.plshark.ObjectNotFoundException;
 import net.plshark.notes.Note;
-import net.plshark.notes.service.NotesService;
+import net.plshark.notes.service.UserNotesService;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,13 +23,13 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/notes")
 public class NotesController {
 
-    private final NotesService notesService;
+    private final UserNotesService notesService;
 
     /**
      * Create a new instance
      * @param notesService the service to use for notes
      */
-    public NotesController(NotesService notesService) {
+    public NotesController(UserNotesService notesService) {
         this.notesService = Objects.requireNonNull(notesService, "notesService cannot be null");
     }
 

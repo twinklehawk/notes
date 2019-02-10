@@ -8,21 +8,21 @@ import reactor.test.StepVerifier
 import reactor.test.publisher.PublisherProbe
 import spock.lang.Specification
 
-class NotesServiceImplSpec extends Specification {
+class UserNotesServiceImplSpec extends Specification {
 
     NotesRepository notesRepo = Mock()
     UserNotePermissionsService permissionService = Mock()
-    NotesServiceImpl service = new NotesServiceImpl(notesRepo, permissionService)
+    UserNotesServiceImpl service = new UserNotesServiceImpl(notesRepo, permissionService)
 
     def "constructor does not accept null"() {
         when:
-        new NotesServiceImpl(null, permissionService)
+        new UserNotesServiceImpl(null, permissionService)
 
         then:
         thrown(NullPointerException)
 
         when:
-        new NotesServiceImpl(notesRepo, null)
+        new UserNotesServiceImpl(notesRepo, null)
 
         then:
         thrown(NullPointerException)

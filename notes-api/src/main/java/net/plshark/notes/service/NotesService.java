@@ -9,34 +9,30 @@ import reactor.core.publisher.Mono;
 public interface NotesService {
 
     /**
-     * Get a note by ID for a user
+     * Get a note by ID
      * @param id the note ID
-     * @param username the username of the current user. The user should own or have read privileges on the note
-     * @return the matching note, or an empty optional if the note was not found for the user
+     * @return the matching note, or an empty optional if the note was not found
      */
-    Mono<Note> getForUser(long id, String username);
+    Mono<Note> get(long id);
 
     /**
      * Save a new note
      * @param note the note to save
-     * @param username the username of the user saving the note
      * @return the saved note
      */
-    Mono<Note> save(Note note, String username);
+    Mono<Note> save(Note note);
 
     /**
      * Update a note
      * @param note the note to update, must have the ID set
-     * @param username the username of the user updating the note
      * @return the updated note
      */
-    Mono<Note> update(Note note, String username);
+    Mono<Note> update(Note note);
 
     /**
      * Delete a note by ID
      * @param id the ID of the note to delete
-     * @param username the username of the current user
      * @return an empty result
      */
-    Mono<Void> deleteForUser(long id, String username);
+    Mono<Void> delete(long id);
 }

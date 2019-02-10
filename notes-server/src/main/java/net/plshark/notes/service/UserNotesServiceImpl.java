@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
  */
 @Named
 @Singleton
-public class NotesServiceImpl implements NotesService {
+public class UserNotesServiceImpl implements UserNotesService {
 
     private final NotesRepository notesRepo;
     private final UserNotePermissionsService permissionService;
@@ -26,7 +26,7 @@ public class NotesServiceImpl implements NotesService {
      * @param notesRepo the repository to use to store notes
      * @param permissionService the service to check user permissions for notes
      */
-    public NotesServiceImpl(NotesRepository notesRepo, UserNotePermissionsService permissionService) {
+    public UserNotesServiceImpl(NotesRepository notesRepo, UserNotePermissionsService permissionService) {
         this.notesRepo = Objects.requireNonNull(notesRepo, "notesRepo cannot be null");
         this.permissionService = Objects.requireNonNull(permissionService, "permissionService cannot be null");
     }
